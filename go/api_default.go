@@ -10,7 +10,6 @@
 package swagger
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -27,8 +26,8 @@ func DeleteSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	fmt.Println("Got Courses")
 
+	testResponse(w, r)
 }
 
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
@@ -64,6 +63,8 @@ func GetUserSegmentSettings(w http.ResponseWriter, r *http.Request) {
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+
+	testResponse(w, r)
 }
 
 func GetUserSegmentsResourceID(w http.ResponseWriter, r *http.Request) {

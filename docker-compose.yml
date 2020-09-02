@@ -14,3 +14,8 @@ services:
         - MYSQL_USER=testiuser
         - MYSQL_PASSWORD=testipassword
         - MYSQL_DATABASE=tiukuDB
+        volumes:
+            - /c/Oamk/Oppari/tiuku-mysql-data:/var/lib/mysql
+      
+volumes:
+    tiuku-mysql-data:
