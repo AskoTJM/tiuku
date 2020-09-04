@@ -2,11 +2,20 @@ version: "3.8"
 
 services:
     api:
+        container_name: api
         ports:
-        -   "8080:8080"
+        - "8080:8080"
+        depends_on: 
+            - "db"
+        working_dir: /tiuku
+        volumes:
+            - /c/Oamk/Oppari/tiuku:/tiuku
         build: .
+        command: go run main.go
+    
     db:
-        image: mysql
+        container_name: db
+        image: mysql:8
         ports: 
         -   "3306:3306"
         environment: 
@@ -15,7 +24,8 @@ services:
         - MYSQL_PASSWORD=testipassword
         - MYSQL_DATABASE=tiukuDB
         volumes:
-            - /c/Oamk/Oppari/tiuku-mysql-data:/var/lib/mysql
-      
+        - /c/Oamk/Oppari/tiuku-mysql-data:/var/lib/mysql
+            
 volumes:
     tiuku-mysql-data:
+    tiuku:
