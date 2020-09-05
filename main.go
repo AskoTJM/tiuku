@@ -22,12 +22,24 @@ import (
 	//    sw "github.com/myname/myrepo/go"
 	//
 	sw "./go"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
+/*
+type Env struct {
+	db *gorm.DB
+}
+
+type User struct {
+	ID       int
+	Username string
+}
+*/
 func main() {
+
 	log.Printf("Server started")
-
 	router := sw.NewRouter()
-
 	log.Fatal(http.ListenAndServe(":8080", router))
+	initDB()
+
 }

@@ -11,8 +11,9 @@ services:
         volumes:
             - /c/Oamk/Oppari/tiuku:/tiuku
         build: .
-        command: go run main.go
-    
+        #command: go run main.go
+        command: tail -fn0 /dev/null    
+
     db:
         container_name: db
         image: mysql:8

@@ -19,5 +19,7 @@ RUN go get -u github.com/jinzhu/gorm/dialects/mysql
 #RUN go build -o main
 #EXPOSE 8080
 #ENTRYPOINT [ "go","./main" ]
-CMD [./main]
+#CMD tail -fn0 /dev/null
+#CMD ./main && tail -f /dev/null
+#CMD [./main]
 #RUN /ail -fn0 /dev/null

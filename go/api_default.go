@@ -11,18 +11,10 @@ package swagger
  */
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
-
-type User struct {
-	ID       int
-	Username string
-}
 
 func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -36,21 +28,10 @@ func DeleteSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusOK)
 	//connectToDB()
-	db, err := gorm.Open("mysql", "testiuser:testipassword@tcp(localhost:3306)/tiukuDB?charset=utf8")
-
-	if err != nil {
-		log.Printf("Connection failed to Open")
-	}
-
-	log.Printf("Edited outside of container")
-	//log.Printf("%+v", db)
-	fmt.Fprintf(w, "Does this work, %+v", db)
-
-	db.CreateTable(&User{})
-
-	//testResponse(w, r)
+	testCreate()
+	testResponse(w, r)
 }
 
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
