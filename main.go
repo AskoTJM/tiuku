@@ -30,10 +30,6 @@ type Env struct {
 	db *gorm.DB
 }
 
-type User struct {
-	ID       int
-	Username string
-}
 */
 func main() {
 
