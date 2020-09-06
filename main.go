@@ -22,7 +22,7 @@ import (
 	//    sw "github.com/myname/myrepo/go"
 	//
 	sw "./go"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	//_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 /*
