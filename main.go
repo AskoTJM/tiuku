@@ -21,8 +21,8 @@ import (
 	//
 	//    sw "github.com/myname/myrepo/go"
 	//
+	
 	sw "./go"
-	//_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 /*
@@ -31,6 +31,7 @@ type Env struct {
 }
 
 */
+
 func main() {
 
 	log.Printf("Server started")

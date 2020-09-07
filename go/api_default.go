@@ -29,6 +29,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	connectToDB()
+	populateSchool()
 	//	testCreate()
 	testResponse(w, r)
 }

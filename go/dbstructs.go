@@ -22,7 +22,7 @@ type StudentUsers struct {
 	StudentClass    string
 }
 
-// Table for FacultyUsers of the API
+// Table for FacultyUsers f the API
 type FacultyUsers struct {
 	ID              uint `gorm:"primary_key"`
 	FacultyID       string
@@ -31,7 +31,7 @@ type FacultyUsers struct {
 	FacultySegments FacultySegments
 }
 
-// Table of Faculty(in this case Teachers), to save their Segments
+// Table of Faculty(in this cse Teachers), to save their Segments
 type FacultySegments struct {
 	ID                     uint `gorm:"primary_key"`
 	ResourceID             string
@@ -46,7 +46,7 @@ type FacultySegments struct {
 type Course struct {
 	ID              uint `gorm:"primary_key"`
 	ResourceID      uint
-	School          Schools
+	Schools         Schools
 	CourseCode      string
 	CourseName      string
 	CourseStartDate string
@@ -55,7 +55,7 @@ type Course struct {
 	Segment         []Segment
 }
 
-// Course can have one or more Segments
+// Course can have on or more Segments
 type Segment struct {
 	ID                     uint `gorm:"primary_key"`
 	SegmentName            string
@@ -66,7 +66,7 @@ type Segment struct {
 	SchoolSegmentsSessions SchoolSegmentsSessions
 }
 
-// Schools Segment table has data for students and where to find their Session for the Segement.
+// Schools Segment table has data fo students and where to find their Session for the Segement.
 type SchoolSegmentsSessions struct {
 	ID                      uint `gorm:"primary_key"`
 	StudentID               string
@@ -74,9 +74,9 @@ type SchoolSegmentsSessions struct {
 	Privacy                 string
 }
 
-// Segment has different Categories for tracking and settings for them.
-// All SubCategories belong in to one of the three MainCategory
-// Maybe should be belongs to or one-to-one with two structs?
+// Segment has different Categories for tracking and settings fr them.
+// All SubCategories belong in to one of the three MainCategoy
+// Maybe should be belongs to o one-to-one with two structs?
 type SegmentCategories struct {
 	ID                 uint `gorm:"primary_key"`
 	MainCategory       string
@@ -88,7 +88,7 @@ type SegmentCategories struct {
 	Active             bool
 }
 
-// What Segments of Courses student is tracking.
+// What Segments of Courses sudent is tracking.
 type StudentSegments struct {
 	ID                     uint `gorm:"primary_key"`
 	ResourceID             string
@@ -101,20 +101,20 @@ type StudentSegments struct {
 
 // Students Sessions for Segment
 type StudentSegmentSessions struct {
-	ID         uint `gorm:"primary_key"`
-	ResourceID uint
-	StartTime  string
-	EndTime    string
-	CreatedAt  string
-	UpdateAt   string
-	DeletedAt  string
-	Categories SegmentCategories
-	Comment    string
-	Version    uint
-	Locations  string
+	ID                uint `gorm:"primary_key"`
+	ResourceID        uint
+	StartTime         string
+	EndTime           string
+	CreatedAt         string
+	UpdateAt          string
+	DeletedAt         string
+	SegmentCategories SegmentCategories
+	Comment           string
+	Version           uint
+	Locations         string
 }
 
-// Table for Schools. School can have multiple campuses
+// Table for Schools.School can have multiple campuses
 type Schools struct {
 	ID       uint `gorm:"primary_key"`
 	Finnish  string
@@ -122,7 +122,7 @@ type Schools struct {
 	Campuses []Campuses
 }
 
-// Campus of the School, Campus can have multiple Apartments
+// Campus of the Schoo, Campus can have multiple Apartments
 type Campuses struct {
 	ID         uint `gorm:"primary_key"`
 	Finnish    string
@@ -130,7 +130,7 @@ type Campuses struct {
 	Apartments []Apartments
 }
 
-// Table for different Apartments in Campus, Apartment can have multiple Degrees
+// Table for different Aartments in Campus, Apartment can have multiple Degrees
 type Apartments struct {
 	ID      uint `gorm:"primary_key"`
 	Finnish string
@@ -138,7 +138,7 @@ type Apartments struct {
 	Degrees []Degrees
 }
 
-// Degrees in the Apartment.
+// Degrees in the Apatment.
 type Degrees struct {
 	ID      uint `gorm:"primary_key"`
 	Finnish string
