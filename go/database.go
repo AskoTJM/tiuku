@@ -40,8 +40,8 @@ func connectToDB() {
 		log.Printf("Problem with connecting to database. <go/database.go->connectToDB>")
 		log.Panic(err)
 	}
-	//test := Testi{dii: 5, fff: "No totta kai"}
-	initDB()
+
+	//initDB()
 	fmt.Printf("%s", db.Error)
 }
 
@@ -51,6 +51,9 @@ func closeDB() {
 	defer db.Close()
 }
 */
+
+/* initDB() for creating needed tables for database
+ */
 func initDB() {
 
 	log.Printf("Trying to AutoMigrate Course table to database. <go/database.go->initDB>")
