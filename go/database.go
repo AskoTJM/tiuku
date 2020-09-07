@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 /*
@@ -129,13 +130,30 @@ func initDB() {
 		log.Panic("Problems creating table for School. <go/database.go->initDB>")
 	}
 
-	if err := db.Table("OAMK").AutoMigrate(&Campuses{
+	if err := db.AutoMigrate(&Campuses{
 		ID:         0,
 		Finnish:    "",
 		English:    "",
 		Apartments: []Apartments{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for Campuses. <go/database.go->initDB>")
+	}
+
+	if err := db.AutoMigrate(&Apartments{
+		ID:      0,
+		Finnish: "",
+		English: "",
+		Degrees: []Degrees{},
+	}).Error; err != nil {
+		log.Panic("Problems creating table for Apartments. <go/database.go->initDB>")
+	}
+
+	if err := db.AutoMigrate(&Degrees{
+		ID:      0,
+		Finnish: "",
+		English: "",
+	}).Error; err != nil {
+		log.Panic("Problems creating table for Degrees. <go/database.go->initDB>")
 	}
 
 	//if err := db.CreateTable("")

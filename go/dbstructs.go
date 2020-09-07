@@ -1,23 +1,12 @@
 package swagger
 
-type User struct {
-	ID       int
-	Username string
-}
-
-type UserModel struct {
-	ID      int `gorm:"primary_key"`
-	Name    string
-	Address string
-}
-
 // Table for StudentUsers
 type StudentUsers struct {
 	ID              uint `gorm:"primary_key"`
 	StudentID       string
 	AnonID          string
 	StudentName     string
-	StudentSegments StudentSegments `gorm:"foreignkey:ID"`
+	StudentSegments StudentSegments
 	StudentEmail    string
 	StudentClass    string
 }
@@ -114,31 +103,31 @@ type StudentSegmentSessions struct {
 	Locations         string
 }
 
-// Table for Schools.School can have multiple campuses
+// Table for Schools. School can have multiple campuses
 type Schools struct {
 	ID       uint `gorm:"primary_key"`
 	Finnish  string
 	English  string
-	Campuses []Campuses
+	Campuses []Campuses `gorm:"association_foreignkey:ID"`
 }
 
-// Campus of the Schoo, Campus can have multiple Apartments
+// Campus of the School, Campus can have multiple Apartments
 type Campuses struct {
 	ID         uint `gorm:"primary_key"`
 	Finnish    string
 	English    string
-	Apartments []Apartments
+	Apartments []Apartments `gorm:"association_foreignkey:ID"`
 }
 
-// Table for different Aartments in Campus, Apartment can have multiple Degrees
+// Table for different Apartments in Campus, Apartment can have multiple Degrees
 type Apartments struct {
 	ID      uint `gorm:"primary_key"`
 	Finnish string
 	English string
-	Degrees []Degrees
+	Degrees []Degrees `gorm:"association_foreignkey:ID"`
 }
 
-// Degrees in the Apatment.
+// Degrees in the Apartment.
 type Degrees struct {
 	ID      uint `gorm:"primary_key"`
 	Finnish string
