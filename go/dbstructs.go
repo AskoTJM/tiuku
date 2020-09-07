@@ -17,47 +17,29 @@ type StudentUsers struct {
 	StudentID       string
 	AnonID          string
 	StudentName     string
-	StudentSegments StudentSegments
+	StudentSegments StudentSegments `gorm:"foreignkey:ID"`
 	StudentEmail    string
 	StudentClass    string
 }
 
-// Table for FacultyUsers
+// Table for FacultyUsers of the API
 type FacultyUsers struct {
-	ID           uint `gorm:"primary_key"`
-	FacultyID    string
-	FacultyEmail string
+	ID              uint `gorm:"primary_key"`
+	FacultyID       string
+	FacultyName     string
+	FacultyEmail    string
+	FacultySegments FacultySegments
 }
 
-// Table for possible schools. School can have multiple campuses
-type Schools struct {
-	ID         uint `gorm:"primary_key"`
-	Finnish    string
-	English    string
-	Apartments []Apartments
-}
-
-// Campus of the School, Campus can have multiple Apartments
-type Campuses struct {
-	ID      uint `gorm:"primary_key"`
-	Finnish string
-	English string
-	Degrees []Degrees
-}
-
-// Table for different Apartments in Campus, Apartment can have multiple Degrees
-type Apartments struct {
-	ID       uint `gorm:"primary_key"`
-	Finnish  string
-	English  string
-	Campuses []Campuses
-}
-
-// Degrees in the Apartment.
-type Degrees struct {
-	ID      uint `gorm:"primary_key"`
-	Finnish string
-	English string
+// Table of Faculty(in this case Teachers), to save their Segments
+type FacultySegments struct {
+	ID                     uint `gorm:"primary_key"`
+	ResourceID             string
+	Course                 Course
+	SegmentNumber          uint
+	SchoolSegmentsSessions SchoolSegmentsSessions
+	SegmentCategories      SegmentCategories
+	Archived               bool
 }
 
 // Table for course
@@ -79,9 +61,9 @@ type Segment struct {
 	SegmentName            string
 	TeacherID              string
 	Scope                  uint
-	Categories             string
+	SegmentCategories      SegmentCategories
 	ExpectedAttendance     uint
-	SchoolSegmentsSessions string
+	SchoolSegmentsSessions SchoolSegmentsSessions
 }
 
 // Schools Segment table has data for students and where to find their Session for the Segement.
@@ -130,4 +112,35 @@ type StudentSegmentSessions struct {
 	Comment    string
 	Version    uint
 	Locations  string
+}
+
+// Table for Schools. School can have multiple campuses
+type Schools struct {
+	ID       uint `gorm:"primary_key"`
+	Finnish  string
+	English  string
+	Campuses []Campuses
+}
+
+// Campus of the School, Campus can have multiple Apartments
+type Campuses struct {
+	ID         uint `gorm:"primary_key"`
+	Finnish    string
+	English    string
+	Apartments []Apartments
+}
+
+// Table for different Apartments in Campus, Apartment can have multiple Degrees
+type Apartments struct {
+	ID      uint `gorm:"primary_key"`
+	Finnish string
+	English string
+	Degrees []Degrees
+}
+
+// Degrees in the Apartment.
+type Degrees struct {
+	ID      uint `gorm:"primary_key"`
+	Finnish string
+	English string
 }
