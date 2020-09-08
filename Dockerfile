@@ -3,6 +3,9 @@ FROM golang:1.15.1
 WORKDIR /tiuku
 VOLUME  ["/tiuku"]
 
+
+EXPORT GO111MODULE=on
+
 RUN go get -d github.com/gorilla/mux
 #GORM V2 uses these
 #RUN go get -u gorm.io/gorm

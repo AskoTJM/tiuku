@@ -81,6 +81,7 @@ type SegmentCategories struct {
 type StudentSegments struct {
 	ID                     uint `gorm:"primary_key"`
 	ResourceID             string
+	StudentID              string
 	Course                 Course
 	SegmentNumber          uint
 	StudentSegmentSessions StudentSegmentSessions
@@ -90,6 +91,8 @@ type StudentSegments struct {
 
 // Students Sessions for Segment
 type StudentSegmentSessions struct {
+	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
+	//gorm.Model
 	ID                uint `gorm:"primary_key"`
 	ResourceID        uint
 	StartTime         string
@@ -108,7 +111,7 @@ type Schools struct {
 	ID       uint `gorm:"primary_key"`
 	Finnish  string
 	English  string
-	Campuses []Campuses `gorm:"association_foreignkey:ID"`
+	Campuses []Campuses `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
 }
 
 // Campus of the School, Campus can have multiple Apartments
@@ -116,7 +119,7 @@ type Campuses struct {
 	ID         uint `gorm:"primary_key"`
 	Finnish    string
 	English    string
-	Apartments []Apartments `gorm:"association_foreignkey:ID"`
+	Apartments []Apartments `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
 }
 
 // Table for different Apartments in Campus, Apartment can have multiple Degrees
@@ -124,7 +127,7 @@ type Apartments struct {
 	ID      uint `gorm:"primary_key"`
 	Finnish string
 	English string
-	Degrees []Degrees `gorm:"association_foreignkey:ID"`
+	Degrees []Degrees `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
 }
 
 // Degrees in the Apartment.
