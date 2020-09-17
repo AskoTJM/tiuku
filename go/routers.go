@@ -45,7 +45,8 @@ func NewRouter() *mux.Router {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to tiuku API.")
+	//apichoice := r.Header.Get("X-API")
+	fmt.Fprintf(w, "Welcome to tiuku Student API.")
 
 }
 

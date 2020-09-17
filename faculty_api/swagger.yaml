@@ -1,0 +1,257 @@
+openapi: 3.0.0
+info:
+  title: facultyAPI
+  description: API for faculty members to access Tiuku
+  contact:
+    name: Asko Mattila
+    email: asko.mattila@gmail.com
+  version: "1.0"
+servers:
+- url: http://localhost:3000
+paths:
+  /courses:
+    get:
+      tags: []
+      summary: List of active courses
+      description: Get list of non-Archived {courses}
+      operationId: get-courses
+      parameters:
+      - name: all
+        in: query
+        description: Get ALL the courses, even marked Archived
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create new course
+      description: Create new {course}
+      operationId: post-courses
+      responses:
+        "200":
+          description: OK
+  /courses/{course}:
+    get:
+      tags: []
+      summary: Get {course} information
+      description: Get information of the {course}
+      operationId: get-courses-course
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /courses/{course}/segments:
+    get:
+      tags: []
+      summary: List of segments for {course}
+      description: Get {segments} of the {course}
+      operationId: get-courses-course-segments
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: New segment for the {course}
+      description: Create new {segment} for the {course}
+      operationId: post-courses-course-segments
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /courses/{course}/segments/{segment}:
+    get:
+      tags: []
+      summary: Get sessions of the {segment} in the {course}
+      description: Get {sessions} of the {segment} of the {course}
+      operationId: get-courses-course-segments-segment
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: segment
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /courses/{course}/segments/{segment}/categories:
+    get:
+      summary: List of segment categories
+      description: List of catergories of {segment} in the {course}
+      operationId: get-courses-course-segments-segment-settings
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: segment
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: New category for {segment}
+      description: |-
+        New category for {segment} in the {course}
+        Used to add available categories to {segment}
+        ex. Practice 1.
+      operationId: post-courses-course-segments-segment-categories
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: segment
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /courses/{course}/segments/{segment}/categories/{category}:
+    get:
+      summary: Get data for {category}
+      description: Get data for {category} in {segment} in {course}
+      operationId: get-courses-course-segments-segment-categories-category
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: segment
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: category
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /courses/{course}/segments/{segment}/categories/{category}/settings:
+    get:
+      tags: []
+      summary: Get settings for {category}
+      operationId: get-courses-course-segments-segment-categories-category-settings
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: segment
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: category
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /courses/{course}/segments/{segment}/categories/{category}/settings/{setting}:
+    get:
+      tags: []
+      summary: Change {setting} in {category}
+      description: Specific {setting} in {categories} of {segment} in {course}
+      operationId: get-courses-course-segments-segment-categories-category-settings-setting
+      parameters:
+      - name: course
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: segment
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: category
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: setting
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+components:
+  schemas: {}

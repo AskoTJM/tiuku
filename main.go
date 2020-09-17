@@ -1,9 +1,9 @@
 package main
 
 /*
- * StudentAPI
+ * tiuku API
  *
- * API for Students to acccess the Tiuku system.
+ * Access the Tiuku system.
  *
  * API version: 1.0
  * Contact: asko.mattila@gmail.com
@@ -21,7 +21,9 @@ import (
 	//
 	//    sw "github.com/myname/myrepo/go"
 	//
-	
+
+	//swfaculty "./faculty"
+
 	sw "./go"
 )
 
@@ -29,8 +31,9 @@ import (
 type Env struct {
 	db *gorm.DB
 }
-
 */
+/*
+ */
 
 func main() {
 
