@@ -45,7 +45,7 @@ func initDB() {
 	if err := db.AutoMigrate(&Course{
 		ID:              0,
 		ResourceID:      0,
-		Schools:         Schools{},
+		Schools:         School{},
 		CourseCode:      "",
 		CourseName:      "",
 		CourseStartDate: "",
@@ -58,50 +58,50 @@ func initDB() {
 
 	log.Printf("Trying to AutoMigrate Segment table to database. <go/database.go->initDB>")
 	if err := db.AutoMigrate(&Segment{
-		ID:                     0,
-		SegmentName:            "",
-		TeacherID:              "",
-		Scope:                  0,
-		SegmentCategories:      SegmentCategories{},
-		ExpectedAttendance:     0,
-		SchoolSegmentsSessions: SchoolSegmentsSessions{},
+		ID:                    0,
+		SegmentName:           "",
+		TeacherID:             "",
+		Scope:                 0,
+		SegmentCategories:     SegmentCategory{},
+		ExpectedAttendance:    0,
+		SchoolSegmentsSession: SchoolSegmentsSession{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for Segment. <go/database.go->initDB>")
 	}
 
 	log.Printf("Trying to AutoMigrate Faculty table to database. <go/database.go->initDB>")
-	if err := db.AutoMigrate(&FacultySegments{
-		ID:                     0,
-		ResourceID:             "",
-		Course:                 Course{},
-		SegmentNumber:          0,
-		SchoolSegmentsSessions: SchoolSegmentsSessions{},
-		SegmentCategories:      SegmentCategories{},
-		Archived:               false,
+	if err := db.AutoMigrate(&FacultySegment{
+		ID:                    0,
+		ResourceID:            "",
+		Course:                Course{},
+		SegmentNumber:         0,
+		SchoolSegmentsSession: SchoolSegmentsSession{},
+		SegmentCategories:     SegmentCategory{},
+		Archived:              false,
 	}).Error; err != nil {
 		log.Panic("Problems creating table for FacultySegments. <go/database.go->initDB>")
 	}
 
 	log.Printf("Trying to AutoMigrate StudentSegments table to database. <go/database.go->initDB>")
-	if err := db.AutoMigrate(&StudentSegments{
+	if err := db.AutoMigrate(&StudentSegment{
 		ID:                     0,
 		ResourceID:             "",
 		Course:                 Course{},
 		SegmentNumber:          0,
-		StudentSegmentSessions: StudentSegmentSessions{},
-		SegmentCategories:      SegmentCategories{},
+		StudentSegmentSessions: StudentSegmentSession{},
+		SegmentCategory:        SegmentCategory{},
 		Archived:               false,
 	}).Error; err != nil {
 		log.Panic("Problems creating table for StudentSegments. <go/database.go->initDB>")
 	}
 
 	log.Printf("Trying to AutoMigrate StudentUsers table to database. <go/database.go->initDB>")
-	if err := db.AutoMigrate(&StudentUsers{
+	if err := db.AutoMigrate(&StudentUser{
 		ID:              0,
 		StudentID:       "",
 		AnonID:          "",
 		StudentName:     "",
-		StudentSegments: StudentSegments{},
+		StudentSegments: StudentSegment{},
 		StudentEmail:    "",
 		StudentClass:    "",
 	}).Error; err != nil {
@@ -109,46 +109,46 @@ func initDB() {
 	}
 
 	log.Printf("Trying to AutoMigrate FacultyUsers table to database. <go/database.go->initDB>")
-	if err := db.AutoMigrate(&FacultyUsers{
-		ID:              0,
-		FacultyID:       "",
-		FacultyName:     "",
-		FacultyEmail:    "",
-		FacultySegments: FacultySegments{},
+	if err := db.AutoMigrate(&FacultyUser{
+		ID:             0,
+		FacultyID:      "",
+		FacultyName:    "",
+		FacultyEmail:   "",
+		FacultySegment: FacultySegment{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for FacultyUsers. <go/database.go->initDB>")
 	}
 	// Tables for School data
 
 	log.Printf("Trying to AutoMigrate Schools table to database. <go/database.go->initDB>")
-	if err := db.AutoMigrate(&Schools{
+	if err := db.AutoMigrate(&School{
 		ID:       0,
 		Finnish:  "",
 		English:  "",
-		Campuses: []Campuses{},
+		Campuses: []Campus{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for School. <go/database.go->initDB>")
 	}
 
-	if err := db.AutoMigrate(&Campuses{
+	if err := db.AutoMigrate(&Campus{
 		ID:         0,
 		Finnish:    "",
 		English:    "",
-		Apartments: []Apartments{},
+		Apartments: []Apartment{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for Campuses. <go/database.go->initDB>")
 	}
 
-	if err := db.AutoMigrate(&Apartments{
+	if err := db.AutoMigrate(&Apartment{
 		ID:      0,
 		Finnish: "",
 		English: "",
-		Degrees: []Degrees{},
+		Degrees: []Degree{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for Apartments. <go/database.go->initDB>")
 	}
 
-	if err := db.AutoMigrate(&Degrees{
+	if err := db.AutoMigrate(&Degree{
 		ID:      0,
 		Finnish: "",
 		English: "",
@@ -161,7 +161,7 @@ func initDB() {
 }
 
 func testAdd() {
-	db.Create(&Degrees{
+	db.Create(&Degree{
 		ID:      0,
 		Finnish: "IT",
 		English: "ITC",
