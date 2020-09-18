@@ -11,12 +11,14 @@ package faculty
 
 import (
 	"net/http"
-	//database "github.com/AskoTJM/tiuku/tiuku/database"
+
+	database "github.com/AskoTJM/tiuku/tiuku/database"
 )
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	database.InitDB()
 	//database.InitDB()
 
 }

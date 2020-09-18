@@ -1,4 +1,4 @@
-package tiuku
+package database
 
 import "log"
 
