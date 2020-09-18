@@ -11,14 +11,13 @@ package faculty
 
 import (
 	"net/http"
-
-	tiuku "github.com/AskoTJM/tiuku/tree/master/tiuku/"
+	//database "github.com/AskoTJM/tiuku/tiuku/database"
 )
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	tiuku.InitDB()
+	//database.InitDB()
 
 }
 
