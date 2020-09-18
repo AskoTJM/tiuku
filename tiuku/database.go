@@ -10,7 +10,7 @@ import (
 
 /*
 	"gorm.io/drive/mysql"
-	"orm.io/gorm"
+	"gorm.io/gorm"
 */
 //
 // Global variable for database

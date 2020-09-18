@@ -25,7 +25,7 @@ import (
 	// swfaculty "./faculty"
 	// sw "./go"
 
-	sw "./go"
+	sw "./tiuku"
 )
 
 /*
@@ -45,7 +45,7 @@ func main() {
 	log.Printf("Server started")
 	router := sw.NewRouter()
 	//router := mux.NewRouter()
-	router.HandleFunc("/*", "router := swfaculty.NewRouter()").Headers("X-API", "faculty")
+	//router.HandleFunc("/*", "router == swfaculty.NewRouter()").Headers("X-API", "faculty")
 	//router.NewRoute().Subrouter().GetRoute()
 	//routerStudent := sw.NewRouter().NewRoute().Subrouter()
 	//routerFaculty := swfaculty.NewRouter()
