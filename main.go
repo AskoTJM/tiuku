@@ -22,7 +22,8 @@ import (
 	//    sw "github.com/myname/myrepo/go"
 	//
 
-	//swfaculty "./faculty"
+	// swfaculty "./faculty"
+	// sw "./go"
 
 	sw "./go"
 )
@@ -33,12 +34,25 @@ type Env struct {
 }
 */
 /*
- */
+func goToFaculty(router) router {
+	router = swfaculty.NewRouter()
+}
+*/
+/**/
 
 func main() {
 
 	log.Printf("Server started")
 	router := sw.NewRouter()
+	//router := mux.NewRouter()
+	router.HandleFunc("/*", "router := swfaculty.NewRouter()").Headers("X-API", "faculty")
+	//router.NewRoute().Subrouter().GetRoute()
+	//routerStudent := sw.NewRouter().NewRoute().Subrouter()
+	//routerFaculty := swfaculty.NewRouter()
+	//router := routerStudent.NewRoute().Subrouter()
+	//router.Headers(routerFaculty.NewRoute().Subrouter()
 	log.Fatal(http.ListenAndServe(":8080", router))
+	//go log.Fatal(http.ListenAndServe(":8080", router))
+	//go log.Fatal(http.ListenAndServe(":80", routerFaculty))
 
 }
