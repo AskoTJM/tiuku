@@ -1,4 +1,4 @@
-package swagger
+package tiuku
 
 // Table for StudentUsers
 type StudentUser struct {
