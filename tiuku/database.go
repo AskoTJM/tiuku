@@ -39,7 +39,7 @@ func connectToDB() {
 
 /* initDB() for creating needed tables for database
  */
-func initDB() {
+func InitDB() {
 
 	log.Printf("Trying to AutoMigrate Course table to database. <go/database.go->initDB>")
 	if err := db.AutoMigrate(&Course{
@@ -160,7 +160,7 @@ func initDB() {
 
 }
 
-func testAdd() {
+func TestAdd() {
 	db.Create(&Degree{
 		ID:      0,
 		Finnish: "IT",
