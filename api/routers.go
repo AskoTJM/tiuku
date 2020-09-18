@@ -57,6 +57,8 @@ var routes = Routes{
 		Index,
 	},
 
+	// Student v1 RAW Routes
+	// DELETE yoursef from Segment participation
 	Route{
 		"DeleteCoursesCourseSegmentsSegment",
 		strings.ToUpper("Delete"),
@@ -64,6 +66,7 @@ var routes = Routes{
 		students.DeleteCoursesCourseSegmentsSegment,
 	},
 
+	// DELETE Session from Segment
 	Route{
 		"DeleteSegmentsSegmentSession",
 		strings.ToUpper("Delete"),
@@ -71,6 +74,7 @@ var routes = Routes{
 		students.DeleteSegmentsSegmentSession,
 	},
 
+	// GET available Courses
 	Route{
 		"GetCourses",
 		strings.ToUpper("Get"),
@@ -78,6 +82,7 @@ var routes = Routes{
 		students.GetCourses,
 	},
 
+	// GET Segments for the Course
 	Route{
 		"GetCoursesCourseSegments",
 		strings.ToUpper("Get"),
@@ -85,6 +90,7 @@ var routes = Routes{
 		students.GetCoursesCourseSegments,
 	},
 
+	// GET data for Segment
 	Route{
 		"GetCoursesCourseSegmentsSegment",
 		strings.ToUpper("Get"),
@@ -92,6 +98,7 @@ var routes = Routes{
 		students.GetCoursesCourseSegmentsSegment,
 	},
 
+	// GET Categories for the Segment
 	Route{
 		"GetCoursesCourseSegmentsSegmentCategories",
 		strings.ToUpper("Get"),
@@ -99,6 +106,7 @@ var routes = Routes{
 		students.GetCoursesCourseSegmentsSegmentCategories,
 	},
 
+	// GET particular Session data from Segment
 	Route{
 		"GetSegmentsSegmentSession",
 		strings.ToUpper("Get"),
@@ -106,6 +114,7 @@ var routes = Routes{
 		students.GetSegmentsSegmentSession,
 	},
 
+	// GET particular Setting of the Segment
 	Route{
 		"GetSegmentsSegmentSettingsSetting",
 		strings.ToUpper("Get"),
@@ -183,7 +192,7 @@ var routes = Routes{
 		students.PutSegmentsSegmentSession,
 	},
 
-	// Faculty routes
+	// Faculty v1 RAW Routes
 
 	Route{
 		"GetCourses",

@@ -1,3 +1,4 @@
 ./swagger-codegen
 ./vscode
 .swagger-codegen-ignore
+.gitignore
