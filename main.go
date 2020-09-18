@@ -14,7 +14,7 @@ import (
 	"log"
 	"net/http"
 
-	sw "github.com/AskoTJM/tiuku/tiuku"
+	sw "github.com/AskoTJM/tiuku/api"
 )
 
 func main() {

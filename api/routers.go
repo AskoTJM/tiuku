@@ -14,8 +14,8 @@ import (
 	"net/http"
 	"strings"
 
-	fac "github.com/AskoTJM/tiuku/tiuku/faculty"
-	students "github.com/AskoTJM/tiuku/tiuku/students"
+	fac "github.com/AskoTJM/tiuku/api/faculty"
+	students "github.com/AskoTJM/tiuku/api/students"
 	"github.com/gorilla/mux"
 )
 

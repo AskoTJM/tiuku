@@ -12,7 +12,7 @@ package faculty
 import (
 	"net/http"
 
-	database "github.com/AskoTJM/tiuku/tiuku/database"
+	database "github.com/AskoTJM/tiuku/api/database"
 )
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
