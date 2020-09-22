@@ -14,9 +14,18 @@ import (
 )
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
+	/*
+		h := r.Header.Get("X-Init")
+		if h == "db" {
+			database.InitDB()
+		}
+		if h == "populate" {
+			database.PopulateSchool()
+			database.PopulateStudents()
+		}
+	*/
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	//database.InitDB()
 
 }
 

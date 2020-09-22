@@ -13,7 +13,9 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
+	database "github.com/AskoTJM/tiuku/api/database"
 	fac "github.com/AskoTJM/tiuku/api/faculty"
 	students "github.com/AskoTJM/tiuku/api/students"
 	"github.com/gorilla/mux"
@@ -46,7 +48,23 @@ func NewRouter() *mux.Router {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to tiuku API")
+	now := time.Now()
+	gotcmd := "Nothing."
+	h := r.Header.Get("X-Init")
+	if h == "db" {
+		database.InitDB()
+		gotcmd = "InitDB"
+	}
+	if h == "populate" {
+		database.PopulateSchool()
+		database.PopulateStudents()
+		gotcmd = "Populated"
+	}
+	if h == "Hello" {
+		gotcmd = "Hello"
+	}
+
+	fmt.Fprintf(w, "Welcome to tiuku API %s \nDone %s", now, gotcmd)
 }
 
 var routes = Routes{

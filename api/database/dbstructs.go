@@ -86,7 +86,7 @@ type SegmentCategory struct {
 	Active             bool
 }
 
-// What Segments of Courses sudent is tracking.
+// What Segments of Courses student is tracking.
 type StudentSegment struct {
 	ID                     uint `gorm:"primary_key"`
 	ResourceID             string
@@ -131,6 +131,10 @@ type Campus struct {
 	Apartments []Apartment `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
 }
 
+func (Campus) TableName() string {
+	return "OAMK_Campuses"
+}
+
 // Table for different Apartment in Campus, Apartment can have multiple Degrees
 type Apartment struct {
 	ID      uint `gorm:"primary_key"`
@@ -145,3 +149,13 @@ type Degree struct {
 	Finnish string
 	English string
 }
+
+/*
+func (Degree) TableName() string {
+	return "OAMK_Degrees"
+}
+
+func (Apartment) TableName() string {
+	return "OAMK_Apartments"
+}
+*/
