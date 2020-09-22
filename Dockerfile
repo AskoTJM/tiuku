@@ -14,6 +14,8 @@ RUN go get -d github.com/gorilla/mux
 RUN go get -u github.com/jinzhu/gorm
 RUN go get -u github.com/jinzhu/gorm/dialects/mysql
 
+#gjson 'get json values quickly'
+RUN go get -u github.com/tidwall/gjson
 #COPY go.mod ./
 #RUN go mod download
 #COPY . .
