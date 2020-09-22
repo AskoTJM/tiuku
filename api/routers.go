@@ -44,6 +44,7 @@ func NewRouter() *mux.Router {
 func Index(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 	gotcmd := "Nothing."
+	// For testing purposes
 	h := r.Header.Get("X-Init")
 	if h == "db" {
 		database.InitDB()
@@ -52,13 +53,18 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	if h == "populate" {
 		database.PopulateSchool()
 		database.PopulateStudents()
+		database.PopulateCourses()
 		gotcmd = "Populating"
 	}
 	if h == "Hello" {
 		gotcmd = "Hello"
 	}
 	if h == "anonId" {
-		gotcmd = database.GetAnonId("oppi1")
+		user := r.Header.Get("X-User")
+		gotcmd = database.GetAnonId(user)
+	}
+	if h == "courses" {
+		gotcmd = database.GetCourses()
 	}
 
 	fmt.Fprintf(w, "Welcome to tiuku API %s \nDone %s", now, gotcmd)

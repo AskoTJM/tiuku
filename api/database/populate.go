@@ -2,6 +2,9 @@ package database
 
 import "log"
 
+// Place for scripts to initalization and for populating database with test data
+// Stuff that should be needed when in use.
+
 // initDB() for creating needed tables for database
 func InitDB() {
 
@@ -326,4 +329,63 @@ func PopulateStudents() {
 	//newSegment := StudentSegment
 	//if err := db.Create(&oppi1_StudentSegments)
 
+}
+
+func PopulateCourses() {
+
+	if err := db.Table(schoolShortName + "_Courses").Create(&Course{
+		ID:              0,
+		ResourceID:      0,
+		Schools:         School{},
+		CourseCode:      "TC1",
+		CourseName:      "Test Course 1",
+		CourseStartDate: "1.1.2020",
+		CourseEndDate:   "1.1.2021",
+		Archived:        false,
+		Segment:         []Segment{},
+	}).Error; err != nil {
+		log.Panic("Problems populating Courses table. <go/populate.go->populateCourses>")
+	}
+
+	if err := db.Table(schoolShortName + "_Courses").Create(&Course{
+		ID:              0,
+		ResourceID:      0,
+		Schools:         School{},
+		CourseCode:      "TC2",
+		CourseName:      "Test Course 2",
+		CourseStartDate: "2.2.2020",
+		CourseEndDate:   "2.2.2021",
+		Archived:        false,
+		Segment:         []Segment{},
+	}).Error; err != nil {
+		log.Panic("Problems populating Courses table o. <go/populate.go->populateCourses>")
+	}
+
+	if err := db.Table(schoolShortName + "_Courses").Create(&Course{
+		ID:              0,
+		ResourceID:      0,
+		Schools:         School{},
+		CourseCode:      "TC3",
+		CourseName:      "Test Course 3",
+		CourseStartDate: "3.3.2020",
+		CourseEndDate:   "3.3.2021",
+		Archived:        true,
+		Segment:         []Segment{},
+	}).Error; err != nil {
+		log.Panic("Problems populating Courses table o. <go/populate.go->populateCourses>")
+	}
+
+	if err := db.Table(schoolShortName + "_Courses").Create(&Course{
+		ID:              0,
+		ResourceID:      0,
+		Schools:         School{},
+		CourseCode:      "TC4",
+		CourseName:      "Test Course 4",
+		CourseStartDate: "4.4.2020",
+		CourseEndDate:   "4.4.2021",
+		Archived:        true,
+		Segment:         []Segment{},
+	}).Error; err != nil {
+		log.Panic("Problems populating Courses table o. <go/populate.go->populateCourses>")
+	}
 }

@@ -16,7 +16,7 @@ var db *gorm.DB
 
 // Global variable for School,
 // Temporary solution needs to be replaced by smarter solution
-// After getting at basic functionality inplace.
+// after getting at least basic functionality inplace.
 var schoolShortName = "OAMK"
 
 // Establish connection to database
@@ -27,7 +27,7 @@ func ConnectToDB() {
 	//var dbconn = "\"" + usernamedb + ":" + userpassdb + "@tcp(db:3306)/tiukuDB?charset=utf8mb4"
 	log.Printf("Trying to connect to database. <go/database.go->connectToDB>")
 
-	// For GORM v2 following should be used, but doesn't seem to work.
+	//For GORM v2 following should be used, but doesn't seem to work.
 	//dsn := "apiaccess:apipass@tcp(db:3306)/tiukuDB?charset=utf8mb4&parseTime=True&loc=Local"
 	//db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -49,12 +49,13 @@ func GetAnonId(StudentID string) (tempstring string) {
 	if db == nil {
 		ConnectToDB()
 	}
+	tableToEdit := schoolShortName + "_StudentUsers"
 	var tempStudent StudentUser
 
-	result := db.Table("OAMK_StudentUsers").Where("student_id = ?", "oppi1").First(&tempStudent)
-	if result.Error != nil {
-		log.Panic(result)
-	}
+	result := db.Table(tableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	//if result.Error == nil {
+	//	log.Panic(result)
+	//}
 	anon, _ := json.Marshal(result)
 	n := len(anon)
 	s := string(anon[:n])
@@ -70,18 +71,32 @@ func GetStudent(StudentID string) *gorm.DB {
 	if db == nil {
 		ConnectToDB()
 	}
+	tableToEdit := schoolShortName + "_StudentUsers"
 	var tempStudent StudentUser
 
-	result := db.Table("OAMK_StudentUsers").Where("student_id = ?", StudentID).First(&tempStudent)
-	if result.Error != nil {
-		log.Panic(result)
-	}
-	//anon, _ := json.Marshal(result)
-	//n := len(anon)
-	//s := string(anon[:n])
+	result := db.Table(tableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	//if result.Error != nil {
+	//	log.Panic(result)
+	//}
 
-	//tempJSON := gjson.Get(s, "Value")
-	return result // tempJSON.String()
+	return result
+}
+
+// Get Courses
+
+func GetCourses() (tempstring string) {
+	if db == nil {
+		ConnectToDB()
+	}
+	tableToEdit := schoolShortName + "_Courses"
+	var tempCourses []Course
+	result := db.Table(tableToEdit).Where("archived = ?", false).Find(&tempCourses)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	tempJSON := gjson.GetMany(s, "Value")
+	return tempJSON[].String()
 }
 
 /*
