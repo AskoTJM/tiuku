@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/golang/gddo/httputil/header"
 )
 
 // Desc: For creating Segment table for new Student users
@@ -64,7 +62,7 @@ func CreateFacultySegmentTable(myFacultyID string) string {
 }
 
 // Desc: Create new course in Courses table.
-// Status: Partially working.
+// Status: Working, but not finished. Needs checking.
 func CreateCourse(r *http.Request) string {
 	// Check if there is connection to database if not connect to it
 	if db == nil {
@@ -83,7 +81,8 @@ func CreateCourse(r *http.Request) string {
 			log.Panic("Problems creating new Course, no body in request information. <database/database_create->CreateCourse>")
 			log.Panic("Error: No body information available.")
 		} else {
-			rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+			rbody := r.Header.Get("Content-Type")
 			// Check if content type is correct one.
 			if rbody != "application/json" {
 				log.Panic("Error: Content-Type is not application/json.")

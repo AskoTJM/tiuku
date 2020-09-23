@@ -11,6 +11,8 @@ package students
 
 import (
 	"net/http"
+
+	"github.com/AskoTJM/tiuku/api/database"
 )
 
 func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
@@ -26,6 +28,8 @@ func DeleteSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+
+	database.GetCourses(w, r)
 }
 
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {

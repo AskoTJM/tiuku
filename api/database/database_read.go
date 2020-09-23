@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -83,7 +84,7 @@ func GetStudent(StudentID string) *gorm.DB {
 
 // Get Courses
 // Status: Almost done, still needs switching for showing all and/or archived courses
-func GetCourses() (tempstring string) {
+func GetCourses(w http.ResponseWriter, r *http.Request) {
 	if db == nil {
 		ConnectToDB()
 	}
@@ -95,5 +96,6 @@ func GetCourses() (tempstring string) {
 	s := string(anon[:n])
 
 	tempJSON := gjson.Get(s, "Value")
-	return tempJSON.String()
+	//return tempJSON.String()
+	fmt.Fprintf(w, "%s", tempJSON)
 }

@@ -34,7 +34,7 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		//log.Println(returnNum)
 	}
 	if h == "courses" {
-		return database.GetCourses()
+		database.GetCourses(w, r)
 	}
 	if h == "studentsegment" {
 		user := r.Header.Get("X-User")
