@@ -20,6 +20,7 @@ var db *gorm.DB
 var schoolShortName = "OAMK"
 
 // Establish connection to database
+// Status: Done
 func ConnectToDB() {
 	var err error
 
@@ -45,6 +46,7 @@ func ConnectToDB() {
 // Input: StudentID
 // Output: AnonID
 // HOX! AnonID SHOULD NOT LEAVE OUTSIDE OF THE API
+// Status: Done
 func GetAnonId(StudentID string) (tempstring string) {
 	if db == nil {
 		ConnectToDB()
@@ -64,9 +66,10 @@ func GetAnonId(StudentID string) (tempstring string) {
 	return tempJSON.String()
 }
 
-// GetStudent
+// GetStudent , get Students data
 // Input: StudentID as string
-// Output *gorm.DB
+// Output *gorm.DB (not sure about this, probably should transform to JSON)
+// Status: Works, but needs more. Return value and obfuscing of AnonID if used outside
 func GetStudent(StudentID string) *gorm.DB {
 	if db == nil {
 		ConnectToDB()
@@ -83,6 +86,7 @@ func GetStudent(StudentID string) *gorm.DB {
 }
 
 // Get Courses
+// Status: Almost done, still needs switching for showing all and/or archived courses
 
 func GetCourses() (tempstring string) {
 	if db == nil {
@@ -95,23 +99,6 @@ func GetCourses() (tempstring string) {
 	n := len(anon)
 	s := string(anon[:n])
 
-	tempJSON := gjson.GetMany(s, "Value")
-	return tempJSON[].String()
+	tempJSON := gjson.Get(s, "Value")
+	return tempJSON.String()
 }
-
-/*
-func CheckIfAnonIdExists(anonid) int {
-""
-}
-*/
-/*
-func testCreate() {
-	test := Testi{dii: 5, fff: "No totta kai"}
-	db.Create(&test)
-}
-
-func testRead() {
-	var testi []Testi
-	db.Find(&testi)
-}
-*/

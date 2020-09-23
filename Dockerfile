@@ -16,6 +16,8 @@ RUN go get -u github.com/jinzhu/gorm/dialects/mysql
 
 #gjson 'get json values quickly'
 RUN go get -u github.com/tidwall/gjson
+#for body manipulation
+RUN go get -u github.com/golang/gddo/httputil/header
 #COPY go.mod ./
 #RUN go mod download
 #COPY . .

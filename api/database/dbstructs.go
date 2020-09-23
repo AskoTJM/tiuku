@@ -72,7 +72,7 @@ type SchoolSegmentsSession struct {
 	Privacy                 string
 }
 
-// Segment has different Categories for tracking and settings fr them.
+// Segment has different Categories for tracking and settings for them.
 // All SubCategories belong in to one of the three MainCategoy
 // Maybe should be belongs to o one-to-one with two structs?
 type SegmentCategory struct {

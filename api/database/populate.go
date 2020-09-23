@@ -3,7 +3,7 @@ package database
 import "log"
 
 // Place for scripts to initalization and for populating database with test data
-// Stuff that should be needed when in use.
+// Stuff that should not be needed when in use.
 
 // initDB() for creating needed tables for database
 func InitDB() {
@@ -309,25 +309,6 @@ func PopulateStudents() {
 	}).Error; err != nil {
 		log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 	}
-
-	// Creating StudentSegments table for oppi1
-	/*
-		if err := db.Table("oppi1_StudentSegments").CreateTable(&StudentSegment{
-			ID:                     0,
-			ResourceID:             "",
-			StudentID:              "oppi1",
-			Course:                 Course{},
-			SegmentNumber:          0,
-			StudentSegmentSessions: StudentSegmentSession{},
-			SegmentCategory:        SegmentCategory{},
-			Archived:               false,
-		}).Error; err != nil {
-			log.Panic("Problems populating table of table StudentUsers. <go/populate.go->populateStudents>")
-		}
-	*/
-	// Creating new row in StudentSegments
-	//newSegment := StudentSegment
-	//if err := db.Create(&oppi1_StudentSegments)
 
 }
 

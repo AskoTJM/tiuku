@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	database "github.com/AskoTJM/tiuku/api/database"
 	fac "github.com/AskoTJM/tiuku/api/faculty"
 	students "github.com/AskoTJM/tiuku/api/students"
 	"github.com/gorilla/mux"
@@ -43,29 +42,9 @@ func NewRouter() *mux.Router {
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
-	gotcmd := "Nothing."
-	// For testing purposes
-	h := r.Header.Get("X-Init")
-	if h == "db" {
-		database.InitDB()
-		gotcmd = "InitDB"
-	}
-	if h == "populate" {
-		database.PopulateSchool()
-		database.PopulateStudents()
-		database.PopulateCourses()
-		gotcmd = "Populating"
-	}
-	if h == "Hello" {
-		gotcmd = "Hello"
-	}
-	if h == "anonId" {
-		user := r.Header.Get("X-User")
-		gotcmd = database.GetAnonId(user)
-	}
-	if h == "courses" {
-		gotcmd = database.GetCourses()
-	}
+
+	// For testing purposes using Header
+	gotcmd := HeaderTests(w, r)
 
 	fmt.Fprintf(w, "Welcome to tiuku API %s \nDone %s", now, gotcmd)
 }
