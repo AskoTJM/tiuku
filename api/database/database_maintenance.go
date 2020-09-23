@@ -2,9 +2,7 @@ package database
 
 // Contains scripts for maintenance of data
 
-// CheckIfUserExists
-// Input: StudentID
-// Ouput: Number rows found with that studentId
+// Desc: Check if Student user exists
 // Status: Works, maybe with slight changes could be used for all row counting?
 func CheckIfUserExists(StudentID string) int64 {
 	if db == nil {

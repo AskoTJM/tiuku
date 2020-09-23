@@ -10,9 +10,10 @@
 package faculty
 
 import (
-	"bytes"
-	"io/ioutil"
+	"fmt"
 	"net/http"
+
+	"github.com/AskoTJM/tiuku/api/database"
 )
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
@@ -58,23 +59,31 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 
 func PostCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
-	//rbody := database.CreateCourse(r)
-	t := &http.Response{
-		Status:     "200 OK",
-		StatusCode: 200,
-		//Proto:      "HTTP/1.1",
-		//ProtoMajor: 1,
-		//ProtoMinor: 1,
-		//Header: map[string][]string{},
-		Body: ioutil.NopCloser(bytes.NewBufferString("testi")),
-		//ContentLength:    0,
-		//TransferEncoding: []string{},
-		///Request: r,
-		//TLS:              &tls.ConnectionState{},
-	}
-	buff := bytes.NewBuffer(nil)
-	t.Write(buff)
+	w.WriteHeader(http.StatusOK)
+
+	rbody := database.CreateCourse(r)
+	/*
+		if rbody != "Error" {
+			t := &http.Response{
+				Status:     "200 OK",
+				StatusCode: 200,
+				Proto:      "HTTP/1.1",
+				ProtoMajor: 1,
+				ProtoMinor: 1,
+				//Header:     //map[string][]string{},
+				Body: ioutil.NopCloser(bytes.NewBufferString(rbody)),
+				//ContentLength:    0,
+				//TransferEncoding: []string{},
+				///Request: r,
+				//TLS:              &tls.ConnectionState{},
+			}
+			buff := bytes.NewBuffer(nil)
+			t.Write(buff)
+			fmt.Fprintf(w, "%s", buff)
+		}
+	*/
+	fmt.Fprintf(w, "%s", rbody)
+
 }
 
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {

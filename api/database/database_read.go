@@ -19,7 +19,7 @@ var db *gorm.DB
 // after getting at least basic functionality inplace.
 var schoolShortName = "OAMK"
 
-// Establish connection to database
+// Desc: Establish connection to database
 // Status: Done
 func ConnectToDB() {
 	var err error
@@ -42,9 +42,7 @@ func ConnectToDB() {
 	fmt.Printf("%s", db.Error)
 }
 
-// GetAnonId
-// Input: StudentID
-// Output: AnonID
+// Desc: GetAnonId with StudentID
 // HOX! AnonID SHOULD NOT LEAVE OUTSIDE OF THE API
 // Status: Done
 func GetAnonId(StudentID string) (tempstring string) {
@@ -66,9 +64,7 @@ func GetAnonId(StudentID string) (tempstring string) {
 	return tempJSON.String()
 }
 
-// GetStudent , get Students data
-// Input: StudentID as string
-// Output *gorm.DB (not sure about this, probably should transform to JSON)
+// Desc: Get Students data
 // Status: Works, but needs more. Return value and obfuscing of AnonID if used outside
 func GetStudent(StudentID string) *gorm.DB {
 	if db == nil {
@@ -87,7 +83,6 @@ func GetStudent(StudentID string) *gorm.DB {
 
 // Get Courses
 // Status: Almost done, still needs switching for showing all and/or archived courses
-
 func GetCourses() (tempstring string) {
 	if db == nil {
 		ConnectToDB()
