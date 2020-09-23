@@ -10,6 +10,8 @@
 package faculty
 
 import (
+	"bytes"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -56,7 +58,23 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 
 func PostCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	//w.WriteHeader(http.StatusOK)
+	//rbody := database.CreateCourse(r)
+	t := &http.Response{
+		Status:     "200 OK",
+		StatusCode: 200,
+		//Proto:      "HTTP/1.1",
+		//ProtoMajor: 1,
+		//ProtoMinor: 1,
+		//Header: map[string][]string{},
+		Body: ioutil.NopCloser(bytes.NewBufferString("testi")),
+		//ContentLength:    0,
+		//TransferEncoding: []string{},
+		///Request: r,
+		//TLS:              &tls.ConnectionState{},
+	}
+	buff := bytes.NewBuffer(nil)
+	t.Write(buff)
 }
 
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {

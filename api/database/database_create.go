@@ -99,6 +99,7 @@ func CreateCourse(r *http.Request) string {
 			log.Panic("Problem with json decoding <database/database_create->CreateCourse")
 		}
 		log.Println(newCourse)
+		return "What is this?"
 	}
-	return "okay"
+	return "What is this2?"
 }
