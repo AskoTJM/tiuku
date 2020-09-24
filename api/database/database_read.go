@@ -16,7 +16,7 @@ import (
 var db *gorm.DB
 
 // Global variable for School,
-// Temporary solution needs to be replaced by smarter solution
+// Temporary solution needs to be replaced by smarter one
 // after getting at least basic functionality inplace.
 var schoolShortName = "OAMK"
 
@@ -46,7 +46,7 @@ func ConnectToDB() {
 // Desc: GetAnonId with StudentID
 // HOX! AnonID SHOULD NOT LEAVE OUTSIDE OF THE API
 // Status: Done
-func GetAnonId(StudentID string) (tempstring string) {
+func GetAnonId(StudentID string) string {
 	if db == nil {
 		ConnectToDB()
 	}
@@ -67,23 +67,30 @@ func GetAnonId(StudentID string) (tempstring string) {
 
 // Desc: Get Students data
 // Status: Works, but needs more. Return value and obfuscing of AnonID if used outside
-func GetStudent(StudentID string) *gorm.DB {
+func GetStudent(StudentID string) StudentUser {
 	if db == nil {
 		ConnectToDB()
 	}
 	tableToEdit := schoolShortName + "_StudentUsers"
 	var tempStudent StudentUser
 
-	result := db.Table(tableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	//result :=
+	db.Table(tableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+
+	/*
+		anon, _ := json.Marshal(result)
+		n := len(anon)
+		s := string(anon[:n])
+	*/
 	//if result.Error != nil {
 	//	log.Panic(result)
 	//}
 
-	return result
+	return tempStudent
 }
 
 // Get Courses
-// Status: Almost done, still needs switching for showing all and/or archived courses
+// Status: Needs switching for showing all and/or archived courses
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 	if db == nil {
 		ConnectToDB()

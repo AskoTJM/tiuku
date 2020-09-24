@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	fac "github.com/AskoTJM/tiuku/api/faculty"
+	"github.com/AskoTJM/tiuku/api/faculty"
 	students "github.com/AskoTJM/tiuku/api/students"
 	"github.com/gorilla/mux"
 )
@@ -43,7 +43,7 @@ func NewRouter() *mux.Router {
 func Index(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 
-	// For testing purposes using Header
+	// For testing purposes using Header to give commands
 	gotcmd := HeaderTests(w, r)
 
 	fmt.Fprintf(w, "Welcome to tiuku API %s \nDone %s", now, gotcmd)
@@ -198,76 +198,83 @@ var routes = Routes{
 		"GetCourses",
 		strings.ToUpper("Get"),
 		"/faculty/v1/courses",
-		fac.GetCourses,
+		faculty.GetCourses,
 	},
 
 	Route{
 		"GetCoursesCourse",
 		strings.ToUpper("Get"),
 		"/faculty/v1//courses/{course}",
-		fac.GetCoursesCourse,
+		faculty.GetCoursesCourse,
 	},
 
 	Route{
 		"GetCoursesCourseSegments",
 		strings.ToUpper("Get"),
 		"/faculty/v1//courses/{course}/segments",
-		fac.GetCoursesCourseSegments,
+		faculty.GetCoursesCourseSegments,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegment",
 		strings.ToUpper("Get"),
 		"/faculty/v1//courses/{course}/segments/{segment}",
-		fac.GetCoursesCourseSegmentsSegment,
+		faculty.GetCoursesCourseSegmentsSegment,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegmentCategoriesCategory",
 		strings.ToUpper("Get"),
 		"/faculty/v1//courses/{course}/segments/{segment}/categories/{category}",
-		fac.GetCoursesCourseSegmentsSegmentCategoriesCategory,
+		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategory,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegmentCategoriesCategorySettings",
 		strings.ToUpper("Get"),
 		"/faculty/v1//courses/{course}/segments/{segment}/categories/{category}/settings",
-		fac.GetCoursesCourseSegmentsSegmentCategoriesCategorySettings,
+		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategorySettings,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting",
 		strings.ToUpper("Get"),
 		"/faculty/v1//courses/{course}/segments/{segment}/categories/{category}/settings/{setting}",
-		fac.GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting,
+		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegmentSettings",
 		strings.ToUpper("Get"),
 		"/faculty/v1//courses/{course}/segments/{segment}/categories",
-		fac.GetCoursesCourseSegmentsSegmentSettings,
+		faculty.GetCoursesCourseSegmentsSegmentSettings,
 	},
 
 	Route{
 		"PostCourses",
 		strings.ToUpper("Post"),
 		"/faculty/v1/courses",
-		fac.PostCourses,
+		faculty.PostCourses,
 	},
 
 	Route{
 		"PostCoursesCourseSegments",
 		strings.ToUpper("Post"),
 		"/faculty/v1//courses/{course}/segments",
-		fac.PostCoursesCourseSegments,
+		faculty.PostCoursesCourseSegments,
 	},
 
 	Route{
 		"PostCoursesCourseSegmentsSegmentCategories",
 		strings.ToUpper("Post"),
 		"/faculty/v1//courses/{course}/segments/{segment}/categories",
-		fac.PostCoursesCourseSegmentsSegmentCategories,
+		faculty.PostCoursesCourseSegmentsSegmentCategories,
+	},
+
+	Route{
+		"GetUserSegments",
+		strings.ToUpper("Get"),
+		"/faculty/v1/segments",
+		faculty.GetUserSegments,
 	},
 }

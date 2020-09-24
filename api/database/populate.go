@@ -1,6 +1,10 @@
 package database
 
-import "log"
+import (
+	"log"
+	"strconv"
+	//"github.com/AskoTJM/tiuku/api/database"
+)
 
 // Place for scripts to initalization and for populating database with test data
 // Stuff that should not be needed when in use.
@@ -225,22 +229,12 @@ func PopulateSchool() {
 		ConnectToDB()
 	}
 
-	if err := db.Create(&School{
-		ID:       0,
-		Finnish:  "Oulun Ammattikorkeakoulu",
-		English:  "Oulu University of Applied Sciences",
-		Campuses: []Campus{},
+	if err := db.Table(schoolShortName + "_Degrees").Create(&Degree{
+		ID:      0,
+		Finnish: "Insinööri (AMK), tieto- ja viestintätekniikka",
+		English: "Bachelor of Engineering, Information Technology",
 	}).Error; err != nil {
-		log.Panic("Problems populating table of Schools. <go/populate.go->populateSchool>")
-	}
-
-	if err := db.Table(schoolShortName + "_Campuses").Create(&Campus{
-		ID:         0,
-		Finnish:    "Linnanmaan Kampus",
-		English:    "Campus Linnanmaa",
-		Apartments: []Apartment{},
-	}).Error; err != nil {
-		log.Panic("Problems populating table of Campuses. <go/populate.go->populateSchool>")
+		log.Panic("Problems populating table of Degrees. <go/populate.go->populateSchool>")
 	}
 
 	if err := db.Table(schoolShortName + "_Apartments").Create(&Apartment{
@@ -252,13 +246,24 @@ func PopulateSchool() {
 		log.Panic("Problems populating table of Apartments. <go/populate.go->populateSchool>")
 	}
 
-	if err := db.Table(schoolShortName + "_Degrees").Create(&Degree{
-		ID:      0,
-		Finnish: "Insinööri (AMK), tieto- ja viestintätekniikka",
-		English: "Bachelor of Engineering, Information Technology",
+	if err := db.Table(schoolShortName + "_Campuses").Create(&Campus{
+		ID:         0,
+		Finnish:    "Linnanmaan Kampus",
+		English:    "Campus Linnanmaa",
+		Apartments: []Apartment{},
 	}).Error; err != nil {
-		log.Panic("Problems populating table of Degrees. <go/populate.go->populateSchool>")
+		log.Panic("Problems populating table of Campuses. <go/populate.go->populateSchool>")
 	}
+
+	if err := db.Create(&School{
+		ID:       0,
+		Finnish:  "Oulun Ammattikorkeakoulu",
+		English:  "Oulu University of Applied Sciences",
+		Campuses: []Campus{},
+	}).Error; err != nil {
+		log.Panic("Problems populating table of Schools. <go/populate.go->populateSchool>")
+	}
+
 	/*
 		db.Model(&Schools{
 			ID:       0,
@@ -269,104 +274,80 @@ func PopulateSchool() {
 	*/
 }
 
-func PopulateStudents() {
+// desc: Auto-generating student users for testing purposes
+func PopulateStudents(p int) {
 	if db == nil {
 		ConnectToDB()
 	}
 
-	if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
-		ID:              0,
-		StudentID:       "oppi1",
-		AnonID:          "Anon1",
-		StudentName:     "Oppilas 1",
-		StudentSegments: StudentSegment{},
-		StudentEmail:    "oppilas1@oppilaitos.fi",
-		StudentClass:    "tit1",
-	}).Error; err != nil {
-		log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
-	}
+	// Null student for testing
+	/*
+		if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
+			ID:              0,
+			StudentID:       "oppi0",
+			AnonID:          "Anon0",
+			StudentName:     "Oppilas 0",
+			StudentSegments: StudentSegment{},
+			StudentEmail:    "oppilas0@oppilaitos.fi",
+			StudentClass:    "tit0",
+		}).Error; err != nil {
+			log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
+		}
+	*/
 
-	if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
-		ID:              0,
-		StudentID:       "oppi2",
-		AnonID:          "Anon2",
-		StudentName:     "Oppilas 2",
-		StudentSegments: StudentSegment{},
-		StudentEmail:    "oppilas2@oppilaitos.fi",
-		StudentClass:    "tit1",
-	}).Error; err != nil {
-		log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
-	}
+	for i := 0; i < p; i = i + 1 {
 
-	if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
-		ID:              0,
-		StudentID:       "oppi3",
-		AnonID:          "Anon3",
-		StudentName:     "Oppilas 3",
-		StudentSegments: StudentSegment{},
-		StudentEmail:    "oppilas3@oppilaitos.fi",
-		StudentClass:    "tit2",
-	}).Error; err != nil {
-		log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
+		// Switching auto-generated classes
+		classToAdd := ""
+		if i%2 == 0 {
+			classToAdd = "tit2"
+		} else {
+			classToAdd = "tit1"
+		}
+
+		if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
+			ID:              0,
+			StudentID:       "oppi" + strconv.Itoa(i),
+			AnonID:          "Anon" + strconv.Itoa(i),
+			StudentName:     "Oppilas " + strconv.Itoa(i),
+			StudentSegments: StudentSegment{},
+			StudentEmail:    "oppilas" + strconv.Itoa(i) + "@oppilaitos.fi",
+			StudentClass:    classToAdd,
+		}).Error; err != nil {
+			log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
+		}
 	}
 
 }
 
-func PopulateCourses() {
+// desc: Auto-generating courses for testing purposes
+func PopulateCourses(p int) {
+	if db == nil {
+		ConnectToDB()
+	}
+	for i := 0; i < p; i = i + 1 {
 
-	if err := db.Table(schoolShortName + "_Courses").Create(&Course{
-		ID:              0,
-		ResourceID:      0,
-		Schools:         School{},
-		CourseCode:      "TC1",
-		CourseName:      "Test Course 1",
-		CourseStartDate: "1.1.2020",
-		CourseEndDate:   "1.1.2021",
-		Archived:        false,
-		Segment:         []Segment{},
-	}).Error; err != nil {
-		log.Panic("Problems populating Courses table. <go/populate.go->populateCourses>")
+		// Auto-generating archived status
+		archivedToAdd := false
+		if i%2 == 0 {
+			archivedToAdd = true
+		} else {
+			archivedToAdd = false
+		}
+
+		if err := db.Table(schoolShortName + "_Courses").Create(&Course{
+			ID:              0,
+			ResourceID:      0,
+			Schools:         School{},
+			CourseCode:      "GTC" + strconv.Itoa(i),
+			CourseName:      "Generated Test Course " + strconv.Itoa(i),
+			CourseStartDate: strconv.Itoa(i) + "." + strconv.Itoa(i) + ".2020",
+			CourseEndDate:   strconv.Itoa(i) + "." + strconv.Itoa(i) + ".2021",
+			Archived:        archivedToAdd,
+			Segment:         []Segment{},
+		}).Error; err != nil {
+			log.Panic("Problems populating Courses table. <go/populate.go->populateCourses>")
+		}
 	}
 
-	if err := db.Table(schoolShortName + "_Courses").Create(&Course{
-		ID:              0,
-		ResourceID:      0,
-		Schools:         School{},
-		CourseCode:      "TC2",
-		CourseName:      "Test Course 2",
-		CourseStartDate: "2.2.2020",
-		CourseEndDate:   "2.2.2021",
-		Archived:        false,
-		Segment:         []Segment{},
-	}).Error; err != nil {
-		log.Panic("Problems populating Courses table o. <go/populate.go->populateCourses>")
-	}
-
-	if err := db.Table(schoolShortName + "_Courses").Create(&Course{
-		ID:              0,
-		ResourceID:      0,
-		Schools:         School{},
-		CourseCode:      "TC3",
-		CourseName:      "Test Course 3",
-		CourseStartDate: "3.3.2020",
-		CourseEndDate:   "3.3.2021",
-		Archived:        true,
-		Segment:         []Segment{},
-	}).Error; err != nil {
-		log.Panic("Problems populating Courses table o. <go/populate.go->populateCourses>")
-	}
-
-	if err := db.Table(schoolShortName + "_Courses").Create(&Course{
-		ID:              0,
-		ResourceID:      0,
-		Schools:         School{},
-		CourseCode:      "TC4",
-		CourseName:      "Test Course 4",
-		CourseStartDate: "4.4.2020",
-		CourseEndDate:   "4.4.2021",
-		Archived:        true,
-		Segment:         []Segment{},
-	}).Error; err != nil {
-		log.Panic("Problems populating Courses table o. <go/populate.go->populateCourses>")
-	}
 }

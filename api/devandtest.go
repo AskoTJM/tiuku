@@ -1,6 +1,7 @@
 package tiuku
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -13,11 +14,24 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		database.InitDB()
 		return "InitDB"
 	}
+
 	if h == "populate" {
 		database.PopulateSchool()
-		database.PopulateStudents()
-		database.PopulateCourses()
-		return "Populating"
+		return "Populated School"
+	}
+
+	if h == "populatecourses" {
+		num := r.Header.Get("X-Number")
+		i, _ := strconv.Atoi(num)
+		database.PopulateCourses(i)
+		return "Populated courses"
+	}
+
+	if h == "populatestudents" {
+		num := r.Header.Get("X-Number")
+		i, _ := strconv.Atoi(num)
+		database.PopulateStudents(i)
+		return "Populated students"
 	}
 	if h == "Hello" {
 		return "Hello"
@@ -42,6 +56,22 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	}
 	if h == "createcourse" {
 		return database.CreateCourse(r)
+	}
+	if h == "getstudentdata" {
+		user := r.Header.Get("X-User")
+		result := database.GetStudent(user)
+		anon, _ := json.Marshal(result)
+		n := len(anon)
+		s := string(anon[:n])
+		/*
+			fmt.Fprintf(w, "%s", s)
+			return "yep"
+		*/
+
+		//tempJSON := gjson.Get(s, "Value.AnonID")
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		return s //tempJSON.String()
 	}
 
 	return "nothing"

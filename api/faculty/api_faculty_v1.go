@@ -61,7 +61,13 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 	w.WriteHeader(http.StatusOK)
 }
 
+func GetUserSegments(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
 // Desc: Create new Course in course table
+// Status: Probably doesn't need so much to response stuff
 func PostCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	//w.WriteHeader(http.StatusOK)
