@@ -117,7 +117,8 @@ type StudentSegmentSession struct {
 
 // Table for School. School can have multiple campuses
 type School struct {
-	ID       uint `gorm:"primary_key"`
+	ID uint `gorm:"primary_key"`
+	//Shorthand string
 	Finnish  string
 	English  string
 	Campuses []Campus `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
@@ -125,7 +126,8 @@ type School struct {
 
 // Campus of the School, Campus can have multiple Apartments
 type Campus struct {
-	ID         uint `gorm:"primary_key"`
+	ID uint `gorm:"primary_key"`
+	//Shorthand  string
 	Finnish    string
 	English    string
 	Apartments []Apartment `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`

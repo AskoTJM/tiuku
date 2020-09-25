@@ -110,5 +110,5 @@ func CreateCourse(r *http.Request) string {
 		//log.Println(newCourse)
 
 	}
-	return "no"
+	return "This should not happen."
 }
