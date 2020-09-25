@@ -20,8 +20,6 @@ func CreateStudentSegmentTable(myAnonID string) string {
 	} else {
 		if err := db.Table(tableToEdit).AutoMigrate(&StudentSegment{
 			ID:                     0,
-			ResourceID:             "",
-			StudentID:              myAnonID,
 			Course:                 Course{},
 			SegmentNumber:          0,
 			StudentSegmentSessions: StudentSegmentSession{},
@@ -48,7 +46,6 @@ func CreateFacultySegmentTable(myFacultyID string) string {
 	} else {
 		if err := db.Table(tableToEdit).AutoMigrate(&FacultySegment{
 			ID:                    0,
-			ResourceID:            "",
 			Course:                Course{},
 			SegmentNumber:         0,
 			SchoolSegmentsSession: SchoolSegmentsSession{},
@@ -110,5 +107,21 @@ func CreateCourse(r *http.Request) string {
 		//log.Println(newCourse)
 
 	}
-	return "This should not happen."
+	return "Error: This should not happen."
+}
+
+// desc: Create new Segment
+func CreateSegment(r *http.Request) {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	var newSegment Segment
+	err := dec.Decode(&newSegment)
+	if err != nil {
+		log.Panic("Problem with json decoding <database/database_create->CreateSegment")
+	}
+
 }

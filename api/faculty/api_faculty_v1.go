@@ -55,13 +55,15 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
+	// Get course information
 	result := database.FindCourseTableById(courseCode)
+	// Remove segment data
 	segs := result.Segment
 	anon, _ := json.Marshal(segs)
 	n := len(anon)
 	s := string(anon[:n])
 
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "%s", s)
 }

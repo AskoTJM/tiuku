@@ -169,7 +169,6 @@ func InitDBv2() {
 		SchoolSegmentsSession: SchoolSegmentsSession{},
 	}, &FacultySegment{
 		ID:                    0,
-		ResourceID:            "",
 		Course:                Course{},
 		SegmentNumber:         0,
 		SchoolSegmentsSession: SchoolSegmentsSession{},
@@ -177,7 +176,6 @@ func InitDBv2() {
 		Archived:              false,
 	}, &StudentSegment{
 		ID:                     0,
-		ResourceID:             "",
 		Course:                 Course{},
 		SegmentNumber:          0,
 		StudentSegmentSessions: StudentSegmentSession{},
@@ -230,24 +228,27 @@ func PopulateSchool() {
 	}
 
 	if err := db.Table(schoolShortName + "_Degrees").Create(&Degree{
-		ID:      0,
-		Finnish: "Insinööri (AMK), tieto- ja viestintätekniikka",
-		English: "Bachelor of Engineering, Information Technology",
+		ID:        0,
+		Shorthand: "bEng",
+		Finnish:   "Insinööri (AMK), tieto- ja viestintätekniikka",
+		English:   "Bachelor of Engineering, Information Technology",
 	}).Error; err != nil {
 		log.Panic("Problems populating table of Degrees. <go/populate.go->populateSchool>")
 	}
 
 	if err := db.Table(schoolShortName + "_Apartments").Create(&Apartment{
-		ID:      0,
-		Finnish: "Informaatioteknologia",
-		English: "Information Technology",
-		Degrees: []Degree{},
+		ID:        0,
+		Shorthand: "ICT",
+		Finnish:   "Informaatioteknologia",
+		English:   "Information Technology",
+		Degrees:   []Degree{},
 	}).Error; err != nil {
 		log.Panic("Problems populating table of Apartments. <go/populate.go->populateSchool>")
 	}
 
 	if err := db.Table(schoolShortName + "_Campuses").Create(&Campus{
 		ID:         0,
+		Shorthand:  "Linna",
 		Finnish:    "Linnanmaan Kampus",
 		English:    "Campus Linnanmaa",
 		Apartments: []Apartment{},
@@ -256,22 +257,15 @@ func PopulateSchool() {
 	}
 
 	if err := db.Create(&School{
-		ID:       0,
-		Finnish:  "Oulun Ammattikorkeakoulu",
-		English:  "Oulu University of Applied Sciences",
-		Campuses: []Campus{},
+		ID:        0,
+		Shorthand: "OAMK",
+		Finnish:   "Oulun Ammattikorkeakoulu",
+		English:   "Oulu University of Applied Sciences",
+		Campuses:  []Campus{},
 	}).Error; err != nil {
 		log.Panic("Problems populating table of Schools. <go/populate.go->populateSchool>")
 	}
 
-	/*
-		db.Model(&Schools{
-			ID:       0,
-			Finnish:  "",
-			English:  "",
-			Campuses: []Campuses{},
-		}).AddForeignKey()
-	*/
 }
 
 // desc: Auto-generating student users for testing purposes

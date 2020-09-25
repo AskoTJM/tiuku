@@ -1,8 +1,10 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/jinzhu/gorm"
 )
@@ -60,3 +62,26 @@ func CheckIfAnonIdExists(anonid string) int {
 
 }
 */
+
+// DOESN'T WORK! DON'T USE!
+func CheckAssociation(w http.ResponseWriter, r *http.Request) {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	var checkSchool School
+	var checkCampus Campus
+	result := db.Model(&checkSchool).Association("Campus").Find(&checkCampus)
+	if result.Error != nil {
+		log.Println(result)
+	} else {
+		anon, _ := json.Marshal(result)
+		log.Println(anon)
+		n := len(anon)
+		s := string(anon[:n])
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		log.Println(s)
+		fmt.Fprintf(w, "%s", s)
+	}
+}

@@ -73,6 +73,10 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		w.WriteHeader(http.StatusOK)
 		return s //tempJSON.String()
 	}
+	if h == "findasso" {
+		database.CheckAssociation(w, r)
+
+	}
 
 	return "nothing"
 }
