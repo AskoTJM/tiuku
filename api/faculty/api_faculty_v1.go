@@ -14,14 +14,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/AskoTJM/tiuku/api/database"
+	"github.com/gorilla/mux"
 )
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
 
 	result := database.GetCourses(r)
 
@@ -29,18 +31,24 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 	n := len(anon)
 	s := string(anon[:n])
 
-	//tempJSON := gjson.Get(s, "Value")
-	//return tempJSON.String()
-	//w.Write(tempJSON)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "%s", s)
 }
 
 func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	courseCode := vars["course"]
+	result := database.FindCourseTableById(courseCode)
+
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-
+	fmt.Fprintf(w, "%s", s)
 }
 
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +84,11 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	url, _ := url.Parse(r.RequestURI)
+	path := url.Path
+	uriParts := strings.Split(path, "/")
+	log.Printf("%s", uriParts)
+
 }
 
 // Desc: Create new Course in course table

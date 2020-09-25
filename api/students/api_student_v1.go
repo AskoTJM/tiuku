@@ -10,6 +10,8 @@
 package students
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/database"
@@ -26,10 +28,15 @@ func DeleteSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
+
+	result := database.GetCourses(r)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-
-	database.GetCourses(r)
+	fmt.Fprintf(w, "%s", s)
 }
 
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {

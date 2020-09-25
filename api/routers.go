@@ -204,49 +204,49 @@ var routes = Routes{
 	Route{
 		"GetCoursesCourse",
 		strings.ToUpper("Get"),
-		"/faculty/v1//courses/{course}",
+		"/faculty/v1/courses/{course}",
 		faculty.GetCoursesCourse,
 	},
 
 	Route{
 		"GetCoursesCourseSegments",
 		strings.ToUpper("Get"),
-		"/faculty/v1//courses/{course}/segments",
+		"/faculty/v1/courses/{course}/segments",
 		faculty.GetCoursesCourseSegments,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegment",
 		strings.ToUpper("Get"),
-		"/faculty/v1//courses/{course}/segments/{segment}",
+		"/faculty/v1/courses/{course}/segments/{segment}",
 		faculty.GetCoursesCourseSegmentsSegment,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegmentCategoriesCategory",
 		strings.ToUpper("Get"),
-		"/faculty/v1//courses/{course}/segments/{segment}/categories/{category}",
+		"/faculty/v1/courses/{course}/segments/{segment}/categories/{category}",
 		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategory,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegmentCategoriesCategorySettings",
 		strings.ToUpper("Get"),
-		"/faculty/v1//courses/{course}/segments/{segment}/categories/{category}/settings",
+		"/faculty/v1/courses/{course}/segments/{segment}/categories/{category}/settings",
 		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategorySettings,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting",
 		strings.ToUpper("Get"),
-		"/faculty/v1//courses/{course}/segments/{segment}/categories/{category}/settings/{setting}",
+		"/faculty/v1/courses/{course}/segments/{segment}/categories/{category}/settings/{setting}",
 		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting,
 	},
 
 	Route{
 		"GetCoursesCourseSegmentsSegmentSettings",
 		strings.ToUpper("Get"),
-		"/faculty/v1//courses/{course}/segments/{segment}/categories",
+		"/faculty/v1/courses/{course}/segments/{segment}/categories",
 		faculty.GetCoursesCourseSegmentsSegmentSettings,
 	},
 
@@ -260,14 +260,14 @@ var routes = Routes{
 	Route{
 		"PostCoursesCourseSegments",
 		strings.ToUpper("Post"),
-		"/faculty/v1//courses/{course}/segments",
+		"/faculty/v1/courses/{course}/segments",
 		faculty.PostCoursesCourseSegments,
 	},
 
 	Route{
 		"PostCoursesCourseSegmentsSegmentCategories",
 		strings.ToUpper("Post"),
-		"/faculty/v1//courses/{course}/segments/{segment}/categories",
+		"/faculty/v1/courses/{course}/segments/{segment}/categories",
 		faculty.PostCoursesCourseSegmentsSegmentCategories,
 	},
 
