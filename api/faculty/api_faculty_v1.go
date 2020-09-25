@@ -11,6 +11,7 @@ package faculty
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -19,10 +20,21 @@ import (
 )
 
 func GetCourses(w http.ResponseWriter, r *http.Request) {
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.WriteHeader(http.StatusOK)
+
+	result := database.GetCourses(r)
+
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	//tempJSON := gjson.Get(s, "Value")
+	//return tempJSON.String()
+	//w.Write(tempJSON)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-
-	database.GetCourses(w, r)
+	fmt.Fprintf(w, "%s", s)
 }
 
 func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
