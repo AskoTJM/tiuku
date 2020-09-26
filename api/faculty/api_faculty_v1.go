@@ -57,7 +57,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	courseCode := vars["course"]
 	// Get course information
 	result := database.FindCourseTableById(courseCode)
-	// Remove segment data
+	// Get segment data
 	segs := result.Segment
 	anon, _ := json.Marshal(segs)
 	n := len(anon)
@@ -131,11 +131,21 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// desc: New segment for the course
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+
+	result := database.CreateSegment(r)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	fmt.Fprintf(w, "%s", s)
+
 }
 
+// desc: New categories for segment
 func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

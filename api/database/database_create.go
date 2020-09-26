@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // Desc: For creating Segment table for new Student users
@@ -110,18 +112,30 @@ func CreateCourse(r *http.Request) string {
 	return "Error: This should not happen."
 }
 
-// desc: Create new Segment
-func CreateSegment(r *http.Request) {
+// desc: Create new Segment for course
+// Status: No clue
+func CreateSegment(r *http.Request) Course {
 	if db == nil {
 		ConnectToDB()
 	}
+	//For what course is this
+	vars := mux.Vars(r)
+	courseCode := vars["course"]
+	log.Printf("CourseCode is: %s", courseCode)
+	getCourseData := FindCourseTableById(courseCode)
 
 	dec := json.NewDecoder(r.Body)
+
 	dec.DisallowUnknownFields()
+	log.Println(dec)
+
 	var newSegment Segment
 	err := dec.Decode(&newSegment)
 	if err != nil {
 		log.Panic("Problem with json decoding <database/database_create->CreateSegment")
 	}
+	//getCourseData.Segment[0] = newSegment
+	db.Model(&getCourseData).Association("Segment").Append(newSegment)
+	return getCourseData
 
 }

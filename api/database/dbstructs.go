@@ -1,12 +1,24 @@
 package database
 
 // Table for StudentUsers
+/*
 type StudentUser struct {
 	ID              uint `gorm:"primary_key"`
 	StudentID       string
 	AnonID          string
 	StudentName     string
 	StudentSegments StudentSegment
+	StudentEmail    string
+	StudentClass    string
+}
+*/
+// Restructed
+type StudentUser struct {
+	ID              uint `gorm:"primary_key"`
+	StudentID       string
+	AnonID          string
+	StudentName     string
+	StudentSegments string
 	StudentEmail    string
 	StudentClass    string
 }
@@ -86,6 +98,7 @@ type SegmentCategory struct {
 }
 
 // What Segments of Courses student is tracking.
+/*
 type StudentSegment struct {
 	ID                     uint `gorm:"primary_key"`
 	Course                 Course
@@ -94,8 +107,19 @@ type StudentSegment struct {
 	SegmentCategory        SegmentCategory
 	Archived               bool
 }
+*/
+// Revamped
+type StudentSegment struct {
+	ID                     uint `gorm:"primary_key"`
+	Course                 Course
+	SegmentNumber          uint
+	StudentSegmentSessions string
+	SegmentCategory        string
+	Archived               bool
+}
 
 // Students Sessions for Segment
+/*
 type StudentSegmentSession struct {
 	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
 	//gorm.Model
@@ -106,6 +130,22 @@ type StudentSegmentSession struct {
 	UpdateAt        string
 	DeletedAt       string
 	SegmentCategory SegmentCategory
+	Comment         string
+	Version         uint
+	Locations       string
+}
+*/
+// Restruct
+type StudentSegmentSession struct {
+	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
+	//gorm.Model
+	ID              uint `gorm:"primary_key"`
+	StartTime       string
+	EndTime         string
+	CreatedAt       string
+	UpdateAt        string
+	DeletedAt       string
+	SegmentCategory string
 	Comment         string
 	Version         uint
 	Locations       string
@@ -123,6 +163,7 @@ type School struct {
 // Campus of the School, Campus can have multiple Apartments
 type Campus struct {
 	ID         uint `gorm:"primary_key"`
+	SchoolID   uint
 	Shorthand  string
 	Finnish    string
 	English    string
@@ -137,6 +178,7 @@ func (Campus) TableName() string {
 // Table for different Apartment in Campus, Apartment can have multiple Degrees
 type Apartment struct {
 	ID        uint `gorm:"primary_key"`
+	CampusID  uint
 	Shorthand string
 	Finnish   string
 	English   string
@@ -145,10 +187,11 @@ type Apartment struct {
 
 // Degree in the Apartment.
 type Degree struct {
-	ID        uint `gorm:"primary_key"`
-	Shorthand string
-	Finnish   string
-	English   string
+	ID          uint `gorm:"primary_key"`
+	ApartmentID uint
+	Shorthand   string
+	Finnish     string
+	English     string
 }
 
 /*
