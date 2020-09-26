@@ -18,6 +18,7 @@ var db *gorm.DB
 // Temporary solution needs to be replaced by smarter one
 // after getting at least basic functionality inplace.
 var schoolShortName = "OAMK"
+var courseTableToEdit = "courses"
 
 // Desc: Establish connection to database
 // Status: Done

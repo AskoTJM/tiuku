@@ -54,7 +54,6 @@ type FacultySegment struct {
 // Table for course
 type Course struct {
 	ID              uint `gorm:"primary_key"`
-	ResourceID      uint
 	Schools         School
 	CourseCode      string
 	CourseName      string
@@ -67,6 +66,7 @@ type Course struct {
 // Course can have on or more Segments
 type Segment struct {
 	ID                    uint `gorm:"primary_key"`
+	CourseID              uint
 	SegmentName           string
 	TeacherID             string
 	Scope                 uint

@@ -17,10 +17,10 @@ func GetAnonId(StudentID string) string {
 	if db == nil {
 		ConnectToDB()
 	}
-	tableToEdit := schoolShortName + "_StudentUsers"
+
 	var tempStudent StudentUser
 
-	result := db.Table(tableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	result := db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 	if result == nil {
 		log.Panic(result)
 	}
@@ -38,10 +38,10 @@ func GetStudentName(StudentID string) string {
 	if db == nil {
 		ConnectToDB()
 	}
-	tableToEdit := schoolShortName + "_StudentUsers"
+
 	var tempStudent StudentUser
 
-	result := db.Table(tableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	result := db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 	if result == nil {
 		log.Panic(result)
 	}
@@ -59,11 +59,11 @@ func GetStudent(StudentID string) StudentUser {
 	if db == nil {
 		ConnectToDB()
 	}
-	tableToEdit := schoolShortName + "_StudentUsers"
+
 	var tempStudent StudentUser
 
 	//result :=
-	db.Table(tableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 
 	/*
 		anon, _ := json.Marshal(result)
@@ -85,24 +85,23 @@ func GetCourses(r *http.Request) []Course {
 		ConnectToDB()
 	}
 
-	tableToEdit := schoolShortName + "_Courses"
 	var tempCourses []Course
-	result := db.Table(tableToEdit)
+	result := db.Table(courseTableToEdit)
 	paramTest := r.URL.Query()
 	filter, params := paramTest["archived"]
 
 	if !params || len(filter) == 0 {
-		result = db.Table(tableToEdit).Where("archived = ?", false).Find(&tempCourses)
+		result = db.Table(courseTableToEdit).Where("archived = ?", false).Find(&tempCourses)
 		if result != nil {
 			log.Println(result.Error)
 		}
 	} else if paramTest.Get("archived") == "yes" {
-		result = db.Table(tableToEdit).Find(&tempCourses)
+		result = db.Table(courseTableToEdit).Find(&tempCourses)
 		if result != nil {
 			log.Println(result.Error)
 		}
 	} else if paramTest.Get("archived") == "only" {
-		result = db.Table(tableToEdit).Where("archived = ?", true).Find(&tempCourses)
+		result = db.Table(courseTableToEdit).Where("archived = ?", true).Find(&tempCourses)
 		if result != nil {
 			log.Println(result)
 		}
@@ -140,8 +139,8 @@ func FindCourseTableByCode(courseCode string) Course {
 	}
 
 	var tempCourse Course
-	tableToEdit := schoolShortName + "_Courses"
-	db.Table(tableToEdit).Where("course_code = ?", courseCode).Find(&tempCourse).Row()
+
+	db.Table(courseTableToEdit).Where("course_code = ?", courseCode).Find(&tempCourse).Row()
 
 	return tempCourse
 }
@@ -154,8 +153,8 @@ func FindCourseTableById(id string) Course {
 	}
 
 	var tempCourse Course
-	tableToEdit := schoolShortName + "_Courses"
-	db.Table(tableToEdit).Where("id = ?", id).Find(&tempCourse).Row()
+
+	db.Table(courseTableToEdit).Where("id = ?", id).Find(&tempCourse).Row()
 
 	return tempCourse
 }

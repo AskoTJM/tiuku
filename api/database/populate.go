@@ -17,9 +17,10 @@ func InitDB() {
 	}
 
 	log.Printf("Trying to AutoMigrate Course table to database. <go/database.go->initDB>")
-	if err := db.Table(schoolShortName + "_Courses").AutoMigrate(&Course{
-		ID:              0,
-		ResourceID:      0,
+	//if err := db.Table(schoolShortName + "_Courses").AutoMigrate(&Course{
+	if err := db.AutoMigrate(&Course{
+		ID: 0,
+		//ResourceID:      0,
 		Schools:         School{},
 		CourseCode:      "",
 		CourseName:      "",
@@ -32,20 +33,20 @@ func InitDB() {
 	}
 
 	// This should be created and named when creating Segment
-	/*
-		log.Printf("Trying to AutoMigrate Segment table to database. <go/database.go->initDB>")
-		if err := db.AutoMigrate(&Segment{
-			ID:                    0,
-			SegmentName:           "",
-			TeacherID:             "",
-			Scope:                 0,
-			SegmentCategories:     SegmentCategory{},
-			ExpectedAttendance:    0,
-			SchoolSegmentsSession: SchoolSegmentsSession{},
-		}).Error; err != nil {
-			log.Panic("Problems creating table for Segment. <go/database.go->initDB>")
-		}
-	*/
+
+	log.Printf("Trying to AutoMigrate Segment table to database. <go/database.go->initDB>")
+	if err := db.AutoMigrate(&Segment{
+		ID:                    0,
+		CourseID:              0,
+		SegmentName:           "",
+		TeacherID:             "",
+		Scope:                 0,
+		SegmentCategories:     SegmentCategory{},
+		ExpectedAttendance:    0,
+		SchoolSegmentsSession: SchoolSegmentsSession{},
+	}).Error; err != nil {
+		log.Panic("Problems creating table for Segment. <go/database.go->initDB>")
+	}
 
 	// This should be created and named when creating new Faculty User
 	/*
@@ -79,12 +80,14 @@ func InitDB() {
 		}
 	*/
 	log.Printf("Trying to AutoMigrate StudentUsers table to database. <go/database.go->initDB>")
-	if err := db.Table(schoolShortName + "_StudentUsers").AutoMigrate(&StudentUser{
-		ID:              0,
-		StudentID:       "",
-		AnonID:          "",
-		StudentName:     "",
-		StudentSegments: StudentSegment{},
+	//if err := db.Table(schoolShortName + "_StudentUsers").AutoMigrate(&StudentUser{
+	if err := db.AutoMigrate(&StudentUser{
+		ID:          0,
+		StudentID:   "",
+		AnonID:      "",
+		StudentName: "",
+		//StudentSegments: StudentSegment{},
+		StudentSegments: "",
 		StudentEmail:    "",
 		StudentClass:    "",
 	}).Error; err != nil {
@@ -92,7 +95,8 @@ func InitDB() {
 	}
 
 	log.Printf("Trying to AutoMigrate FacultyUsers table to database. <go/database.go->initDB>")
-	if err := db.Table(schoolShortName + "_FacultyUsers").AutoMigrate(&FacultyUser{
+	//if err := db.Table(schoolShortName + "_FacultyUsers").AutoMigrate(&FacultyUser{
+	if err := db.AutoMigrate(&FacultyUser{
 		ID:             0,
 		FacultyID:      "",
 		FacultyName:    "",
@@ -105,36 +109,40 @@ func InitDB() {
 
 	log.Printf("Trying to AutoMigrate Schools table to database. <go/database.go->initDB>")
 	if err := db.AutoMigrate(&School{
-		ID:       0,
-		Finnish:  "",
-		English:  "",
-		Campuses: []Campus{},
+		ID:        0,
+		Shorthand: "",
+		Finnish:   "",
+		English:   "",
+		Campuses:  []Campus{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for School. <go/database.go->initDB>")
 	}
-
-	if err := db.Table(schoolShortName + "_Campuses").AutoMigrate(&Campus{
+	//if err := db.Table(schoolShortName + "_Campuses").AutoMigrate(&Campus{
+	if err := db.AutoMigrate(&Campus{
 		ID:         0,
+		Shorthand:  "",
 		Finnish:    "",
 		English:    "",
 		Apartments: []Apartment{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for Campuses. <go/database.go->initDB>")
 	}
-
-	if err := db.Table(schoolShortName + "_Apartments").AutoMigrate(&Apartment{
-		ID:      0,
-		Finnish: "",
-		English: "",
-		Degrees: []Degree{},
+	//if err := db.Table(schoolShortName + "_Apartments").AutoMigrate(&Apartment{
+	if err := db.AutoMigrate(&Apartment{
+		ID:        0,
+		Shorthand: "",
+		Finnish:   "",
+		English:   "",
+		Degrees:   []Degree{},
 	}).Error; err != nil {
 		log.Panic("Problems creating table for Apartments. <go/database.go->initDB>")
 	}
-
-	if err := db.Table(schoolShortName + "_Degrees").AutoMigrate(&Degree{
-		ID:      0,
-		Finnish: "",
-		English: "",
+	//if err := db.Table(schoolShortName + "_Degrees").AutoMigrate(&Degree{
+	if err := db.AutoMigrate(&Degree{
+		ID:        0,
+		Shorthand: "",
+		Finnish:   "",
+		English:   "",
 	}).Error; err != nil {
 		log.Panic("Problems creating table for Degrees. <go/database.go->initDB>")
 	}
@@ -150,8 +158,8 @@ func InitDBv2() {
 
 	log.Printf("Trying to AutoMigrate Course table to database. <go/database.go->initDB>")
 	if err := db.AutoMigrate(&Course{
-		ID:              0,
-		ResourceID:      0,
+		ID: 0,
+		//ResourceID:      0,
 		Schools:         School{},
 		CourseCode:      "",
 		CourseName:      "",
@@ -175,18 +183,21 @@ func InitDBv2() {
 		SegmentCategories:     SegmentCategory{},
 		Archived:              false,
 	}, &StudentSegment{
-		ID:                     0,
-		Course:                 Course{},
-		SegmentNumber:          0,
-		StudentSegmentSessions: StudentSegmentSession{},
-		SegmentCategory:        SegmentCategory{},
+		ID:            0,
+		Course:        Course{},
+		SegmentNumber: 0,
+		//StudentSegmentSessions: StudentSegmentSession{},
+		//SegmentCategory:        SegmentCategory{},
+		StudentSegmentSessions: "",
+		SegmentCategory:        "",
 		Archived:               false,
 	}, &StudentUser{
-		ID:              0,
-		StudentID:       "",
-		AnonID:          "",
-		StudentName:     "",
-		StudentSegments: StudentSegment{},
+		ID:          0,
+		StudentID:   "",
+		AnonID:      "",
+		StudentName: "",
+		//StudentSegments: StudentSegment{},
+		StudentSegments: "",
 		StudentEmail:    "",
 		StudentClass:    "",
 	}, &FacultyUser{
@@ -222,6 +233,7 @@ func InitDBv2() {
 	//if err := db.CreateTable("")
 }
 
+/*
 func PopulateSchool() {
 	if db == nil {
 		ConnectToDB()
@@ -265,6 +277,69 @@ func PopulateSchool() {
 	}).Error; err != nil {
 		log.Panic("Problems populating table of Schools. <go/populate.go->populateSchool>")
 	}
+}
+*/
+
+func PopulateSchool() {
+	if db == nil {
+		ConnectToDB()
+	}
+	/*
+		if err := db.Table(schoolShortName + "_Degrees").Create(&Degree{
+			ID:        0,
+			Shorthand: "bEng",
+			Finnish:   "Insinööri (AMK), tieto- ja viestintätekniikka",
+			English:   "Bachelor of Engineering, Information Technology",
+		}).Error; err != nil {
+			log.Panic("Problems populating table of Degrees. <go/populate.go->populateSchool>")
+		}
+
+		if err := db.Table(schoolShortName + "_Apartments").Create(&Apartment{
+			ID:        0,
+			Shorthand: "ICT",
+			Finnish:   "Informaatioteknologia",
+			English:   "Information Technology",
+			Degrees:   []Degree{},
+		}).Error; err != nil {
+			log.Panic("Problems populating table of Apartments. <go/populate.go->populateSchool>")
+		}
+
+		if err := db.Table(schoolShortName + "_Campuses").Create(&Campus{
+			ID:         0,
+			Shorthand:  "Linna",
+			Finnish:    "Linnanmaan Kampus",
+			English:    "Campus Linnanmaa",
+			Apartments: []Apartment{},
+		}).Error; err != nil {
+			log.Panic("Problems populating table of Campuses. <go/populate.go->populateSchool>")
+		}
+	*/
+	if err := db.Create(&School{
+		ID:        0,
+		Shorthand: "OAMK",
+		Finnish:   "Oulun Ammattikorkeakoulu",
+		English:   "Oulu University of Applied Sciences",
+		Campuses: []Campus{{
+			ID:        0,
+			Shorthand: "Linna",
+			Finnish:   "Linnanmaan Kampus",
+			English:   "Campus Linnanmaa",
+			Apartments: []Apartment{{
+				ID:        0,
+				Shorthand: "ICT",
+				Finnish:   "Informaatioteknologia",
+				English:   "Information Technology",
+				Degrees: []Degree{{
+					ID:        0,
+					Shorthand: "bEng",
+					Finnish:   "Insinööri (AMK), tieto- ja viestintätekniikka",
+					English:   "Bachelor of Engineering, Information Technology",
+				}},
+			}},
+		}},
+	}).Error; err != nil {
+		log.Printf("Problems populating table of Schools. <go/populate.go->populateSchool>")
+	}
 
 }
 
@@ -298,13 +373,14 @@ func PopulateStudents(p int) {
 		} else {
 			classToAdd = "tit1"
 		}
-
-		if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
-			ID:              0,
-			StudentID:       "oppi" + strconv.Itoa(i),
-			AnonID:          "Anon" + strconv.Itoa(i),
-			StudentName:     "Oppilas " + strconv.Itoa(i),
-			StudentSegments: StudentSegment{},
+		//if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
+		if err := db.Create(&StudentUser{
+			ID:          0,
+			StudentID:   "oppi" + strconv.Itoa(i),
+			AnonID:      "Anon" + strconv.Itoa(i),
+			StudentName: "Oppilas " + strconv.Itoa(i),
+			//StudentSegments: StudentSegment{},
+			StudentSegments: "",
 			StudentEmail:    "oppilas" + strconv.Itoa(i) + "@oppilaitos.fi",
 			StudentClass:    classToAdd,
 		}).Error; err != nil {
@@ -328,10 +404,10 @@ func PopulateCourses(p int) {
 		} else {
 			archivedToAdd = false
 		}
-
-		if err := db.Table(schoolShortName + "_Courses").Create(&Course{
-			ID:              0,
-			ResourceID:      0,
+		//if err := db.Table(schoolShortName + "_Courses").Create(&Course{
+		if err := db.Create(&Course{
+			ID: 0,
+			//ResourceID:      0,
 			Schools:         School{},
 			CourseCode:      "GTC" + strconv.Itoa(i),
 			CourseName:      "Generated Test Course " + strconv.Itoa(i),

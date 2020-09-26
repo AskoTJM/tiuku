@@ -21,11 +21,13 @@ func CreateStudentSegmentTable(myAnonID string) string {
 		return "Error: Table already exists."
 	} else {
 		if err := db.Table(tableToEdit).AutoMigrate(&StudentSegment{
-			ID:                     0,
-			Course:                 Course{},
-			SegmentNumber:          0,
-			StudentSegmentSessions: StudentSegmentSession{},
-			SegmentCategory:        SegmentCategory{},
+			ID:            0,
+			Course:        Course{},
+			SegmentNumber: 0,
+			//StudentSegmentSessions: StudentSegmentSession{},
+			//SegmentCategory:        SegmentCategory{},
+			StudentSegmentSessions: "",
+			SegmentCategory:        "",
 			Archived:               false,
 		}).Error; err != nil {
 			log.Panic("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
@@ -69,8 +71,8 @@ func CreateCourse(r *http.Request) string {
 	}
 
 	// Check if there is table for courses.
-	tableToEdit := schoolShortName + "_Courses"
-	result := db.HasTable(tableToEdit)
+
+	result := db.HasTable(courseTableToEdit)
 
 	if !result {
 		log.Panic("Problems creating new Course, table for courses doesn't exist. <database/database_create->CreateCourse>")
@@ -96,7 +98,7 @@ func CreateCourse(r *http.Request) string {
 		if err != nil {
 			log.Panic("Problem with json decoding <database/database_create->CreateCourse")
 		}
-		db.Table(tableToEdit).Create(&newCourse)
+		db.Table(courseTableToEdit).Create(&newCourse)
 		// Need to fix error checking.
 		/*
 			err2 := db.Table(tableToEdit).AutoMigrate(&newCourse)
@@ -136,6 +138,8 @@ func CreateSegment(r *http.Request) Course {
 	}
 	//getCourseData.Segment[0] = newSegment
 	db.Model(&getCourseData).Association("Segment").Append(newSegment)
+	db.Save(&getCourseData)
+	//db.Preload()
 	return getCourseData
 
 }
