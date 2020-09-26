@@ -19,6 +19,7 @@ var db *gorm.DB
 // after getting at least basic functionality inplace.
 var schoolShortName = "OAMK"
 var courseTableToEdit = "courses"
+var segmentTableToEdit = "segments"
 
 // Desc: Establish connection to database
 // Status: Done

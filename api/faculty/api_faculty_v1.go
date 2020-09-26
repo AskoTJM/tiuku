@@ -58,9 +58,9 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	// Get course information
 	result := database.FindCourseTableById(courseCode)
 	// Get segment data
-
+	result2 := database.FindSegmentTableByCourseId(result.ID)
 	//segs := result.Segment
-	anon, _ := json.Marshal(result)
+	anon, _ := json.Marshal(result2)
 	n := len(anon)
 	s := string(anon[:n])
 

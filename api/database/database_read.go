@@ -158,3 +158,26 @@ func FindCourseTableById(id string) Course {
 
 	return tempCourse
 }
+
+func FindSegmentTableByCourseId(courseID uint) []Segment {
+	var tempSegment []Segment
+	//tempSegment := make([]Segment, 0)
+	result := db.Table(segmentTableToEdit).Where("course_id = ?", courseID).Find(&tempSegment)
+	if result != nil {
+		log.Println(result)
+	}
+
+	returnSegment := make([]Segment, 0)
+	result2, _ := result.Rows()
+
+	var tempCourse2 Segment
+	for result2.Next() {
+
+		if err3 := result.ScanRows(result2, &tempCourse2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSegment = append(returnSegment, tempCourse2)
+	}
+
+	return returnSegment
+}
