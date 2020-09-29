@@ -59,7 +59,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	result := database.FindCourseTableById(courseCode)
 	// Get segment data
 	result2 := database.FindSegmentTableByCourseId(result.ID)
-	//segs := result.Segment
+	//Transform results to json
 	anon, _ := json.Marshal(result2)
 	n := len(anon)
 	s := string(anon[:n])
@@ -70,8 +70,21 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	//courseCode := vars["course"]
+	segCode := vars["segment"]
+	// Get course information
+	//courseRes := database.FindCourseTableById(courseCode)
+	// Get segment data
+	segRes := database.FindCourseTableById(segCode)
+	//Transform results to json
+	anon, _ := json.Marshal(segRes)
+	n := len(anon)
+	s := string(anon[:n])
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
 }
 
 func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r *http.Request) {
@@ -92,6 +105,7 @@ func GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting(w http.Res
 func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+
 }
 
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
