@@ -10,11 +10,15 @@ import (
 
 // Desc: For creating Segment table for new Student users
 // Status: Works
-func CreateStudentSegmentTable(myAnonID string) string {
+func CreateStudentSegmentTable(StudentID string) string {
 	if db == nil {
 		ConnectToDB()
 	}
-	tableToEdit := myAnonID + "_SegmentsTable"
+	// Get Students data
+	tempStudent := GetStudent(StudentID)
+	// Get AnonID for data
+	myAnonID := GetAnonId(StudentID)
+	tableToEdit := myAnonID + "_segments"
 	result := db.HasTable(tableToEdit)
 	if result {
 		log.Println("Error: Table already exists. <database/database_maintenance.go->CreateStudentSegmentTable>")
@@ -32,6 +36,44 @@ func CreateStudentSegmentTable(myAnonID string) string {
 		}).Error; err != nil {
 			log.Panic("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
+		// Update the Student data with the name of the segment table
+		db.Model(&tempStudent).Where("student_id", StudentID).Update("student_segments", tableToEdit)
+		return tableToEdit
+
+	}
+}
+
+// Desc: For creating Archive Segment table for containing old segments
+// Status: Works
+func CreateStudentSegmentTableArchived(StudentID string) string {
+	if db == nil {
+		ConnectToDB()
+	}
+	// Get Students data
+	//tempStudent := GetStudent(StudentID)
+	// Get AnonID for data
+	myAnonID := GetAnonId(StudentID)
+	tableToEdit := myAnonID + "_segments_archived"
+	// Check if the table already exists
+	result := db.HasTable(tableToEdit)
+	if result {
+		log.Println("Error: Table already exists. <database/database_maintenance.go->CreateStudentSegmentTable>")
+		return "Error: Table already exists."
+	} else {
+		if err := db.Table(tableToEdit).AutoMigrate(&StudentSegment{
+			ID:            0,
+			Course:        Course{},
+			SegmentNumber: 0,
+			//StudentSegmentSessions: StudentSegmentSession{},
+			//SegmentCategory:        SegmentCategory{},
+			StudentSegmentSessions: "",
+			SegmentCategory:        "",
+			Archived:               false,
+		}).Error; err != nil {
+			log.Panic("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
+		}
+		// Update the Student data with the name of the segment table
+		// db.Model(&tempStudent).Update("student_segments", tableToEdit)
 		return tableToEdit
 	}
 }

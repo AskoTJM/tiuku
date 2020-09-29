@@ -14,12 +14,13 @@ import (
 // Global variable for database
 var db *gorm.DB
 
-// Global variable for School,
-// Temporary solution needs to be replaced by smarter one
-// after getting at least basic functionality inplace.
+// Global variables for School, etc
+// Should be temporary solution, now just easier to change naming conventions
+// Maybe replace with configuration file?
 var schoolShortName = "OAMK"
 var courseTableToEdit = "courses"
 var segmentTableToEdit = "segments"
+var studentsTableToEdit = "student_users"
 
 // Desc: Establish connection to database
 // Status: Done

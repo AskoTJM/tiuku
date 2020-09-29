@@ -20,7 +20,7 @@ func GetAnonId(StudentID string) string {
 
 	var tempStudent StudentUser
 
-	result := db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	result := db.Table(studentsTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 	if result == nil {
 		log.Panic(result)
 	}

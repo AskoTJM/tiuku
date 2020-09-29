@@ -53,6 +53,7 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	if h == "studentsegment" {
 		user := r.Header.Get("X-User")
 		return database.CreateStudentSegmentTable(user)
+
 	}
 	if h == "createcourse" {
 		return database.CreateCourse(r)
