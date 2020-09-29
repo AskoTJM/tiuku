@@ -126,7 +126,7 @@ var routes = Routes{
 		"GetUserSegmentSettings",
 		strings.ToUpper("Get"),
 		"/students/v1/segment/{segment}/settings",
-		students.GetUserSegmentSettings,
+		students.GetUserSegmentsSettings,
 	},
 
 	Route{

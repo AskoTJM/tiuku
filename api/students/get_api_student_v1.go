@@ -17,16 +17,8 @@ import (
 	"github.com/AskoTJM/tiuku/api/database"
 )
 
-func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func DeleteSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
+// desc: Get list of active courses available
+// status:
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 
 	result := database.GetCourses(r)
@@ -39,77 +31,56 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
+// desc: Get list of segments on the {course}
+// status:
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc: "Get available courses", but we already get courses with /courses/ ?
+// status: wtf? This should do?
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc: Get categories used for {segment}
+// status:
 func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc:Get Sessions for {segment}
+// status:
 func GetSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc: Get value of {setting} for {segment}
+// status:
 func GetSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-func GetUserSegmentSettings(w http.ResponseWriter, r *http.Request) {
+// desc: ??
+func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc: Get list of active segments for student user
+// status.
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc: Get Session data for {segment}
 func GetUserSegmentsResourceID(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func PatchSegmentSegmentSettings(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func PatchSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func PatchSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func PostSegmentsSegment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func PostUserSegments(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func PutSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
