@@ -220,5 +220,5 @@ func CreateCategoriesForSegment(r *http.Request) {
 	// db.Model(&models.UserInfo{}).AddForeignKey("u_id", "t_user(id)", "RESTRICT", "RESTRICT")
 	//db.Model(&SegmentCategory.MainCategory)
 	//db.Table(tableToCreate).Model(&SegmentCategory{}).AddForeignKey("maincategory", "maincategory(id)", "RESTRICT", "RESTRICT")
-	db.Table(tableToCreate).AddForeignKey("main_category", "maincategory(id)", "RESTRICT", "RESTRICT")
+	db.Table(tableToCreate).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
 }

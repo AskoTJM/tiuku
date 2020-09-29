@@ -50,15 +50,15 @@ func PopulateSchool() {
 		log.Printf("Problems creating main categories. <go/populate.go->populateSchool>")
 	}
 	if err := db.Create(&MainCategory{
-		ID:       1,
+		ID:       0,
 		Shorthad: "Etä",
-		Finnish:  "Etäiopetus",
+		Finnish:  "Etäopetus",
 		English:  "Virtualroom study",
 	}).Error; err != nil {
 		log.Printf("Problems creating main categories. <go/populate.go->populateSchool>")
 	}
 	if err := db.Create(&MainCategory{
-		ID:       2,
+		ID:       0,
 		Shorthad: "Itse",
 		Finnish:  "Itsenäinen opiskelu",
 		English:  "Independent Study",
