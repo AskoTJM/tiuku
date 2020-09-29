@@ -37,7 +37,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 // desc: Get {course} information
-// status: works?
+// status: Works. Doesn't give any information about segments
 func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -54,7 +54,7 @@ func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 // desc: Get list of segments for {course}
-// status: works?
+// status: Works
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -74,7 +74,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 }
 
 // desc: Get data/sessions of the {segment} in the {course}
-// status: WIP. Not sure about this. Need to re-think.
+// status: Works
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	//courseCode := vars["course"]
@@ -82,7 +82,7 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	// Get course information
 	//courseRes := database.FindCourseTableById(courseCode)
 	// Get segment data
-	segRes := database.FindCourseTableById(segCode)
+	segRes := database.FindSegmentDataById(segCode)
 	//Transform results to json
 	anon, _ := json.Marshal(segRes)
 	n := len(anon)

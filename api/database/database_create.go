@@ -186,3 +186,39 @@ func CreateSegment(r *http.Request) Course {
 	return getCourseData
 
 }
+
+func CreateCategoriesForSegment(r *http.Request) {
+	if db == nil {
+		ConnectToDB()
+	}
+	//var tempCategories SegmentCategory
+	vars := mux.Vars(r)
+	segmentID := vars["segment"]
+	log.Println(segmentID)
+	tableToCreate := segmentID + "_categories"
+	if err := db.Table(tableToCreate).AutoMigrate(&SegmentCategory{
+		ID:                 0,
+		MainCategory:       0,
+		SubCategory:        "",
+		MandatoryToTrack:   false,
+		MandatoryToComment: false,
+		Tickable:           false,
+		LocationNeeded:     false,
+		Active:             false,
+		/*}).Model(&SegmentCategory{
+		ID:                 0,
+		MainCategory:       0,
+		SubCategory:        "",
+		MandatoryToTrack:   false,
+		MandatoryToComment: false,
+		Tickable:           false,
+		LocationNeeded:     false,
+		Active:             false,*/
+	}).Error; err != nil {
+		log.Panic("Problems creating categories table for segment. <database/database_create->CreateCategoriesForSegment>")
+	}
+	// db.Model(&models.UserInfo{}).AddForeignKey("u_id", "t_user(id)", "RESTRICT", "RESTRICT")
+	//db.Model(&SegmentCategory.MainCategory)
+	//db.Table(tableToCreate).Model(&SegmentCategory{}).AddForeignKey("maincategory", "maincategory(id)", "RESTRICT", "RESTRICT")
+	db.Table(tableToCreate).AddForeignKey("main_category", "maincategory(id)", "RESTRICT", "RESTRICT")
+}

@@ -30,6 +30,20 @@ func FindCourseTableById(id string) Course {
 	return tempCourse
 }
 
+// desc: Find segment by id
+// status:
+func FindSegmentDataById(id string) Segment {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	var tempSegment Segment
+
+	db.Table(segmentTableToEdit).Where("id = ?", id).Find(&tempSegment).Row()
+
+	return tempSegment
+}
+
 func FindSegmentTableByCourseId(courseID uint) []Segment {
 	if db == nil {
 		ConnectToDB()

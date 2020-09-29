@@ -89,13 +89,20 @@ type SchoolSegmentsSession struct {
 // Maybe should be belongs to o one-to-one with two structs?
 type SegmentCategory struct {
 	ID                 uint `gorm:"primary_key"`
-	MainCategory       string
+	MainCategory       uint
 	SubCategory        string
 	MandatoryToTrack   bool
 	MandatoryToComment bool
 	Tickable           bool
 	LocationNeeded     bool
 	Active             bool
+}
+
+type MainCategory struct {
+	ID       uint `gorm:"primary_key"`
+	Shorthad string
+	Finnish  string
+	English  string
 }
 
 // What Segments of Courses student is tracking.
