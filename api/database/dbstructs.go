@@ -25,13 +25,14 @@ type StudentUser struct {
 
 // Table for FacultyUsers f the API
 type FacultyUser struct {
-	ID             uint `gorm:"primary_key"`
-	FacultyID      string
-	FacultyName    string
-	FacultyEmail   string
-	School         School
-	Apartment      Apartment
-	FacultySegment FacultySegment
+	ID           uint `gorm:"primary_key"`
+	FacultyID    string
+	FacultyName  string
+	FacultyEmail string
+	School       School
+	Apartment    Apartment
+	//FacultySegment FacultySegment
+	FacultySegment string
 }
 
 type StudentClass struct {

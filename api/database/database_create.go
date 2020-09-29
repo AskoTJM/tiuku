@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Desc: For creating Segment table for new Student users
+// Desc: For creating Segments table for new Student users and adding it to student_user list
 // Status: Works
 func CreateStudentSegmentTable(StudentID string) string {
 	if db == nil {
@@ -37,7 +37,8 @@ func CreateStudentSegmentTable(StudentID string) string {
 			log.Panic("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
 		// Update the Student data with the name of the segment table
-		db.Model(&tempStudent).Where("student_id", StudentID).Update("student_segments", tableToEdit)
+		db.Model(&tempStudent).Where("student_id = ? ", StudentID).Update("student_segments", tableToEdit)
+		log.Println(tempStudent)
 		return tableToEdit
 
 	}

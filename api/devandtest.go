@@ -33,6 +33,13 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		database.PopulateStudents(i)
 		return "Populated students"
 	}
+
+	if h == "populatefaculty" {
+		num := r.Header.Get("X-Number")
+		i, _ := strconv.Atoi(num)
+		database.PopulateFaculty(i)
+		return "Populated faculty"
+	}
 	if h == "Hello" {
 		return "Hello"
 	}

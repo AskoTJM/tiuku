@@ -23,6 +23,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// desc: List of active courses
+// status: works
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 
 	result := database.GetCourses(r)
@@ -36,6 +38,8 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
+// desc: Get {course} information
+// status: works?
 func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -51,6 +55,8 @@ func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
+// desc: Get list of segments for {course}
+// status: works?
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -69,6 +75,8 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
+// desc: Get data/sessions of the {segment} in the {course}
+// status: WIP. Not sure about this. Need to re-think.
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	//courseCode := vars["course"]
@@ -87,27 +95,40 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
+// desc: Get categories for the {Segment}
+// status:
 func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc: Get settings for {category}
+// status:
 func GetCoursesCourseSegmentsSegmentCategoriesCategorySettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc: Change(GET) {setting} in {category}
+// status: Unnecessary? Better way to do this. Or least should be PUT/PATCH
+// ToDo: Remove or repurpose
 func GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
+// desc: Get settings for {segment} of the {course}
+// status: Not sure about this one either
+// todo: Think about this.
 func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
 }
 
+// desc: Get segments table for Faculty User
+// status: WIP
+//
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -118,8 +139,9 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Desc: Create new Course in course table
-// Status: Probably doesn't need so much to response stuff
+// desc: Create new Course in course table
+// Status: Need to clean and re-think, but works.
+// Probably doesn't need so much to response stuff
 func PostCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	//w.WriteHeader(http.StatusOK)
@@ -147,6 +169,7 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 // desc: New segment for the course
+// status: Works
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -160,7 +183,8 @@ func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// desc: New categories for segment
+// desc: Add New categories for segment
+// status:
 func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

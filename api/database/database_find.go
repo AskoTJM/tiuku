@@ -63,7 +63,7 @@ func FindSegmentTableById(segmentID uint) Segment {
 	if result != nil {
 		log.Println(result)
 	}
-	// Should be possible to have more than one row with ID
+	// Shouldn't be possible to have more than one row with ID
 	/*
 		returnSegment := make([]Segment, 0)
 		result2, _ := result.Rows()

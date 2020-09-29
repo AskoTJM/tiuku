@@ -97,11 +97,12 @@ func InitDB() {
 	log.Printf("Trying to AutoMigrate FacultyUsers table to database. <go/database.go->initDB>")
 	//if err := db.Table(schoolShortName + "_FacultyUsers").AutoMigrate(&FacultyUser{
 	if err := db.AutoMigrate(&FacultyUser{
-		ID:             0,
-		FacultyID:      "",
-		FacultyName:    "",
-		FacultyEmail:   "",
-		FacultySegment: FacultySegment{},
+		ID:           0,
+		FacultyID:    "",
+		FacultyName:  "",
+		FacultyEmail: "",
+		//FacultySegment: FacultySegment{},
+		FacultySegment: "",
 	}).Error; err != nil {
 		log.Panic("Problems creating table for FacultyUsers. <go/database.go->initDB>")
 	}
@@ -201,11 +202,12 @@ func InitDBv2() {
 		StudentEmail:    "",
 		StudentClass:    "",
 	}, &FacultyUser{
-		ID:             0,
-		FacultyID:      "",
-		FacultyName:    "",
-		FacultyEmail:   "",
-		FacultySegment: FacultySegment{},
+		ID:           0,
+		FacultyID:    "",
+		FacultyName:  "",
+		FacultyEmail: "",
+		//FacultySegment: FacultySegment{},
+		FacultySegment: "",
 	}, &School{
 		ID:       0,
 		Finnish:  "",
@@ -417,6 +419,31 @@ func PopulateCourses(p int) {
 			Segment:         []Segment{},
 		}).Error; err != nil {
 			log.Panic("Problems populating Courses table. <go/populate.go->populateCourses>")
+		}
+	}
+
+}
+
+// desc: Auto-generating faculty users for testing purposes
+func PopulateFaculty(p int) {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	for i := 0; i < p; i = i + 1 {
+
+		//if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
+		if err := db.Create(&FacultyUser{
+			ID:             0,
+			FacultyID:      "ope" + strconv.Itoa(i),
+			FacultyName:    "opettaja" + strconv.Itoa(i),
+			FacultyEmail:   "opettaja" + strconv.Itoa(i) + "@oppilaitos.fi",
+			School:         School{},
+			Apartment:      Apartment{},
+			FacultySegment: "",
+			//FacultySegment: FacultySegment{},
+		}).Error; err != nil {
+			log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 		}
 	}
 
