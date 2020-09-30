@@ -29,8 +29,8 @@ type FacultyUser struct {
 	FacultyID    string
 	FacultyName  string
 	FacultyEmail string
-	School       School
-	Apartment    Apartment
+	//School       School
+	Apartment Apartment
 	//FacultySegment FacultySegment
 	FacultySegment string
 }
@@ -55,7 +55,7 @@ type FacultySegment struct {
 // Table for course
 type Course struct {
 	ID              uint `gorm:"primary_key"`
-	Schools         School
+	Degree          Degree
 	CourseCode      string
 	CourseName      string
 	CourseStartDate string
@@ -69,7 +69,7 @@ type Segment struct {
 	ID                    uint `gorm:"primary_key"`
 	CourseID              uint
 	SegmentName           string
-	TeacherID             string
+	TeacherID             uint
 	Scope                 uint
 	SegmentCategories     SegmentCategory
 	ExpectedAttendance    uint

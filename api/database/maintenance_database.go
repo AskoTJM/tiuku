@@ -57,7 +57,7 @@ func InitDB() {
 	if err := db.AutoMigrate(&Course{
 		ID: 0,
 		//ResourceID:      0,
-		Schools:         School{},
+		Degree:          Degree{},
 		CourseCode:      "",
 		CourseName:      "",
 		CourseStartDate: "",
@@ -75,7 +75,7 @@ func InitDB() {
 		ID:                    0,
 		CourseID:              0,
 		SegmentName:           "",
-		TeacherID:             "",
+		TeacherID:             0,
 		Scope:                 0,
 		SegmentCategories:     SegmentCategory{},
 		ExpectedAttendance:    0,
@@ -208,7 +208,7 @@ func InitDBv2() {
 	if err := db.AutoMigrate(&Course{
 		ID: 0,
 		//ResourceID:      0,
-		Schools:         School{},
+		Degree:          Degree{},
 		CourseCode:      "",
 		CourseName:      "",
 		CourseStartDate: "",
@@ -218,7 +218,7 @@ func InitDBv2() {
 	}, &Segment{
 		ID:                    0,
 		SegmentName:           "",
-		TeacherID:             "",
+		TeacherID:             0,
 		Scope:                 0,
 		SegmentCategories:     SegmentCategory{},
 		ExpectedAttendance:    0,

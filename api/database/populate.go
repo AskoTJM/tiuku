@@ -95,6 +95,7 @@ func PopulateStudents(p int) {
 		}).Error; err != nil {
 			log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 		}
+		CreateStudentSegmentTable("oppi" + strconv.Itoa(i))
 	}
 
 }
@@ -117,7 +118,13 @@ func PopulateCourses(p int) {
 		if err := db.Create(&Course{
 			ID: 0,
 			//ResourceID:      0,
-			Schools:         School{},
+			Degree: Degree{
+				ID:          0,
+				ApartmentID: 0,
+				Shorthand:   "",
+				Finnish:     "",
+				English:     "",
+			},
 			CourseCode:      "GTC" + strconv.Itoa(i),
 			CourseName:      "Generated Test Course " + strconv.Itoa(i),
 			CourseStartDate: strconv.Itoa(i) + "." + strconv.Itoa(i) + ".2020",
@@ -131,7 +138,8 @@ func PopulateCourses(p int) {
 
 }
 
-// desc: Auto-generating faculty users for testing purposes
+// desc: Testing purposes generates faculty users
+//
 func PopulateFaculty(p int) {
 	if db == nil {
 		ConnectToDB()
@@ -141,17 +149,18 @@ func PopulateFaculty(p int) {
 
 		//if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
 		if err := db.Create(&FacultyUser{
-			ID:             0,
-			FacultyID:      "ope" + strconv.Itoa(i),
-			FacultyName:    "opettaja" + strconv.Itoa(i),
-			FacultyEmail:   "opettaja" + strconv.Itoa(i) + "@oppilaitos.fi",
-			School:         School{},
+			ID:           0,
+			FacultyID:    "ope" + strconv.Itoa(i),
+			FacultyName:  "opettaja" + strconv.Itoa(i),
+			FacultyEmail: "opettaja" + strconv.Itoa(i) + "@oppilaitos.fi",
+			//School:         School{},
 			Apartment:      Apartment{},
 			FacultySegment: "",
 			//FacultySegment: FacultySegment{},
 		}).Error; err != nil {
 			log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 		}
+		CreateFacultySegmentTable("ope" + strconv.Itoa(i))
 	}
 
 }
