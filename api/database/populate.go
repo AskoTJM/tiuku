@@ -105,7 +105,7 @@ func PopulateCourses(p int) {
 	if db == nil {
 		ConnectToDB()
 	}
-	for i := 0; i < p; i = i + 1 {
+	for i := 0; i < p; i++ {
 
 		// Auto-generating archived status
 		archivedToAdd := false
@@ -134,11 +134,39 @@ func PopulateCourses(p int) {
 		}).Error; err != nil {
 			log.Println("Problems populating Courses table. <go/populate.go->populateCourses>")
 		}
-		courseToAdd := FindCourseTableById(strconv.Itoa(i))
-		result := AutoCreateSegments(courseToAdd)
+		log.Println(i)
+		result := AutoCreateSegments(FindCourseTableById(strconv.Itoa(i + 1)))
 		log.Println(result.CourseName)
 	}
 
+}
+
+//	desc: AutoCreateSegments for Courses
+//	comment: Couldn't use
+func AutoCreateSegments(courseToAdd Course) Course {
+	if db == nil {
+		ConnectToDB()
+	}
+	//For what course is this
+	var c = 1
+	log.Printf("CourseCode is: %s", courseToAdd.CourseCode)
+	//getCourseData := FindCourseTableById(courseToAdd.ID)
+	for c < 4 {
+		newSegment := &Segment{
+			ID:                    0,
+			CourseID:              courseToAdd.ID,
+			SegmentName:           "segment " + strconv.Itoa(c),
+			TeacherID:             0,
+			Scope:                 3,
+			SegmentCategories:     SegmentCategory{},
+			ExpectedAttendance:    15,
+			SchoolSegmentsSession: SchoolSegmentsSession{},
+		}
+		c++
+		db.Model(&courseToAdd).Association("Segment").Append(newSegment)
+		db.Save(&courseToAdd)
+	}
+	return courseToAdd
 }
 
 // desc: Testing purposes generates faculty users
@@ -165,46 +193,5 @@ func PopulateFaculty(p int) {
 		}
 		CreateFacultySegmentTable("ope" + strconv.Itoa(i))
 	}
-
-}
-
-//	desc: AutoCreateSegments for Courses
-//	comment: Couldn't use
-func AutoCreateSegments(courseToAdd Course) Course {
-	if db == nil {
-		ConnectToDB()
-	}
-	//For what course is this
-	var c = 0
-	log.Printf("CourseCode is: %s", courseToAdd.CourseCode)
-	//getCourseData := FindCourseTableById(courseToAdd.ID)
-	for c < 3 {
-		newSegment := &Segment{
-			ID:                    0,
-			CourseID:              courseToAdd.ID,
-			SegmentName:           "segment " + strconv.Itoa(c),
-			TeacherID:             0,
-			Scope:                 3,
-			SegmentCategories:     SegmentCategory{},
-			ExpectedAttendance:    15,
-			SchoolSegmentsSession: SchoolSegmentsSession{},
-		}
-		c++
-		db.Model(&courseToAdd).Association("Segment").Append(newSegment)
-		db.Save(&courseToAdd)
-	}
-
-	return courseToAdd
-	//dec := json.NewDecoder(r.Body)
-	/*
-		newSeg.DisallowUnknownFields()
-		log.Println(dec)
-
-		var newSegment Segment
-		err := dec.Decode(&newSegment)
-		if err != nil {
-			log.Println("Problem with json decoding <database/database_create->CreateSegment")
-		}*/
-	//getCourseData.Segment[0] = newSegment
 
 }
