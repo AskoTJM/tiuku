@@ -22,7 +22,7 @@ func GetAnonId(StudentID string) string {
 
 	result := db.Table(studentsTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 	if result == nil {
-		log.Panic(result)
+		log.Println(result)
 	}
 	anon, _ := json.Marshal(result)
 	n := len(anon)
@@ -43,7 +43,7 @@ func GetStudentName(StudentID string) string {
 
 	result := db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 	if result == nil {
-		log.Panic(result)
+		log.Println(result)
 	}
 	anon, _ := json.Marshal(result)
 	n := len(anon)
@@ -62,17 +62,10 @@ func GetStudent(StudentID string) StudentUser {
 
 	var tempStudent StudentUser
 
-	//result :=
-	db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
-
-	/*
-		anon, _ := json.Marshal(result)
-		n := len(anon)
-		s := string(anon[:n])
-	*/
-	//if result.Error != nil {
-	//	log.Panic(result)
-	//}
+	result := db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	if result == nil {
+		log.Println(result)
+	}
 
 	return tempStudent
 }
@@ -129,4 +122,52 @@ func GetCourses(r *http.Request) []Course {
 	}
 
 	return returnCourses
+}
+
+// desc: Get segments of student user
+// status:
+func GetUserSegments(r *http.Request) []StudentSegment {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	var tempSegment []StudentSegment
+	myAnonID := GetAnonId(r.Header.Get("X-User"))
+	tableToEdit := myAnonID + "_segments"
+	result := db.Table(tableToEdit)
+	paramTest := r.URL.Query()
+	filter, params := paramTest["archived"]
+
+	if !params || len(filter) == 0 {
+		result = db.Table(tableToEdit).Where("archived = ?", false).Find(&tempSegment)
+		if result != nil {
+			log.Println(result.Error)
+		}
+	} else if paramTest.Get("archived") == "yes" {
+		result = db.Table(tableToEdit).Find(&tempSegment)
+		if result != nil {
+			log.Println(result.Error)
+		}
+	} else if paramTest.Get("archived") == "only" {
+		result = db.Table(tableToEdit).Where("archived = ?", true).Find(&tempSegment)
+		if result != nil {
+			log.Println(result)
+		}
+	} else {
+		fmt.Println("Error: Invalid parameters.")
+	}
+
+	returnSegments := make([]StudentSegment, 0)
+	result2, _ := result.Rows()
+
+	var tempSegments2 StudentSegment
+	for result2.Next() {
+
+		if err3 := result.ScanRows(result2, &tempSegments2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSegments = append(returnSegments, tempSegments2)
+	}
+
+	return returnSegments
 }

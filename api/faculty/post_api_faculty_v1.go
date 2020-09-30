@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/database"
@@ -33,7 +34,10 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 			//TLS:              &tls.ConnectionState{},
 		}
 		buff := bytes.NewBuffer(nil)
-		t.Write(buff)
+		err := t.Write(buff)
+		if err != nil {
+			log.Println(err)
+		}
 		fmt.Fprintf(w, "%s", buff)
 	}
 

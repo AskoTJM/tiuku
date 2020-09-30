@@ -12,10 +12,7 @@ package faculty
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/AskoTJM/tiuku/api/database"
 	"github.com/gorilla/mux"
@@ -127,11 +124,19 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 // desc: Get segments table for Faculty User
 // status: WIP
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	url, _ := url.Parse(r.RequestURI)
-	path := url.Path
-	uriParts := strings.Split(path, "/")
-	log.Printf("%s", uriParts)
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.WriteHeader(http.StatusOK)
+
+	user := r.Header.Get("X-User")
+	returnNum := database.CheckIfFacultyUserExists(user)
+	if returnNum == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "%s", "Incorrect request")
+	} else if returnNum > 1 {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	} else {
+		//database
+	}
 
 }

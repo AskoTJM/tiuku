@@ -34,7 +34,7 @@ func CreateStudentSegmentTable(StudentID string) string {
 			SegmentCategory:        "",
 			Archived:               false,
 		}).Error; err != nil {
-			log.Panic("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
+			log.Println("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
 		// Update the Student data with the name of the segment table
 		db.Model(&tempStudent).Where("student_id = ? ", StudentID).Update("student_segments", tableToEdit)
@@ -46,6 +46,8 @@ func CreateStudentSegmentTable(StudentID string) string {
 
 // Desc: For creating Archive Segment table for containing old segments
 // Status: Works
+// comment: Most likely unnecessary. Amount of segments for one student user shouldn't be that much
+// that we need another table for archiving.
 func CreateStudentSegmentTableArchived(StudentID string) string {
 	if db == nil {
 		ConnectToDB()
@@ -71,7 +73,7 @@ func CreateStudentSegmentTableArchived(StudentID string) string {
 			SegmentCategory:        "",
 			Archived:               false,
 		}).Error; err != nil {
-			log.Panic("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
+			log.Println("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
 		// Update the Student data with the name of the segment table
 		// db.Model(&tempStudent).Update("student_segments", tableToEdit)
@@ -85,10 +87,10 @@ func CreateFacultySegmentTable(myFacultyID string) string {
 	if db == nil {
 		ConnectToDB()
 	}
-	tableToEdit := myFacultyID + "_SegmentsTable"
+	tableToEdit := myFacultyID + "_segments"
 	result := db.HasTable(tableToEdit)
 	if result {
-		log.Println("Error: Table already exists. <database/database_maintenance.go->CreateFacultySegmentTable>")
+		log.Println("Error: Table already exists. <database/create_database.go->CreateFacultySegmentTable>")
 		return "Error: Table already exists."
 	} else {
 		if err := db.Table(tableToEdit).AutoMigrate(&FacultySegment{
@@ -99,7 +101,7 @@ func CreateFacultySegmentTable(myFacultyID string) string {
 			SegmentCategories:     SegmentCategory{},
 			Archived:              false,
 		}).Error; err != nil {
-			log.Panic("Problems creating Segment table of FacultyUsers. <database/database_create->CreateFacultySegmentTable>")
+			log.Println("Problems creating Segment table of FacultyUsers. <database/create_database->CreateFacultySegmentTable>")
 		}
 		return tableToEdit
 	}
@@ -118,18 +120,18 @@ func CreateCourse(r *http.Request) string {
 	result := db.HasTable(courseTableToEdit)
 
 	if !result {
-		log.Panic("Problems creating new Course, table for courses doesn't exist. <database/database_create->CreateCourse>")
+		log.Println("Problems creating new Course, table for courses doesn't exist. <database/database_create->CreateCourse>")
 	} else {
 		// Check if content type is set.
 		if r.Header.Get("Content-Type") == "" {
-			log.Panic("Problems creating new Course, no body in request information. <database/database_create->CreateCourse>")
-			log.Panic("Error: No body information available.")
+			log.Println("Problems creating new Course, no body in request information. <database/database_create->CreateCourse>")
+			log.Println("Error: No body information available.")
 		} else {
 			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
 			rbody := r.Header.Get("Content-Type")
 			// Check if content type is correct one.
 			if rbody != "application/json" {
-				log.Panic("Error: Content-Type is not application/json.")
+				log.Println("Error: Content-Type is not application/json.")
 			}
 
 		}
@@ -139,15 +141,15 @@ func CreateCourse(r *http.Request) string {
 		var newCourse Course
 		err := dec.Decode(&newCourse)
 		if err != nil {
-			log.Panic("Problem with json decoding <database/database_create->CreateCourse")
+			log.Println("Problem with json decoding <database/database_create->CreateCourse")
 		}
 		db.Table(courseTableToEdit).Create(&newCourse)
 		// Need to fix error checking.
 		/*
 			err2 := db.Table(tableToEdit).AutoMigrate(&newCourse)
 			if err2 != nil {
-				log.Panic("Problems creating new course on course table. <database/database_create->CreateCourse>")
-				log.Panic(err2)
+				log.Println("Problems creating new course on course table. <database/database_create->CreateCourse>")
+				log.Println(err2)
 			}
 		*/
 		return "Done adding"
@@ -158,7 +160,7 @@ func CreateCourse(r *http.Request) string {
 }
 
 // desc: Create new Segment for course
-// Status: No clue
+// Status: works
 func CreateSegment(r *http.Request) Course {
 	if db == nil {
 		ConnectToDB()
@@ -177,7 +179,7 @@ func CreateSegment(r *http.Request) Course {
 	var newSegment Segment
 	err := dec.Decode(&newSegment)
 	if err != nil {
-		log.Panic("Problem with json decoding <database/database_create->CreateSegment")
+		log.Println("Problem with json decoding <database/database_create->CreateSegment")
 	}
 	//getCourseData.Segment[0] = newSegment
 	db.Model(&getCourseData).Association("Segment").Append(newSegment)
@@ -206,7 +208,7 @@ func CreateCategoriesForSegment(r *http.Request) {
 		LocationNeeded:     false,
 		Active:             false,
 	}).Error; err != nil {
-		log.Panic("Problems creating categories table for segment. <database/database_create->CreateCategoriesForSegment>")
+		log.Println("Problems creating categories table for segment. <database/database_create->CreateCategoriesForSegment>")
 	}
 
 	db.Table(tableToCreate).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")

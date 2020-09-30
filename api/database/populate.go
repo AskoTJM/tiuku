@@ -93,7 +93,7 @@ func PopulateStudents(p int) {
 			StudentEmail:    "oppilas" + strconv.Itoa(i) + "@oppilaitos.fi",
 			StudentClass:    classToAdd,
 		}).Error; err != nil {
-			log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
+			log.Println("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 		}
 		CreateStudentSegmentTable("oppi" + strconv.Itoa(i))
 	}
@@ -132,8 +132,11 @@ func PopulateCourses(p int) {
 			Archived:        archivedToAdd,
 			Segment:         []Segment{},
 		}).Error; err != nil {
-			log.Panic("Problems populating Courses table. <go/populate.go->populateCourses>")
+			log.Println("Problems populating Courses table. <go/populate.go->populateCourses>")
 		}
+		courseToAdd := FindCourseTableById(strconv.Itoa(i))
+		result := AutoCreateSegments(courseToAdd)
+		log.Println(result.CourseName)
 	}
 
 }
@@ -158,9 +161,50 @@ func PopulateFaculty(p int) {
 			FacultySegment: "",
 			//FacultySegment: FacultySegment{},
 		}).Error; err != nil {
-			log.Panic("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
+			log.Println("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 		}
 		CreateFacultySegmentTable("ope" + strconv.Itoa(i))
 	}
+
+}
+
+//	desc: AutoCreateSegments for Courses
+//	comment: Couldn't use
+func AutoCreateSegments(courseToAdd Course) Course {
+	if db == nil {
+		ConnectToDB()
+	}
+	//For what course is this
+	var c = 0
+	log.Printf("CourseCode is: %s", courseToAdd.CourseCode)
+	//getCourseData := FindCourseTableById(courseToAdd.ID)
+	for c < 3 {
+		newSegment := &Segment{
+			ID:                    0,
+			CourseID:              courseToAdd.ID,
+			SegmentName:           "segment " + strconv.Itoa(c),
+			TeacherID:             0,
+			Scope:                 3,
+			SegmentCategories:     SegmentCategory{},
+			ExpectedAttendance:    15,
+			SchoolSegmentsSession: SchoolSegmentsSession{},
+		}
+		c++
+		db.Model(&courseToAdd).Association("Segment").Append(newSegment)
+		db.Save(&courseToAdd)
+	}
+
+	return courseToAdd
+	//dec := json.NewDecoder(r.Body)
+	/*
+		newSeg.DisallowUnknownFields()
+		log.Println(dec)
+
+		var newSegment Segment
+		err := dec.Decode(&newSegment)
+		if err != nil {
+			log.Println("Problem with json decoding <database/database_create->CreateSegment")
+		}*/
+	//getCourseData.Segment[0] = newSegment
 
 }
