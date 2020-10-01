@@ -72,15 +72,10 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		anon, _ := json.Marshal(result)
 		n := len(anon)
 		s := string(anon[:n])
-		/*
-			fmt.Fprintf(w, "%s", s)
-			return "yep"
-		*/
 
-		//tempJSON := gjson.Get(s, "Value.AnonID")
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		return s //tempJSON.String()
+		return s
 	}
 	if h == "findasso" {
 		database.CheckAssociation(w, r)
@@ -88,6 +83,11 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	}
 	if h == "populatesegments" {
 		database.AutoCreateSegments()
+		//database.AutoCreateStudentUserTables()
+	}
+	if h == "populatesegments2" {
+		//database.AutoCreateSegments()
+		database.AutoCreateStudentUserTables()
 	}
 
 	return "nothing"

@@ -23,6 +23,9 @@ var segmentTableToEdit = "segments"
 var studentsTableToEdit = "student_users"
 var facultyTableToEdit = "faculty_users"
 
+// Debug mode for spamming your logs
+var debugMode bool = true
+
 // Desc: Establish connection to database
 // Status: Done
 func ConnectToDB() {
@@ -30,8 +33,9 @@ func ConnectToDB() {
 
 	//Maybe use global variables for database settings. But for now this is fine...
 	//var dbconn = "\"" + usernamedb + ":" + userpassdb + "@tcp(db:3306)/tiukuDB?charset=utf8mb4"
-	log.Printf("Trying to connect to database. <database/database.go->connectToDB>")
-
+	if debugMode {
+		log.Printf("Trying to connect to database. <database/database.go->connectToDB>")
+	}
 	//For GORM v2 following should be used, but doesn't seem to work.
 	//dsn := "apiaccess:apipass@tcp(db:3306)/tiukuDB?charset=utf8mb4&parseTime=True&loc=Local"
 	//db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -52,8 +56,9 @@ func InitDB() {
 	if db == nil {
 		ConnectToDB()
 	}
-
-	log.Printf("Trying to AutoMigrate Course table to database. <database/maintenance_database.go->initDB>")
+	if debugMode {
+		log.Printf("Trying to AutoMigrate Course table to database. <database/maintenance_database.go->initDB>")
+	}
 	//if err := db.Table(schoolShortName + "_Courses").AutoMigrate(&Course{
 	if err := db.AutoMigrate(&Course{
 		ID: 0,
@@ -70,8 +75,9 @@ func InitDB() {
 	}
 
 	// This should be created and named when creating Segment
-
-	log.Printf("Trying to AutoMigrate Segment table to database. <database/maintenance_database.go->initDB>")
+	if debugMode {
+		log.Printf("Trying to AutoMigrate Segment table to database. <database/maintenance_database.go->initDB>")
+	}
 	if err := db.AutoMigrate(&Segment{
 		ID:                    0,
 		CourseID:              0,
@@ -274,5 +280,25 @@ func CountSegments() int {
 	}
 	var numberOfRows int
 	db.Table(segmentTableToEdit).Count(&numberOfRows)
+	return numberOfRows
+}
+
+// desc: Number of Student users in the database
+func CountStudentUsers() int {
+	if db == nil {
+		ConnectToDB()
+	}
+	var numberOfRows int
+	db.Table(studentsTableToEdit).Count(&numberOfRows)
+	return numberOfRows
+}
+
+// desc: Number of Faculty users in the database
+func CountFacultyUsers() int {
+	if db == nil {
+		ConnectToDB()
+	}
+	var numberOfRows int
+	db.Table(facultyTableToEdit).Count(&numberOfRows)
 	return numberOfRows
 }

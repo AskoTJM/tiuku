@@ -62,11 +62,13 @@ func GetStudentUser(StudentID string) StudentUser {
 
 	var tempStudent StudentUser
 
-	result := db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	result := db.Table(studentsTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 	if result == nil {
 		log.Println(result)
 	}
-
+	if debugMode {
+		log.Printf("tempStudent has value of: %s", tempStudent.AnonID)
+	}
 	return tempStudent
 }
 
@@ -183,7 +185,7 @@ func GetFacultyUser(FacultyID string) FacultyUser {
 
 	var tempFaculty FacultyUser
 
-	result := db.Table(courseTableToEdit).Where("student_id = ?", FacultyID).First(&tempFaculty)
+	result := db.Table(courseTableToEdit).Where("faculty_id = ?", FacultyID).First(&tempFaculty)
 	if result == nil {
 		log.Println(result)
 	}

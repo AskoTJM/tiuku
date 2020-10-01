@@ -10,14 +10,17 @@ import (
 
 // Desc: For creating Segments table for new Student users and adding it to student_user list
 // Status: Works
-func CreateStudentSegmentTable(newStudent StudentUser) string {
+func CreateStudentSegmentTable(student StudentUser) string {
 	if db == nil {
 		ConnectToDB()
 	}
 	// Get Students data
-	tempStudent := GetStudentUser(newStudent.StudentID)
+	tempStudent := student //.StudentID)
 	// Get AnonID for data
-	myAnonID := newStudent.AnonID
+	myAnonID := tempStudent.AnonID
+	if debugMode {
+		log.Printf("Anon Id is: %s", student.StudentID)
+	}
 	tableToEdit := myAnonID + "_segments"
 	result := db.HasTable(tableToEdit)
 	if result {
@@ -37,8 +40,10 @@ func CreateStudentSegmentTable(newStudent StudentUser) string {
 			log.Println("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
 		// Update the Student data with the name of the segment table
-		db.Model(&tempStudent).Where("student_id = ? ", newStudent.ID).Update("student_segments", tableToEdit)
-		log.Println(tempStudent)
+		db.Model(&tempStudent).Where("student_id = ? ", tempStudent.StudentID).Update("student_segments", tableToEdit)
+		if debugMode {
+			log.Println(tempStudent)
+		}
 		return tableToEdit
 
 	}

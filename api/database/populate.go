@@ -95,11 +95,28 @@ func PopulateStudents(p int) {
 		}).Error; err != nil {
 			log.Println("Problems populating table of StudentUsers. <database/populate.go->populateStudents>")
 		}
-		tempStudent := GetStudentUser(strconv.Itoa(i))
-		CreateStudentSegmentTable(tempStudent)
 
 	}
 
+}
+
+func AutoCreateStudentUserTables() {
+	if db == nil {
+		ConnectToDB()
+	}
+	numberOfStudentUsers := CountStudentUsers()
+	i := 1
+	for i < numberOfStudentUsers {
+		newStudent := GetStudentUser("oppi" + strconv.Itoa(i))
+		if debugMode {
+			log.Printf("newStudent has value of: %d", i)
+			log.Printf("newStudent AnonID is : %s", newStudent.AnonID)
+		}
+		CreateStudentSegmentTable(newStudent)
+		CreateActiveSegmentSessionsTable(newStudent)
+		CreateStudentSegmentTableArchived(newStudent)
+		i++
+	}
 }
 
 // desc: Auto-generating courses for testing purposes
@@ -137,14 +154,14 @@ func PopulateCourses(p int) {
 		}).Error; err != nil {
 			log.Println("Problems populating Courses table. <database/populate.go->populateCourses>")
 		}
-		tempFaculty := GetFacultyUser(strconv.Itoa(i))
-		CreateFacultySegmentTable(tempFaculty)
+		//tempFaculty := GetFacultyUser(strconv.Itoa(i))
+		//CreateFacultySegmentTable(tempFaculty)
 	}
 
 }
 
 //	desc: AutoCreateSegments for Courses
-//	comment: Couldn't use
+//	comment: Modified code from CreateSegments
 func AutoCreateSegments() {
 	if db == nil {
 		ConnectToDB()
@@ -226,6 +243,25 @@ func PopulateFaculty(p int) {
 			log.Println("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 		}
 		//CreateFacultySegmentTable("ope" + strconv.Itoa(i))
+		//tempFaculty := GetFacultyUser(strconv.Itoa(i))
+		//if debugMode {
+		//	log.Println(tempFaculty.FacultyID)
+		//}
+		//tempFaculty.FacultySegment = CreateFacultySegmentTable(tempFaculty)
 	}
 
+}
+
+// desc: Auto create table for Faculty Users
+func AutoCreateFacultyUserTables() {
+	if db == nil {
+		ConnectToDB()
+	}
+	numberOfFacultyUsers := CountFacultyUsers()
+	i := 1
+	for i < numberOfFacultyUsers {
+		newFaculty := GetFacultyUser("ope" + strconv.Itoa(i))
+		CreateFacultySegmentTable(newFaculty)
+		i++
+	}
 }

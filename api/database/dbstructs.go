@@ -149,6 +149,8 @@ type StudentSegmentSession struct {
 	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
 	//gorm.Model
 	ID              uint `gorm:"primary_key"`
+	SegmentID       uint
+	Segment         Segment
 	StartTime       string
 	EndTime         string
 	CreatedAt       string
