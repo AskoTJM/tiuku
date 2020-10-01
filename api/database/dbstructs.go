@@ -56,7 +56,7 @@ type FacultySegment struct {
 type Course struct {
 	ID              uint `gorm:"primary_key"`
 	Degree          Degree
-	CourseCode      string
+	CourseCode      string `gorm:"not null"`
 	CourseName      string
 	CourseStartDate string
 	CourseEndDate   string
@@ -66,20 +66,21 @@ type Course struct {
 
 // Course can have on or more Segments
 type Segment struct {
-	ID                    uint `gorm:"primary_key"`
-	CourseID              uint
-	SegmentName           string
-	TeacherID             uint
-	Scope                 uint
-	SegmentCategories     SegmentCategory
+	ID          uint `gorm:"primary_key"`
+	CourseID    uint `gorm:"not null"`
+	SegmentName string
+	TeacherID   uint
+	Scope       uint
+	//SegmentCategories     SegmentCategory
+	SegmentCategories     string
 	ExpectedAttendance    uint
 	SchoolSegmentsSession SchoolSegmentsSession
 }
 
 // Schools Segment table has data fo students and where to find their Session for the Segement.
 type SchoolSegmentsSession struct {
-	ID                      uint `gorm:"primary_key"`
-	AnonID                  string
+	ID                      uint   `gorm:"primary_key"`
+	AnonID                  string `gorm:"not null"`
 	StudentSegmentsSessions string
 	Privacy                 string
 }
@@ -89,7 +90,7 @@ type SchoolSegmentsSession struct {
 // Maybe should be belongs to o one-to-one with two structs?
 type SegmentCategory struct {
 	ID                 uint `gorm:"primary_key"`
-	MainCategory       uint
+	MainCategory       uint `gorm:"not null"`
 	SubCategory        string
 	MandatoryToTrack   bool
 	MandatoryToComment bool
@@ -99,10 +100,10 @@ type SegmentCategory struct {
 }
 
 type MainCategory struct {
-	ID       uint `gorm:"primary_key"`
-	Shorthad string
-	Finnish  string
-	English  string
+	ID        uint `gorm:"primary_key"`
+	Shorthand string
+	Finnish   string
+	English   string
 }
 
 // What Segments of Courses student is tracking.

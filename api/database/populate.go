@@ -38,32 +38,32 @@ func PopulateSchool() {
 			}},
 		}},
 	}).Error; err != nil {
-		log.Printf("Problems populating table of Schools. <go/populate.go->populateSchool>")
+		log.Printf("Problems populating table of Schools. <database/populate.go->populateSchool>")
 	}
 
 	if err := db.Create(&MainCategory{
-		ID:       0,
-		Shorthad: "Lähi",
-		Finnish:  "Lähiopetus",
-		English:  "Classroom study",
+		ID:        0,
+		Shorthand: "Lähi",
+		Finnish:   "Lähiopetus",
+		English:   "Classroom study",
 	}).Error; err != nil {
-		log.Printf("Problems creating main categories. <go/populate.go->populateSchool>")
+		log.Printf("Problems creating main categories. <database/populate.go->populateSchool>")
 	}
 	if err := db.Create(&MainCategory{
-		ID:       0,
-		Shorthad: "Etä",
-		Finnish:  "Etäopetus",
-		English:  "Virtualroom study",
+		ID:        0,
+		Shorthand: "Etä",
+		Finnish:   "Etäopetus",
+		English:   "Virtualroom study",
 	}).Error; err != nil {
-		log.Printf("Problems creating main categories. <go/populate.go->populateSchool>")
+		log.Printf("Problems creating main categories. <database/populate.go->populateSchool>")
 	}
 	if err := db.Create(&MainCategory{
-		ID:       0,
-		Shorthad: "Itse",
-		Finnish:  "Itsenäinen opiskelu",
-		English:  "Independent Study",
+		ID:        0,
+		Shorthand: "Itse",
+		Finnish:   "Itsenäinen opiskelu",
+		English:   "Independent Study",
 	}).Error; err != nil {
-		log.Printf("Problems creating main categories. <go/populate.go->populateSchool>")
+		log.Printf("Problems creating main categories. <database/populate.go->populateSchool>")
 	}
 }
 
@@ -72,9 +72,9 @@ func PopulateStudents(p int) {
 	if db == nil {
 		ConnectToDB()
 	}
-
-	for i := 0; i < p; i = i + 1 {
-
+	i := 0
+	for i < p {
+		i = i + 1
 		// Switching auto-generated classes
 		classToAdd := ""
 		if i%2 == 0 {
@@ -93,7 +93,7 @@ func PopulateStudents(p int) {
 			StudentEmail:    "oppilas" + strconv.Itoa(i) + "@oppilaitos.fi",
 			StudentClass:    classToAdd,
 		}).Error; err != nil {
-			log.Println("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
+			log.Println("Problems populating table of StudentUsers. <database/populate.go->populateStudents>")
 		}
 		CreateStudentSegmentTable("oppi" + strconv.Itoa(i))
 	}
@@ -105,8 +105,9 @@ func PopulateCourses(p int) {
 	if db == nil {
 		ConnectToDB()
 	}
-	for i := 0; i < p; i++ {
-
+	i := 0
+	for i < p {
+		i++
 		// Auto-generating archived status
 		archivedToAdd := false
 		if i%2 == 0 {
@@ -132,41 +133,72 @@ func PopulateCourses(p int) {
 			Archived:        archivedToAdd,
 			Segment:         []Segment{},
 		}).Error; err != nil {
-			log.Println("Problems populating Courses table. <go/populate.go->populateCourses>")
+			log.Println("Problems populating Courses table. <database/populate.go->populateCourses>")
 		}
 		log.Println(i)
-		result := AutoCreateSegments(FindCourseTableById(strconv.Itoa(i + 1)))
-		log.Println(result.CourseName)
+
 	}
 
 }
 
 //	desc: AutoCreateSegments for Courses
 //	comment: Couldn't use
-func AutoCreateSegments(courseToAdd Course) Course {
+func AutoCreateSegments() {
 	if db == nil {
 		ConnectToDB()
 	}
-	//For what course is this
-	var c = 1
-	log.Printf("CourseCode is: %s", courseToAdd.CourseCode)
-	//getCourseData := FindCourseTableById(courseToAdd.ID)
-	for c < 4 {
-		newSegment := &Segment{
-			ID:                    0,
-			CourseID:              courseToAdd.ID,
-			SegmentName:           "segment " + strconv.Itoa(c),
-			TeacherID:             0,
-			Scope:                 3,
-			SegmentCategories:     SegmentCategory{},
-			ExpectedAttendance:    15,
-			SchoolSegmentsSession: SchoolSegmentsSession{},
+	numberOfCourses := CountCourses()
+	i := 1
+	for i < numberOfCourses {
+		courseToAdd := FindCourseTableById(strconv.Itoa(i))
+		log.Print(courseToAdd.ID)
+		c := 1
+		for c < 4 {
+			newSegment := &Segment{
+				ID:                    0,
+				CourseID:              courseToAdd.ID,
+				SegmentName:           "segment " + strconv.Itoa(c),
+				TeacherID:             0,
+				Scope:                 3,
+				SegmentCategories:     "", //SegmentCategory{},
+				ExpectedAttendance:    15,
+				SchoolSegmentsSession: SchoolSegmentsSession{},
+			}
+			c++
+			newSegment.CourseID = courseToAdd.ID
+			db.Model(&courseToAdd).Association("Segment").Append(newSegment)
+			db.Save(&courseToAdd)
+			newSegment.SegmentCategories = AutoCreateCategoriesForSegment(newSegment.ID)
 		}
-		c++
-		db.Model(&courseToAdd).Association("Segment").Append(newSegment)
-		db.Save(&courseToAdd)
+
+		i++
 	}
-	return courseToAdd
+	//return courseToAdd
+}
+
+func AutoCreateCategoriesForSegment(segmentToAdd uint) string { //segmentToAdd Segment) string {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	segmentID := segmentToAdd //.ID
+	log.Println(segmentID)
+	tableToCreate := strconv.FormatUint(uint64(segmentID), 10) + "_categories"
+	if err := db.Table(tableToCreate).AutoMigrate(&SegmentCategory{
+		ID:                 0,
+		MainCategory:       0,
+		SubCategory:        "",
+		MandatoryToTrack:   false,
+		MandatoryToComment: false,
+		Tickable:           false,
+		LocationNeeded:     false,
+		Active:             false,
+	}).Error; err != nil {
+		log.Println("Problems creating categories table for segment. <database/database_create->AutoCreateCategoriesForSegment>")
+	}
+
+	db.Table(tableToCreate).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
+	return tableToCreate
 }
 
 // desc: Testing purposes generates faculty users
@@ -175,9 +207,9 @@ func PopulateFaculty(p int) {
 	if db == nil {
 		ConnectToDB()
 	}
-
-	for i := 0; i < p; i = i + 1 {
-
+	i := 0
+	for i < p {
+		i = i + 1
 		//if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
 		if err := db.Create(&FacultyUser{
 			ID:           0,

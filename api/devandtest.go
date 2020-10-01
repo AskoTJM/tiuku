@@ -85,8 +85,8 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		database.CheckAssociation(w, r)
 
 	}
-	if h == "maincategories" {
-
+	if h == "populatesegments" {
+		database.AutoCreateSegments()
 	}
 
 	return "nothing"

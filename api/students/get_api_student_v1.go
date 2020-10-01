@@ -101,7 +101,7 @@ func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 }
 
 // desc: Get list of active segments for student user
-// status.
+// status:
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")

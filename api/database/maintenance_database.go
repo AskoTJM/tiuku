@@ -78,7 +78,7 @@ func InitDB() {
 		SegmentName:           "",
 		TeacherID:             0,
 		Scope:                 0,
-		SegmentCategories:     SegmentCategory{},
+		SegmentCategories:     "", //SegmentCategory{},
 		ExpectedAttendance:    0,
 		SchoolSegmentsSession: SchoolSegmentsSession{},
 	}).Error; err != nil {
@@ -88,10 +88,10 @@ func InitDB() {
 	log.Printf("Trying to AutoMigrate Course table to database. <database/maintenance_database.go->initDB>")
 	//if err := db.Table(schoolShortName + "_Courses").AutoMigrate(&Course{
 	if err := db.AutoMigrate(&MainCategory{
-		ID:       0,
-		Shorthad: "",
-		Finnish:  "",
-		English:  "",
+		ID:        0,
+		Shorthand: "",
+		Finnish:   "",
+		English:   "",
 	}).Error; err != nil {
 		log.Println("Problems creating table for Course. <database/maintenance_database.go->initDB>")
 	}
@@ -221,7 +221,7 @@ func InitDBv2() {
 		SegmentName:           "",
 		TeacherID:             0,
 		Scope:                 0,
-		SegmentCategories:     SegmentCategory{},
+		SegmentCategories:     "", //SegmentCategory{},
 		ExpectedAttendance:    0,
 		SchoolSegmentsSession: SchoolSegmentsSession{},
 	}, &FacultySegment{
@@ -338,4 +338,22 @@ func CheckAssociation(w http.ResponseWriter, r *http.Request) {
 		log.Println(s)
 		fmt.Fprintf(w, "%s", s)
 	}
+}
+
+func CountCourses() int {
+	if db == nil {
+		ConnectToDB()
+	}
+	var numberOfRows int
+	db.Table(courseTableToEdit).Count(&numberOfRows)
+	return numberOfRows
+}
+
+func CountSegments() int {
+	if db == nil {
+		ConnectToDB()
+	}
+	var numberOfRows int
+	db.Table(segmentTableToEdit).Count(&numberOfRows)
+	return numberOfRows
 }
