@@ -198,91 +198,6 @@ func InitDB() {
 
 }
 
-// Alternative test for InitDB initalization
-func InitDBv2() {
-
-	if db == nil {
-		ConnectToDB()
-	}
-
-	log.Printf("Trying to AutoMigrate Course table to database. <database/maintenance_database.go->initDB>")
-	if err := db.AutoMigrate(&Course{
-		ID: 0,
-		//ResourceID:      0,
-		Degree:          Degree{},
-		CourseCode:      "",
-		CourseName:      "",
-		CourseStartDate: "",
-		CourseEndDate:   "",
-		Archived:        false,
-		Segment:         []Segment{},
-	}, &Segment{
-		ID:                    0,
-		SegmentName:           "",
-		TeacherID:             0,
-		Scope:                 0,
-		SegmentCategories:     "", //SegmentCategory{},
-		ExpectedAttendance:    0,
-		SchoolSegmentsSession: SchoolSegmentsSession{},
-	}, &FacultySegment{
-		ID:                    0,
-		Course:                Course{},
-		SegmentNumber:         0,
-		SchoolSegmentsSession: SchoolSegmentsSession{},
-		SegmentCategories:     SegmentCategory{},
-		Archived:              false,
-	}, &StudentSegment{
-		ID:            0,
-		Course:        Course{},
-		SegmentNumber: 0,
-		//StudentSegmentSessions: StudentSegmentSession{},
-		//SegmentCategory:        SegmentCategory{},
-		StudentSegmentSessions: "",
-		SegmentCategory:        "",
-		Archived:               false,
-	}, &StudentUser{
-		ID:          0,
-		StudentID:   "",
-		AnonID:      "",
-		StudentName: "",
-		//StudentSegments: StudentSegment{},
-		StudentSegments: "",
-		StudentEmail:    "",
-		StudentClass:    "",
-	}, &FacultyUser{
-		ID:           0,
-		FacultyID:    "",
-		FacultyName:  "",
-		FacultyEmail: "",
-		//FacultySegment: FacultySegment{},
-		FacultySegment: "",
-	}, &School{
-		ID:       0,
-		Finnish:  "",
-		English:  "",
-		Campuses: []Campus{},
-	}, &Campus{
-		ID:         0,
-		Finnish:    "",
-		English:    "",
-		Apartments: []Apartment{},
-	}, &Apartment{
-		ID:      0,
-		Finnish: "",
-		English: "",
-		Degrees: []Degree{},
-	}, &Degree{
-		ID:      0,
-		Finnish: "",
-		English: "",
-	}).Error; err != nil {
-		log.Println("Problems creating initial tables. <database/maintenance_database.go->initDBv2>")
-	}
-	//db.Model(&School.Campuses{}).AddForeignKey("")
-
-	//if err := db.CreateTable("")
-}
-
 // Desc: Check if Student user exists
 // Status: Works, maybe with slight changes could be used for all row counting?
 func CheckIfUserExists(StudentID string) int64 {
@@ -340,6 +255,8 @@ func CheckAssociation(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// desc: Count how many courses there are in the courses table.
+// status:
 func CountCourses() int {
 	if db == nil {
 		ConnectToDB()
@@ -349,6 +266,8 @@ func CountCourses() int {
 	return numberOfRows
 }
 
+// desc: Count how many segments there are in the segment table.
+// status:
 func CountSegments() int {
 	if db == nil {
 		ConnectToDB()

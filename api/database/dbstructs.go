@@ -14,9 +14,9 @@ type StudentUser struct {
 */
 // Restructed
 type StudentUser struct {
-	ID              uint `gorm:"primary_key"`
-	StudentID       string
-	AnonID          string
+	ID              uint   `gorm:"primary_key"`
+	StudentID       string `gorm:"not null"`
+	AnonID          string `gorm:"not null"`
 	StudentName     string
 	StudentSegments string
 	StudentEmail    string
@@ -25,8 +25,8 @@ type StudentUser struct {
 
 // Table for FacultyUsers f the API
 type FacultyUser struct {
-	ID           uint `gorm:"primary_key"`
-	FacultyID    string
+	ID           uint   `gorm:"primary_key"`
+	FacultyID    string `gorm:"not null"`
 	FacultyName  string
 	FacultyEmail string
 	//School       School
@@ -154,7 +154,7 @@ type StudentSegmentSession struct {
 	CreatedAt       string
 	UpdateAt        string
 	DeletedAt       string
-	SegmentCategory string
+	SegmentCategory string `gorm:"not null"`
 	Comment         string
 	Version         uint
 	Locations       string

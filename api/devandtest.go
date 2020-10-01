@@ -59,7 +59,8 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	}
 	if h == "studentsegment" {
 		user := r.Header.Get("X-User")
-		return database.CreateStudentSegmentTable(user)
+		studentTemp := database.GetStudentUser(user)
+		return database.CreateStudentSegmentTable(studentTemp)
 
 	}
 	if h == "createcourse" {
@@ -67,7 +68,7 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	}
 	if h == "getstudentdata" {
 		user := r.Header.Get("X-User")
-		result := database.GetStudent(user)
+		result := database.GetStudentUser(user)
 		anon, _ := json.Marshal(result)
 		n := len(anon)
 		s := string(anon[:n])

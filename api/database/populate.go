@@ -8,7 +8,7 @@ import (
 
 // Place for scripts to initalization and for populating database with test data
 // Stuff that should not be needed when in use.
-
+// desc: Populating School data and maincategories
 func PopulateSchool() {
 	if db == nil {
 		ConnectToDB()
@@ -95,7 +95,9 @@ func PopulateStudents(p int) {
 		}).Error; err != nil {
 			log.Println("Problems populating table of StudentUsers. <database/populate.go->populateStudents>")
 		}
-		CreateStudentSegmentTable("oppi" + strconv.Itoa(i))
+		tempStudent := GetStudentUser(strconv.Itoa(i))
+		CreateStudentSegmentTable(tempStudent)
+
 	}
 
 }
@@ -135,8 +137,8 @@ func PopulateCourses(p int) {
 		}).Error; err != nil {
 			log.Println("Problems populating Courses table. <database/populate.go->populateCourses>")
 		}
-		log.Println(i)
-
+		tempFaculty := GetFacultyUser(strconv.Itoa(i))
+		CreateFacultySegmentTable(tempFaculty)
 	}
 
 }
@@ -218,12 +220,12 @@ func PopulateFaculty(p int) {
 			FacultyEmail: "opettaja" + strconv.Itoa(i) + "@oppilaitos.fi",
 			//School:         School{},
 			Apartment:      Apartment{},
-			FacultySegment: "",
+			FacultySegment: "", //CreateFacultySegmentTable("ope" + strconv.Itoa(i))"",
 			//FacultySegment: FacultySegment{},
 		}).Error; err != nil {
 			log.Println("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 		}
-		CreateFacultySegmentTable("ope" + strconv.Itoa(i))
+		//CreateFacultySegmentTable("ope" + strconv.Itoa(i))
 	}
 
 }

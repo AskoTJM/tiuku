@@ -10,14 +10,14 @@ import (
 
 // Desc: For creating Segments table for new Student users and adding it to student_user list
 // Status: Works
-func CreateStudentSegmentTable(StudentID string) string {
+func CreateStudentSegmentTable(newStudent StudentUser) string {
 	if db == nil {
 		ConnectToDB()
 	}
 	// Get Students data
-	tempStudent := GetStudent(StudentID)
+	tempStudent := GetStudentUser(newStudent.StudentID)
 	// Get AnonID for data
-	myAnonID := GetAnonId(StudentID)
+	myAnonID := newStudent.AnonID
 	tableToEdit := myAnonID + "_segments"
 	result := db.HasTable(tableToEdit)
 	if result {
@@ -37,7 +37,7 @@ func CreateStudentSegmentTable(StudentID string) string {
 			log.Println("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
 		// Update the Student data with the name of the segment table
-		db.Model(&tempStudent).Where("student_id = ? ", StudentID).Update("student_segments", tableToEdit)
+		db.Model(&tempStudent).Where("student_id = ? ", newStudent.ID).Update("student_segments", tableToEdit)
 		log.Println(tempStudent)
 		return tableToEdit
 
@@ -48,14 +48,14 @@ func CreateStudentSegmentTable(StudentID string) string {
 // Status: Works
 // comment: Most likely unnecessary. Amount of segments for one student user shouldn't be that much
 // that we need another table for archiving.
-func CreateStudentSegmentTableArchived(StudentID string) string {
+func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
 	if db == nil {
 		ConnectToDB()
 	}
 	// Get Students data
 	//tempStudent := GetStudent(StudentID)
 	// Get AnonID for data
-	myAnonID := GetAnonId(StudentID)
+	myAnonID := newStudent.AnonID
 	tableToEdit := myAnonID + "_segments_archived"
 	// Check if the table already exists
 	result := db.HasTable(tableToEdit)
@@ -83,11 +83,11 @@ func CreateStudentSegmentTableArchived(StudentID string) string {
 
 // Desc: Create Segment table for new Faculty users
 // Status: No clue, just copy+pasted and edited from CreateStudentSegmentTable
-func CreateFacultySegmentTable(myFacultyID string) string {
+func CreateFacultySegmentTable(newFaculty FacultyUser) string {
 	if db == nil {
 		ConnectToDB()
 	}
-	tableToEdit := myFacultyID + "_segments"
+	tableToEdit := newFaculty.FacultyID + "_segments"
 	result := db.HasTable(tableToEdit)
 	if result {
 		log.Println("Error: Table already exists. <database/create_database.go->CreateFacultySegmentTable>")
@@ -212,4 +212,55 @@ func CreateCategoriesForSegment(r *http.Request) {
 	}
 
 	db.Table(tableToCreate).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
+}
+
+// desc: Create SegmentSessionTable for active segments for new student user
+func CreateActiveSegmentSessionsTable(user StudentUser) string {
+	if db == nil {
+		ConnectToDB()
+	}
+	//var newTable StudentSegmentSession
+	tableToCreate := user.AnonID + "_sessions"
+
+	if err := db.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{
+		ID:              0,
+		StartTime:       "",
+		EndTime:         "",
+		CreatedAt:       "",
+		UpdateAt:        "",
+		DeletedAt:       "",
+		SegmentCategory: "",
+		Comment:         "",
+		Version:         0,
+		Locations:       "",
+	}).Error; err != nil {
+		log.Println("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable>")
+	}
+
+	return tableToCreate
+}
+
+// desc: Create Archive SegmentSessionTable for student user
+func CreateSegmentsSessionsArchive(user StudentUser) string {
+	if db == nil {
+		ConnectToDB()
+	}
+	tableToCreate := user.AnonID + "_sessions_archived"
+
+	if err := db.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{
+		ID:              0,
+		StartTime:       "",
+		EndTime:         "",
+		CreatedAt:       "",
+		UpdateAt:        "",
+		DeletedAt:       "",
+		SegmentCategory: "",
+		Comment:         "",
+		Version:         0,
+		Locations:       "",
+	}).Error; err != nil {
+		log.Println("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable>")
+	}
+
+	return tableToCreate
 }

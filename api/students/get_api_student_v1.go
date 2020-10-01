@@ -51,9 +51,9 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// desc: Get your data for specific Segment ?
+// desc: Get your data for specific Segment
 // status:
-// comment: Not sure what this was supposed to do. Maybe add information if enrolled to it?
+// comment: Maybe add information if enrolled to it already?
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	//courseCode := vars["course"]
