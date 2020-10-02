@@ -33,9 +33,6 @@ func FindCourseTableById(id string) Course {
 // desc: Find segment by id
 // status:
 func FindSegmentDataById(id string) Segment {
-	if db == nil {
-		ConnectToDB()
-	}
 
 	var tempSegment Segment
 
@@ -68,29 +65,6 @@ func FindSegmentTableByCourseId(courseID uint) []Segment {
 	}
 
 	return returnSegment
-}
-
-func FindSegmentTableById(segmentID uint) Segment {
-	var tempSegment Segment
-	//tempSegment := make([]Segment, 0)
-	result := db.Table(segmentTableToEdit).Where("id = ?", segmentID).Find(&tempSegment)
-	if result != nil {
-		log.Println(result)
-	}
-	// Shouldn't be possible to have more than one row with ID
-	/*
-		returnSegment := make([]Segment, 0)
-		result2, _ := result.Rows()
-		var tempCourse2 Segment
-		for result2.Next() {
-
-			if err3 := result.ScanRows(result2, &tempCourse2); err3 != nil {
-				log.Println(err3)
-			}
-			returnSegment = append(returnSegment, tempCourse2)
-		}
-	*/
-	return tempSegment
 }
 
 func FindCategoriesBySegmentId(segmentID uint) []SegmentCategory {

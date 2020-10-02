@@ -106,7 +106,7 @@ func AutoCreateStudentUserTables() {
 	}
 	numberOfStudentUsers := CountStudentUsers()
 	i := 1
-	for i < numberOfStudentUsers {
+	for i < (numberOfStudentUsers + 1) {
 		newStudent := GetStudentUser("oppi" + strconv.Itoa(i))
 		if debugMode {
 			log.Printf("newStudent has value of: %d", i)
@@ -114,7 +114,7 @@ func AutoCreateStudentUserTables() {
 		}
 		CreateStudentSegmentTable(newStudent)
 		CreateActiveSegmentSessionsTable(newStudent)
-		CreateStudentSegmentTableArchived(newStudent)
+		CreateSegmentsSessionsArchive(newStudent)
 		i++
 	}
 }
@@ -187,7 +187,8 @@ func AutoCreateSegments() {
 			newSegment.CourseID = courseToAdd.ID
 			db.Model(&courseToAdd).Association("Segment").Append(newSegment)
 			db.Save(&courseToAdd)
-			newSegment.SegmentCategories = AutoCreateCategoriesForSegment(newSegment.ID)
+			// Re-thinkin about categories, maybe only create when using other than 3 stock ones?
+			//newSegment.SegmentCategories = AutoCreateCategoriesForSegment(newSegment.ID)
 		}
 
 		i++
@@ -242,12 +243,7 @@ func PopulateFaculty(p int) {
 		}).Error; err != nil {
 			log.Println("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
 		}
-		//CreateFacultySegmentTable("ope" + strconv.Itoa(i))
-		//tempFaculty := GetFacultyUser(strconv.Itoa(i))
-		//if debugMode {
-		//	log.Println(tempFaculty.FacultyID)
-		//}
-		//tempFaculty.FacultySegment = CreateFacultySegmentTable(tempFaculty)
+
 	}
 
 }

@@ -88,6 +88,8 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	if h == "populatesegments2" {
 		//database.AutoCreateSegments()
 		database.AutoCreateStudentUserTables()
+		// Do faculty actually need their own lists as we can search segments table and filter that.
+		//database.AutoCreateFacultyUserTables()
 	}
 
 	return "nothing"

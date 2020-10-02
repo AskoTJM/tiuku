@@ -120,8 +120,7 @@ func GetUserSegments(r *http.Request) []StudentSegment {
 	return returnSegments
 }
 
-// Get Courses, default only active. with "archived=yes" all courses
-// , "archived=only" to get only archived ones.
+// Get Courses, default only active. with "archived=yes" all courses, "archived=only" to get only archived ones.
 // Status: Works
 func GetCourses(r *http.Request) []Course {
 	if db == nil {
@@ -152,13 +151,6 @@ func GetCourses(r *http.Request) []Course {
 		fmt.Println("Error: Invalid parameters.")
 	}
 
-	/*
-		// Test what we got from db
-		anon, _ := json.Marshal(result)
-		n := len(anon)
-		s := string(anon[:n])
-		log.Println(s)
-	*/
 	returnCourses := make([]Course, 0)
 	result2, _ := result.Rows()
 
@@ -177,7 +169,7 @@ func GetCourses(r *http.Request) []Course {
 // FacultyUserSpesifics
 
 // Desc: Get Faculty User
-// Status: Works, but needs more. Return value and obfuscing of AnonID if used outside
+// Status: Works
 func GetFacultyUser(FacultyID string) FacultyUser {
 	if db == nil {
 		ConnectToDB()
@@ -185,10 +177,70 @@ func GetFacultyUser(FacultyID string) FacultyUser {
 
 	var tempFaculty FacultyUser
 
-	result := db.Table(courseTableToEdit).Where("faculty_id = ?", FacultyID).First(&tempFaculty)
+	result := db.Table(facultyTableToEdit).Where("faculty_id = ?", FacultyID).First(&tempFaculty)
 	if result == nil {
 		log.Println(result)
 	}
 
 	return tempFaculty
+}
+
+// desc: Get segments of faculty user, active and with parameters, archived=yes and archived=only
+// status: works
+func GetFacultyUserSegments(r *http.Request) []Segment {
+	if db == nil {
+		ConnectToDB()
+	}
+	var tempSegment []Segment
+
+	user := r.Header.Get("X-User")
+	// Get teachers ID number
+	teacher := GetFacultyUser(user)
+	result := db.Table(segmentTableToEdit).Where("teacher_id = ?", teacher.ID).Find(&tempSegment)
+	paramTest := r.URL.Query()
+	filter, params := paramTest["archived"]
+
+	returnSegments := make([]Segment, 0)
+	result2, _ := result.Rows()
+
+	var tempSegments2 Segment
+	for result2.Next() {
+
+		//Read row to tempSegments2
+		if err3 := result.ScanRows(result2, &tempSegments2); err3 != nil {
+			log.Println(err3)
+		}
+		byID := tempSegments2.CourseID
+		var tempCourse Course
+		if err4 := db.Table(courseTableToEdit).First(&tempCourse, byID); err4 != nil {
+			log.Println(err4)
+		}
+		log.Println("tempSegments2 value: ")
+		log.Println(byID)
+		if !params || len(filter) == 0 {
+			if !tempCourse.Archived {
+				returnSegments = append(returnSegments, tempSegments2)
+			}
+			if result != nil {
+				log.Println(result.Error)
+			}
+		} else if paramTest.Get("archived") == "yes" {
+			returnSegments = append(returnSegments, tempSegments2)
+			if result != nil {
+				log.Println(result.Error)
+			}
+		} else if paramTest.Get("archived") == "only" {
+			if tempCourse.Archived {
+				returnSegments = append(returnSegments, tempSegments2)
+			}
+			if result != nil {
+				log.Println(result)
+			}
+		} else {
+			fmt.Println("Error: Invalid parameters.")
+		}
+
+	}
+
+	return returnSegments
 }
