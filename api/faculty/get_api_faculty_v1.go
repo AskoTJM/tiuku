@@ -123,7 +123,7 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 }
 
 // desc: Get segments table for Faculty User
-// status: WIP
+// status: Works, I think
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")

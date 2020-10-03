@@ -72,9 +72,10 @@ type Segment struct {
 	TeacherID   uint
 	Scope       uint
 	//SegmentCategories     SegmentCategory
-	SegmentCategories     string
+	//SegmentCategories     string
 	ExpectedAttendance    uint
 	SchoolSegmentsSession SchoolSegmentsSession
+	Archived              bool
 }
 
 // Schools Segment table has data fo students and where to find their Session for the Segement.
@@ -82,7 +83,7 @@ type SchoolSegmentsSession struct {
 	ID                      uint   `gorm:"primary_key"`
 	AnonID                  string `gorm:"not null"`
 	StudentSegmentsSessions string
-	Privacy                 string
+	Privacy                 string //Allowed to see name of the student
 }
 
 // Segment has different Categories for tracking and settings for them.
@@ -90,6 +91,7 @@ type SchoolSegmentsSession struct {
 // Maybe should be belongs to o one-to-one with two structs?
 type SegmentCategory struct {
 	ID                 uint `gorm:"primary_key"`
+	SegmentID          uint
 	MainCategory       uint `gorm:"not null"`
 	SubCategory        string
 	MandatoryToTrack   bool
@@ -97,6 +99,7 @@ type SegmentCategory struct {
 	Tickable           bool
 	LocationNeeded     bool
 	Active             bool
+	Archived           bool
 }
 
 type MainCategory struct {

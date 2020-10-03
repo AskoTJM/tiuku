@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/AskoTJM/tiuku/api/scripts"
 	"github.com/gorilla/mux"
 )
 
@@ -217,6 +218,26 @@ func CreateCategoriesForSegment(r *http.Request) {
 	}
 
 	db.Table(tableToCreate).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
+}
+
+// desc: Create List to
+
+func CreateSchoolSegmentSession(segToAdd Segment) string {
+	if db == nil {
+		ConnectToDB()
+	}
+	var returnString string
+	tableToCreate := scripts.UintToString(segToAdd.ID) + "_session"
+	if err := db.Table(tableToCreate).AutoMigrate(&SchoolSegmentsSession{
+		ID:                      0,
+		AnonID:                  "",
+		StudentSegmentsSessions: "",
+		Privacy:                 "",
+	}).Error; err != nil {
+		log.Println("Problems creating School sessions list for segment. <database/create_database->CreateSchoolSegmentsList>")
+	}
+
+	return returnString
 }
 
 // desc: Create SegmentSessionTable for active segments for new student user

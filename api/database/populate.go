@@ -174,12 +174,12 @@ func AutoCreateSegments() {
 		c := 1
 		for c < 4 {
 			newSegment := &Segment{
-				ID:                    0,
-				CourseID:              courseToAdd.ID,
-				SegmentName:           "segment " + strconv.Itoa(c),
-				TeacherID:             0,
-				Scope:                 3,
-				SegmentCategories:     "", //SegmentCategory{},
+				ID:          0,
+				CourseID:    courseToAdd.ID,
+				SegmentName: "segment " + strconv.Itoa(c),
+				TeacherID:   0,
+				Scope:       3,
+				//SegmentCategories:     "", //SegmentCategory{},
 				ExpectedAttendance:    15,
 				SchoolSegmentsSession: SchoolSegmentsSession{},
 			}
@@ -196,6 +196,8 @@ func AutoCreateSegments() {
 	//return courseToAdd
 }
 
+// desc: Auto creating catergories for segments
+// status: works, but decided to go with one shared table for categories.
 func AutoCreateCategoriesForSegment(segmentToAdd uint) string { //segmentToAdd Segment) string {
 	if db == nil {
 		ConnectToDB()
@@ -221,6 +223,57 @@ func AutoCreateCategoriesForSegment(segmentToAdd uint) string { //segmentToAdd S
 	return tableToCreate
 }
 
+// desc: Auto Populate categories with test categories.
+func PopulateCategories() {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	if err := db.Create(&SegmentCategory{
+		ID:                 0,
+		SegmentID:          1,
+		MainCategory:       1,
+		SubCategory:        "Tunti1",
+		MandatoryToTrack:   false,
+		MandatoryToComment: false,
+		Tickable:           false,
+		LocationNeeded:     false,
+		Active:             true,
+		Archived:           false,
+	}).Error; err != nil {
+		log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
+	}
+	if err := db.Create(&SegmentCategory{
+		ID:                 0,
+		SegmentID:          1,
+		MainCategory:       2,
+		SubCategory:        "Videoluento",
+		MandatoryToTrack:   false,
+		MandatoryToComment: false,
+		Tickable:           false,
+		LocationNeeded:     false,
+		Active:             true,
+		Archived:           false,
+	}).Error; err != nil {
+		log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
+	}
+	if err := db.Create(&SegmentCategory{
+		ID:                 0,
+		SegmentID:          1,
+		MainCategory:       3,
+		SubCategory:        "Kotitehtävä 2",
+		MandatoryToTrack:   false,
+		MandatoryToComment: false,
+		Tickable:           false,
+		LocationNeeded:     false,
+		Active:             true,
+		Archived:           false,
+	}).Error; err != nil {
+		log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
+	}
+
+}
+
 // desc: Testing purposes generates faculty users
 //
 func PopulateFaculty(p int) {
@@ -241,11 +294,9 @@ func PopulateFaculty(p int) {
 			FacultySegment: "", //CreateFacultySegmentTable("ope" + strconv.Itoa(i))"",
 			//FacultySegment: FacultySegment{},
 		}).Error; err != nil {
-			log.Println("Problems populating table of StudentUsers. <go/populate.go->populateStudents>")
+			log.Println("Problems populating table of StudentUsers. <database/populate.go->populateStudents>")
 		}
-
 	}
-
 }
 
 // desc: Auto create table for Faculty Users

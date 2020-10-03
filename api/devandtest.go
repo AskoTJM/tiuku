@@ -14,12 +14,12 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		database.InitDB()
 		return "InitDB"
 	}
-
-	if h == "populate" {
-		database.PopulateSchool()
-		return "Populated School"
-	}
-
+	/*
+		if h == "populate" {
+			//database.PopulateSchool()
+			//return "Populated School"
+		}
+	*/
 	if h == "populatecourses" {
 		num := r.Header.Get("X-Number")
 		i, _ := strconv.Atoi(num)
@@ -90,6 +90,9 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		database.AutoCreateStudentUserTables()
 		// Do faculty actually need their own lists as we can search segments table and filter that.
 		//database.AutoCreateFacultyUserTables()
+	}
+	if h == "populatesegments3" {
+		database.PopulateCategories()
 	}
 
 	return "nothing"
