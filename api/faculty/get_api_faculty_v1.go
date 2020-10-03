@@ -16,6 +16,7 @@ import (
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/database"
+	"github.com/AskoTJM/tiuku/api/scripts"
 	"github.com/gorilla/mux"
 )
 
@@ -40,7 +41,7 @@ func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
-	result := database.FindCourseTableById(courseCode)
+	result := database.GetCourseTableById(courseCode)
 
 	anon, _ := json.Marshal(result)
 	n := len(anon)
@@ -58,9 +59,9 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
 	// Get course information
-	result := database.FindCourseTableById(courseCode)
+	result := database.GetCourseTableById(courseCode)
 	// Get segment data
-	result2 := database.FindSegmentTableByCourseId(result.ID)
+	result2 := database.GetSegmentTableByCourseId(result.ID)
 	//Transform results to json
 	anon, _ := json.Marshal(result2)
 	n := len(anon)
@@ -80,7 +81,7 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	// Get course information
 	//courseRes := database.FindCourseTableById(courseCode)
 	// Get segment data
-	segRes := database.FindSegmentDataById(segCode)
+	segRes := database.GetSegmentDataById(scripts.StringToUint(segCode))
 	//Transform results to json
 	anon, _ := json.Marshal(segRes)
 	n := len(anon)
@@ -98,7 +99,7 @@ func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r 
 	w.WriteHeader(http.StatusOK)
 }
 
-// desc: Get settings for {category}
+// desc: Wtf?
 // status:
 func GetCoursesCourseSegmentsSegmentCategoriesCategorySettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -113,12 +114,27 @@ func GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting(w http.Res
 	w.WriteHeader(http.StatusOK)
 }
 
-// desc: Get settings for {segment} of the {course}
+// desc: Get Categories for {segment} of the {course}
 // status: Not sure about this one either
 // todo: Think about this.
 func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Request) {
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.WriteHeader(http.StatusOK)
+	vars := mux.Vars(r)
+	segId := vars["segment"]
+	// Get course information
+	//result := database.GetCourseTableById(segId)
+	// Get segment data
+	res := scripts.StringToUint(segId)
+	result2 := database.GetCategoriesBySegmentId(res)
+	// Transform results to json
+	anon, _ := json.Marshal(result2)
+	n := len(anon)
+	s := string(anon[:n])
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
 
 }
 

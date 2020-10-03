@@ -149,3 +149,23 @@ func CountFacultyUsers() int {
 	db.Table(facultyTableToEdit).Count(&numberOfRows)
 	return numberOfRows
 }
+
+// desc: Archiving Course, it's segments and categories...
+// status:
+func ArchiveCourse(courseToArchive Course) {
+	if db == nil {
+		ConnectToDB()
+	}
+	courseToArchive.Archived = true
+	//tempSegment := GetSegmentTableByCourseId(courseToArchive.ID)
+	//tempSegment.ScanRows
+	/*
+		result2, _ := tempSegment.Rows()
+		var tempCourse2 Segment
+		for result2.Next() {
+			if err3 := result.ScanRows(result2, &tempCourse2); err3 != nil {
+				log.Println(err3)
+			}
+		}
+	*/
+}

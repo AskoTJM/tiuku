@@ -6,8 +6,11 @@ import (
 	//"github.com/AskoTJM/tiuku/api/database"
 )
 
+// Should only contain scripts to autopopulate data for development and testing
 // Place for scripts to initalization and for populating database with test data
 // Stuff that should not be needed when in use.
+
+// OBSOLETE! Replaced by initDB scripts.
 // desc: Populating School data and maincategories
 func PopulateSchool() {
 	if db == nil {
@@ -169,7 +172,7 @@ func AutoCreateSegments() {
 	numberOfCourses := CountCourses()
 	i := 1
 	for i < numberOfCourses {
-		courseToAdd := FindCourseTableById(strconv.Itoa(i))
+		courseToAdd := GetCourseTableById(strconv.Itoa(i))
 		log.Print(courseToAdd.ID)
 		c := 1
 		for c < 4 {
@@ -228,48 +231,52 @@ func PopulateCategories() {
 	if db == nil {
 		ConnectToDB()
 	}
-
-	if err := db.Create(&SegmentCategory{
-		ID:                 0,
-		SegmentID:          1,
-		MainCategory:       1,
-		SubCategory:        "Tunti1",
-		MandatoryToTrack:   false,
-		MandatoryToComment: false,
-		Tickable:           false,
-		LocationNeeded:     false,
-		Active:             true,
-		Archived:           false,
-	}).Error; err != nil {
-		log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
-	}
-	if err := db.Create(&SegmentCategory{
-		ID:                 0,
-		SegmentID:          1,
-		MainCategory:       2,
-		SubCategory:        "Videoluento",
-		MandatoryToTrack:   false,
-		MandatoryToComment: false,
-		Tickable:           false,
-		LocationNeeded:     false,
-		Active:             true,
-		Archived:           false,
-	}).Error; err != nil {
-		log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
-	}
-	if err := db.Create(&SegmentCategory{
-		ID:                 0,
-		SegmentID:          1,
-		MainCategory:       3,
-		SubCategory:        "Kotitehtävä 2",
-		MandatoryToTrack:   false,
-		MandatoryToComment: false,
-		Tickable:           false,
-		LocationNeeded:     false,
-		Active:             true,
-		Archived:           false,
-	}).Error; err != nil {
-		log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
+	c := CountSegments()
+	i := 1
+	for i < c {
+		if err := db.Create(&SegmentCategory{
+			ID:                 0,
+			SegmentID:          uint(i),
+			MainCategory:       1,
+			SubCategory:        "Lähi tunti " + strconv.Itoa(i),
+			MandatoryToTrack:   false,
+			MandatoryToComment: false,
+			Tickable:           false,
+			LocationNeeded:     false,
+			Active:             true,
+			Archived:           false,
+		}).Error; err != nil {
+			log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
+		}
+		if err := db.Create(&SegmentCategory{
+			ID:                 0,
+			SegmentID:          uint(i),
+			MainCategory:       2,
+			SubCategory:        "Videoluento " + strconv.Itoa(i),
+			MandatoryToTrack:   false,
+			MandatoryToComment: false,
+			Tickable:           false,
+			LocationNeeded:     false,
+			Active:             true,
+			Archived:           false,
+		}).Error; err != nil {
+			log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
+		}
+		if err := db.Create(&SegmentCategory{
+			ID:                 0,
+			SegmentID:          uint(i),
+			MainCategory:       3,
+			SubCategory:        "Kotitehtävä " + strconv.Itoa(i),
+			MandatoryToTrack:   false,
+			MandatoryToComment: false,
+			Tickable:           false,
+			LocationNeeded:     false,
+			Active:             true,
+			Archived:           false,
+		}).Error; err != nil {
+			log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
+		}
+		i++
 	}
 
 }

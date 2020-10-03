@@ -15,6 +15,7 @@ import (
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/database"
+	"github.com/AskoTJM/tiuku/api/scripts"
 	"github.com/gorilla/mux"
 )
 
@@ -38,9 +39,9 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
 	// Get course information
-	result := database.FindCourseTableById(courseCode)
+	result := database.GetCourseTableById(courseCode)
 	// Get segment data
-	result2 := database.FindSegmentTableByCourseId(result.ID)
+	result2 := database.GetSegmentTableByCourseId(result.ID)
 	// Transform results to json
 	anon, _ := json.Marshal(result2)
 	n := len(anon)
@@ -61,7 +62,7 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	// Get course information
 	//courseRes := database.FindCourseTableById(courseCode)
 	// Get segment data
-	segRes := database.FindSegmentDataById(segCode)
+	segRes := database.GetSegmentDataById(scripts.StringToUint(segCode))
 	//Transform results to json
 	anon, _ := json.Marshal(segRes)
 	n := len(anon)

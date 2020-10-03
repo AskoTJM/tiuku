@@ -81,9 +81,10 @@ type Segment struct {
 // Schools Segment table has data fo students and where to find their Session for the Segement.
 type SchoolSegmentsSession struct {
 	ID                      uint   `gorm:"primary_key"`
+	SegmentID               uint   `gorm:"not null"`
 	AnonID                  string `gorm:"not null"`
 	StudentSegmentsSessions string
-	Privacy                 string //Allowed to see name of the student
+	Privacy                 string //Allowed to see name of the student?
 }
 
 // Segment has different Categories for tracking and settings for them.

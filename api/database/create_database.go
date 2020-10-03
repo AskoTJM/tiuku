@@ -175,7 +175,7 @@ func CreateSegment(r *http.Request) Course {
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
 	log.Printf("CourseCode is: %s", courseCode)
-	getCourseData := FindCourseTableById(courseCode)
+	getCourseData := GetCourseTableById(courseCode)
 
 	dec := json.NewDecoder(r.Body)
 

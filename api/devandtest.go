@@ -45,7 +45,7 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	}
 	if h == "anonId" {
 		user := r.Header.Get("X-User")
-		return database.GetAnonId(user)
+		return database.GetStudentUser(user).AnonID
 	}
 	if h == "countusers" {
 		user := r.Header.Get("X-User")

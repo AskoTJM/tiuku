@@ -54,7 +54,7 @@ func InitDB() {
 		log.Println("Problems creating Main Category table. <database/maintenance_database.go->initDB>")
 	}
 
-	// desc:
+	// desc: Table for SegmentCategories
 	if err := db.AutoMigrate(&SegmentCategory{
 		ID:                 0,
 		MainCategory:       0,
@@ -68,6 +68,15 @@ func InitDB() {
 		log.Println("Problems creating table for Categories. <database/maintenance_database.go->initDB>")
 	}
 
+	if err := db.AutoMigrate(&SchoolSegmentsSession{
+		ID:                      0,
+		SegmentID:               0,
+		AnonID:                  "",
+		StudentSegmentsSessions: "",
+		Privacy:                 "",
+	}).Error; err != nil {
+		log.Println("Problems creating table for Participant Session table. <database/maintenance_database.go->initDB>")
+	}
 	// This should be created and named when creating new Faculty User
 	/*
 		log.Printf("Trying to AutoMigrate Faculty table to database. <database/database.go->initDB>")

@@ -1,19 +1,18 @@
 package database
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/tidwall/gjson"
 )
 
 // Desc: GetAnonId with StudentID
 // HOX! AnonID SHOULD NOT LEAVE OUTSIDE OF THE API
-// Status: Done
+// Status: Done but REMOVED, smarter to use GetStudentUser
+/*
 func GetAnonId(StudentID string) string {
 	if db == nil {
 		ConnectToDB()
@@ -32,9 +31,11 @@ func GetAnonId(StudentID string) string {
 	tempJSON := gjson.Get(s, "Value.AnonID")
 	return tempJSON.String()
 }
+*/
 
 // desc: Get name of the student with StudentID
-// Status: Should work, c+p
+// Status: Removed,not in use and GetStudentUser is smarter to use
+/*
 func GetStudentName(StudentID string) string {
 	if db == nil {
 		ConnectToDB()
@@ -53,6 +54,7 @@ func GetStudentName(StudentID string) string {
 	tempJSON := gjson.Get(s, "Value.StudentName")
 	return tempJSON.String()
 }
+*/
 
 // Desc: Get Students data
 // Status: Works, but needs more. Return value and obfuscing of AnonID if used outside
@@ -81,7 +83,7 @@ func GetUserSegments(r *http.Request) []StudentSegment {
 	}
 
 	var tempSegment []StudentSegment
-	myAnonID := GetAnonId(r.Header.Get("X-User"))
+	myAnonID := GetStudentUser(r.Header.Get("X-User")).AnonID
 	tableToEdit := myAnonID + "_segments"
 	result := db.Table(tableToEdit)
 	paramTest := r.URL.Query()
@@ -294,4 +296,82 @@ func GetFacultyUserSegments(r *http.Request) []Segment {
 	}
 
 	return returnSegments
+}
+
+// desc: Find course by courseCode
+// Status: Unclear
+func GetCourseTableByCode(courseCode string) Course {
+	if db == nil {
+		ConnectToDB()
+	}
+	var tempCourse Course
+	db.Table(courseTableToEdit).Where("course_code = ?", courseCode).Find(&tempCourse).Row()
+	return tempCourse
+}
+
+// desc: Find course by id
+// Status: Unclear
+func GetCourseTableById(id string) Course {
+	if db == nil {
+		ConnectToDB()
+	}
+	var tempCourse Course
+	db.Table(courseTableToEdit).Where("id = ?", id).Find(&tempCourse).Row()
+	return tempCourse
+}
+
+// desc: Find segment by id
+// status:
+func GetSegmentDataById(id uint) Segment {
+	if db == nil {
+		ConnectToDB()
+	}
+	var tempSegment Segment
+	db.Table(segmentTableToEdit).Where("id = ?", id).Find(&tempSegment).Row()
+	return tempSegment
+}
+
+func GetSegmentTableByCourseId(courseID uint) []Segment {
+	if db == nil {
+		ConnectToDB()
+	}
+	var tempSegment []Segment
+	//tempSegment := make([]Segment, 0)
+	result := db.Table(segmentTableToEdit).Where("course_id = ?", courseID).Find(&tempSegment)
+	if result != nil {
+		log.Println(result)
+	}
+	returnSegment := make([]Segment, 0)
+	result2, _ := result.Rows()
+	var tempCourse2 Segment
+	for result2.Next() {
+		if err3 := result.ScanRows(result2, &tempCourse2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSegment = append(returnSegment, tempCourse2)
+	}
+	return returnSegment
+}
+
+// desc: Find ALL categories belonging to segment
+// comment: If using categories table for all segments
+func GetCategoriesBySegmentId(segmentID uint) []SegmentCategory {
+	if db == nil {
+		ConnectToDB()
+	}
+	var tempSegment []SegmentCategory
+	result := db.Table(categoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
+	if result != nil {
+		log.Println(result)
+	}
+	returnSegment := make([]SegmentCategory, 0)
+	result2, _ := result.Rows()
+	var tempSegment2 SegmentCategory
+	for result2.Next() {
+		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSegment = append(returnSegment, tempSegment2)
+	}
+	return returnSegment
 }
