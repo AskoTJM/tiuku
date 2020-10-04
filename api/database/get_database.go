@@ -1,5 +1,9 @@
 package database
 
+/*
+// get_database.go
+// Description: Code for retrieving data from database
+*/
 import (
 	"fmt"
 	"log"
@@ -8,53 +12,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
-
-// Desc: GetAnonId with StudentID
-// HOX! AnonID SHOULD NOT LEAVE OUTSIDE OF THE API
-// Status: Done but REMOVED, smarter to use GetStudentUser
-/*
-func GetAnonId(StudentID string) string {
-	if db == nil {
-		ConnectToDB()
-	}
-
-	var tempStudent StudentUser
-
-	result := db.Table(studentsTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
-	if result == nil {
-		log.Println(result)
-	}
-	anon, _ := json.Marshal(result)
-	n := len(anon)
-	s := string(anon[:n])
-
-	tempJSON := gjson.Get(s, "Value.AnonID")
-	return tempJSON.String()
-}
-*/
-
-// desc: Get name of the student with StudentID
-// Status: Removed,not in use and GetStudentUser is smarter to use
-/*
-func GetStudentName(StudentID string) string {
-	if db == nil {
-		ConnectToDB()
-	}
-
-	var tempStudent StudentUser
-
-	result := db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
-	if result == nil {
-		log.Println(result)
-	}
-	anon, _ := json.Marshal(result)
-	n := len(anon)
-	s := string(anon[:n])
-
-	tempJSON := gjson.Get(s, "Value.StudentName")
-	return tempJSON.String()
-}
-*/
 
 // Desc: Get Students data
 // Status: Works, but needs more. Return value and obfuscing of AnonID if used outside
@@ -189,67 +146,6 @@ func GetFacultyUser(FacultyID string) FacultyUser {
 }
 
 // desc: Get segments of faculty user, active and with parameters, archived=yes and archived=only
-// status: Works, but replaced by new version as Archived added possibility to archive invidual segments
-// left if we happen to need to go back in this.
-// HOX! Weird issues with filtering archived/non-archived results.
-/*
-func GetFacultyUserSegments(r *http.Request) []Segment {
-	if db == nil {
-		ConnectToDB()
-	}
-	var tempSegment []Segment
-
-	user := r.Header.Get("X-User")
-	// Get teachers ID number
-	teacher := GetFacultyUser(user)
-	result := db.Table(segmentTableToEdit).Where("teacher_id = ?", teacher.ID).Find(&tempSegment)
-	paramTest := r.URL.Query()
-	filter, params := paramTest["archived"]
-
-	returnSegments := make([]Segment, 0)
-	result2, _ := result.Rows()
-
-	var tempSegments2 Segment
-	for result2.Next() {
-
-		//Read row to tempSegments2
-		if err3 := result.ScanRows(result2, &tempSegments2); err3 != nil {
-			log.Println(err3)
-		}
-		byID := tempSegments2.CourseID
-		var tempCourse Course
-		if err4 := db.Table(courseTableToEdit).First(&tempCourse, byID); err4 != nil {
-			log.Println(err4)
-		}
-		log.Println("tempSegments2 value: ")
-		log.Println(byID)
-		if !params || len(filter) == 0 {
-			if !tempCourse.Archived {
-				returnSegments = append(returnSegments, tempSegments2)
-			}
-			if result != nil {
-				log.Println(result.Error)
-			}
-		} else if paramTest.Get("archived") == "yes" {
-			returnSegments = append(returnSegments, tempSegments2)
-			if result != nil {
-				log.Println(result.Error)
-			}
-		} else if paramTest.Get("archived") == "only" {
-			if tempCourse.Archived {
-				returnSegments = append(returnSegments, tempSegments2)
-			}
-			if result != nil {
-				log.Println(result)
-			}
-		} else {
-			fmt.Println("Error: Invalid parameters.")
-		}
-	}
-	return returnSegments
-}*/
-
-// desc: Get segments of faculty user, active and with parameters, archived=yes and archived=only
 // status:
 // comment: New version as added Archived bool, makes search simpler, doesn't require reading Courses tables.
 func GetFacultyUserSegments(r *http.Request) []Segment {
@@ -375,3 +271,111 @@ func GetCategoriesBySegmentId(segmentID uint) []SegmentCategory {
 	}
 	return returnSegment
 }
+
+// Desc: GetAnonId with StudentID
+// HOX! AnonID SHOULD NOT LEAVE OUTSIDE OF THE API
+// Status: Done but REMOVED, smarter to use GetStudentUser
+/*
+func GetAnonId(StudentID string) string {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	var tempStudent StudentUser
+
+	result := db.Table(studentsTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	if result == nil {
+		log.Println(result)
+	}
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	tempJSON := gjson.Get(s, "Value.AnonID")
+	return tempJSON.String()
+}
+*/
+
+// desc: Get name of the student with StudentID
+// Status: Removed,not in use and GetStudentUser is smarter to use
+/*
+func GetStudentName(StudentID string) string {
+	if db == nil {
+		ConnectToDB()
+	}
+
+	var tempStudent StudentUser
+
+	result := db.Table(courseTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	if result == nil {
+		log.Println(result)
+	}
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	tempJSON := gjson.Get(s, "Value.StudentName")
+	return tempJSON.String()
+}
+*/
+
+// desc: Get segments of faculty user, active and with parameters, archived=yes and archived=only
+// status: Works, but replaced by new version as Archived added possibility to archive invidual segments
+// left if we happen to need to go back in this.
+// HOX! Weird issues with filtering archived/non-archived results.
+/*
+func GetFacultyUserSegments(r *http.Request) []Segment {
+	if db == nil {
+		ConnectToDB()
+	}
+	var tempSegment []Segment
+
+	user := r.Header.Get("X-User")
+	// Get teachers ID number
+	teacher := GetFacultyUser(user)
+	result := db.Table(segmentTableToEdit).Where("teacher_id = ?", teacher.ID).Find(&tempSegment)
+	paramTest := r.URL.Query()
+	filter, params := paramTest["archived"]
+
+	returnSegments := make([]Segment, 0)
+	result2, _ := result.Rows()
+
+	var tempSegments2 Segment
+	for result2.Next() {
+
+		//Read row to tempSegments2
+		if err3 := result.ScanRows(result2, &tempSegments2); err3 != nil {
+			log.Println(err3)
+		}
+		byID := tempSegments2.CourseID
+		var tempCourse Course
+		if err4 := db.Table(courseTableToEdit).First(&tempCourse, byID); err4 != nil {
+			log.Println(err4)
+		}
+		log.Println("tempSegments2 value: ")
+		log.Println(byID)
+		if !params || len(filter) == 0 {
+			if !tempCourse.Archived {
+				returnSegments = append(returnSegments, tempSegments2)
+			}
+			if result != nil {
+				log.Println(result.Error)
+			}
+		} else if paramTest.Get("archived") == "yes" {
+			returnSegments = append(returnSegments, tempSegments2)
+			if result != nil {
+				log.Println(result.Error)
+			}
+		} else if paramTest.Get("archived") == "only" {
+			if tempCourse.Archived {
+				returnSegments = append(returnSegments, tempSegments2)
+			}
+			if result != nil {
+				log.Println(result)
+			}
+		} else {
+			fmt.Println("Error: Invalid parameters.")
+		}
+	}
+	return returnSegments
+}*/

@@ -1,5 +1,10 @@
 package students
 
+/*
+// patch_api_student_v1.go
+// Description: PATCH request functions for Student users
+*/
+
 import "net/http"
 
 // desc: Change settings for the {segment}

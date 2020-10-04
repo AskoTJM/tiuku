@@ -1,14 +1,16 @@
 package database
 
+/*
+// populate.go
+// Description: Should only contain scripts to autopopulate data for development and testing
+// Place for scripts for populating database with test data
+// Stuff that should not be needed when in use.
+*/
 import (
 	"log"
 	"strconv"
 	//"github.com/AskoTJM/tiuku/api/database"
 )
-
-// Should only contain scripts to autopopulate data for development and testing
-// Place for scripts to initalization and for populating database with test data
-// Stuff that should not be needed when in use.
 
 // OBSOLETE! Replaced by initDB scripts.
 // desc: Populating School data and maincategories
@@ -107,7 +109,7 @@ func AutoCreateStudentUserTables() {
 	if db == nil {
 		ConnectToDB()
 	}
-	numberOfStudentUsers := CountStudentUsers()
+	numberOfStudentUsers := CountTableRows(studentsTableToEdit)
 	i := 1
 	for i < (numberOfStudentUsers + 1) {
 		newStudent := GetStudentUser("oppi" + strconv.Itoa(i))
@@ -169,7 +171,7 @@ func AutoCreateSegments() {
 	if db == nil {
 		ConnectToDB()
 	}
-	numberOfCourses := CountCourses()
+	numberOfCourses := CountTableRows(courseTableToEdit)
 	i := 1
 	for i < numberOfCourses {
 		courseToAdd := GetCourseTableById(strconv.Itoa(i))
@@ -231,7 +233,7 @@ func PopulateCategories() {
 	if db == nil {
 		ConnectToDB()
 	}
-	c := CountSegments()
+	c := CountTableRows(segmentTableToEdit)
 	i := 1
 	for i < c {
 		if err := db.Create(&SegmentCategory{
@@ -311,7 +313,7 @@ func AutoCreateFacultyUserTables() {
 	if db == nil {
 		ConnectToDB()
 	}
-	numberOfFacultyUsers := CountFacultyUsers()
+	numberOfFacultyUsers := CountTableRows(facultyTableToEdit)
 	i := 1
 	for i < numberOfFacultyUsers {
 		newFaculty := GetFacultyUser("ope" + strconv.Itoa(i))

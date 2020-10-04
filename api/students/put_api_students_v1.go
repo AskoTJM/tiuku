@@ -1,5 +1,9 @@
 package students
 
+/*
+// put_api_student_v1.go
+// Description: PUT request functions for Student users
+*/
 import "net/http"
 
 // desc: Replace {session} of the {segment} with new data

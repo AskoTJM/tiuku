@@ -1,5 +1,9 @@
 package database
 
+/*
+// create_database.go
+// Description: Creating and adding tables to database
+*/
 import (
 	"encoding/json"
 	"log"

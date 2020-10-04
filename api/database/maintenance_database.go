@@ -1,5 +1,9 @@
 package database
 
+/*
+// maintenance_database.go
+// Description: code for maintenance of API
+*/
 import (
 	"encoding/json"
 	"fmt"
@@ -108,64 +112,55 @@ func CheckAssociation(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// desc: Count how many courses there are in the courses table.
+// desc: Count how many rows there are in the table.
 // status:
-func CountCourses() int {
+func CountTableRows(tableToEdit string) int {
 	if db == nil {
 		ConnectToDB()
 	}
 	var numberOfRows int
-	db.Table(courseTableToEdit).Count(&numberOfRows)
+	db.Table(tableToEdit).Count(&numberOfRows)
 	return numberOfRows
 }
 
-// desc: Count how many segments there are in the segment table.
+// desc: Toggle Archive status of course, it's segments and categories, true to archive, false to un-archive
 // status:
-func CountSegments() int {
+func ArchiveCourse(courseToArchive Course, archive bool) {
 	if db == nil {
 		ConnectToDB()
 	}
-	var numberOfRows int
-	db.Table(segmentTableToEdit).Count(&numberOfRows)
-	return numberOfRows
-}
 
-// desc: Number of Student users in the database
-func CountStudentUsers() int {
-	if db == nil {
-		ConnectToDB()
+	courseToArchive.Archived = archive
+	db.Save(&courseToArchive)
+	// Set Courses Segment to Archived
+	var tempSegment []Segment
+	result := db.Table(segmentTableToEdit).Where("course_id = ?", courseToArchive.ID).Find(&tempSegment)
+	if result != nil {
+		log.Println(result)
 	}
-	var numberOfRows int
-	db.Table(studentsTableToEdit).Count(&numberOfRows)
-	return numberOfRows
-}
-
-// desc: Number of Faculty users in the database
-func CountFacultyUsers() int {
-	if db == nil {
-		ConnectToDB()
-	}
-	var numberOfRows int
-	db.Table(facultyTableToEdit).Count(&numberOfRows)
-	return numberOfRows
-}
-
-// desc: Archiving Course, it's segments and categories...
-// status:
-func ArchiveCourse(courseToArchive Course) {
-	if db == nil {
-		ConnectToDB()
-	}
-	courseToArchive.Archived = true
-	//tempSegment := GetSegmentTableByCourseId(courseToArchive.ID)
-	//tempSegment.ScanRows
-	/*
-		result2, _ := tempSegment.Rows()
-		var tempCourse2 Segment
-		for result2.Next() {
-			if err3 := result.ScanRows(result2, &tempCourse2); err3 != nil {
-				log.Println(err3)
-			}
+	result2, _ := result.Rows()
+	var tempSegment2 Segment
+	for result2.Next() {
+		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
+			log.Println(err3)
 		}
-	*/
+		tempSegment2.Archived = archive
+		db.Save(&tempSegment2)
+		// Change Categories for Segment to Archived
+		var tempCat []SegmentCategory
+		resultSeg := db.Table(categoriesTableToEdit).Where("segment_id = ?", tempSegment2.ID).Find(&tempCat)
+		if resultSeg != nil {
+			log.Println(resultSeg)
+		}
+
+		resultSeg2, _ := resultSeg.Rows()
+		var tempCat2 SegmentCategory
+		for resultSeg2.Next() {
+			if err4 := result.ScanRows(resultSeg2, &tempCat2); err4 != nil {
+				log.Println(err4)
+			}
+			tempCat2.Archived = archive
+			db.Save(&tempCat2)
+		}
+	}
 }

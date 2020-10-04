@@ -1,5 +1,9 @@
 package database
 
+/*
+// init_database.go
+// Description: Initializing database for use.
+*/
 import "log"
 
 // initDB() for creating needed tables for database

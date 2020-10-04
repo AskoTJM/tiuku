@@ -1,5 +1,10 @@
 package students
 
+/*
+// post_api_student_v1.go
+// Description: POST request functions for Student users
+*/
+
 import "net/http"
 
 // desc: Join {segment} of the {course}

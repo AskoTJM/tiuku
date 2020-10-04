@@ -1,5 +1,9 @@
 package faculty
 
+/*
+// post_api_faculty_v1.go
+// Description: POST request functions for Faculty users
+*/
 import (
 	"bytes"
 	"encoding/json"

@@ -1,5 +1,10 @@
 package database
 
+/*
+// dbstructs.go
+// Description: Structs used in tiuku
+*/
+
 // Table for StudentUsers
 /*
 type StudentUser struct {

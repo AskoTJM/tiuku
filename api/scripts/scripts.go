@@ -1,5 +1,9 @@
 package scripts
 
+/*
+// scripts
+// Description: functions independent of database or http connections, mostly to make somethings easier.
+*/
 import (
 	"fmt"
 	"net/http"

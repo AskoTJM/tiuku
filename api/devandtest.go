@@ -1,5 +1,11 @@
 package tiuku
 
+/*
+// devandtest.go
+// Description: Code for testing features before proper implementing
+// also for running population scripts.
+*/
+
 import (
 	"encoding/json"
 	"net/http"
@@ -93,6 +99,13 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	}
 	if h == "populatesegments3" {
 		database.PopulateCategories()
+	}
+	if h == "archivecourse" {
+		courseNum := r.Header.Get("X-Course")
+		//log.Println(courseNum)
+		tempCourse := database.GetCourseTableById(courseNum)
+		//log.Println(tempCourse)
+		database.ArchiveCourse(tempCourse, true)
 	}
 
 	return "nothing"
