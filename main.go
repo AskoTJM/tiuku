@@ -22,5 +22,14 @@ func main() {
 	log.Printf("Server started")
 	router := sw.NewRouter()
 	log.Fatal(http.ListenAndServe(":8080", router))
+	//database.ConnectToDB()
+	/*
+		Tiukudb, err := gorm.Open("mysql", "apiaccess:apipass@tcp(db:3306)/tiukuDB?charset=utf8mb4")
+		if err != nil {
+			log.Printf("Problem with connecting to database. <database/database.go->connectToDB>")
+			log.Println(err)
+		}
+		defer Tiukudb.Close()
+	*/
 
 }

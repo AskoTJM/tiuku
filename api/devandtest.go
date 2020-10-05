@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"strconv"
 
-	database "github.com/AskoTJM/tiuku/api/database"
+	"github.com/AskoTJM/tiuku/api/database"
 )
 
 func HeaderTests(w http.ResponseWriter, r *http.Request) string {

@@ -3,6 +3,7 @@ package students
 /*
 // patch_api_student_v1.go
 // Description: PATCH request functions for Student users
+// CRUD: Update/Modify Collection: 405 (Method Not Allowed) Single: 200 (OK), 204( No Content), 404 (Not Found)
 */
 
 import "net/http"

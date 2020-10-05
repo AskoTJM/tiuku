@@ -3,6 +3,7 @@ package students
 /*
 // delete_api_student_v1.go
 // Description: DELETE request functions for Student users
+// CRUD Delete Colelction  405 (Method Not Allowed) Single: 200 (Ok), 404 (Not Found)
 */
 
 import "net/http"

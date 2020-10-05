@@ -1,6 +1,7 @@
 /*
 // get_api_student_v1.go
 // Description: GET request functions for Student users
+// CRUD: Read, Collection: 200(OK) Item: 200(OK), 404 (Not Found)
 */
 package students
 
@@ -73,10 +74,26 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	//w.WriteHeader(http.StatusOK)
+	vars := mux.Vars(r)
+	segId := vars["segment"]
+	// Get course information
+	//result := database.GetCourseTableById(segId)
+	// Get segment data
+	res := scripts.StringToUint(segId)
+	// Get categories for segment, filter out InActive ones.
+	result2 := database.GetCategoriesBySegmentId(res, true, false)
+	// Transform results to json
+	anon, _ := json.Marshal(result2)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
 
 }
 
-// desc:Get Sessions for {segment}
+// desc:Get 'Your' Sessions for {segment}
 // status:
 func GetSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -84,13 +101,14 @@ func GetSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get value of {setting} for {segment}
-// status:
+// Can't remember what this was about
 func GetSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+
 }
 
-// ??
+// What is this
 func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -122,6 +140,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get Session data for {segment}
+// Not sure if this is needed, probably already have different endpoint to handle this
 func GetUserSegmentsResourceID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

@@ -133,7 +133,7 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 	//result := database.GetCourseTableById(segId)
 	// Get segment data
 	res := scripts.StringToUint(segId)
-	result2 := database.GetCategoriesBySegmentId(res, true)
+	result2 := database.GetCategoriesBySegmentId(res, true, true)
 	// Transform results to json
 	anon, _ := json.Marshal(result2)
 	n := len(anon)

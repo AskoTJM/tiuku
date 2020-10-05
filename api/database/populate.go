@@ -15,11 +15,11 @@ import (
 // OBSOLETE! Replaced by initDB scripts.
 // Populating School data and maincategories
 func PopulateSchool() {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
-	if err := db.Create(&School{
+	if err := Tiukudb.Create(&School{
 		ID:        0,
 		Shorthand: "OAMK",
 		Finnish:   "Oulun Ammattikorkeakoulu",
@@ -46,7 +46,7 @@ func PopulateSchool() {
 		log.Printf("Problems populating table of Schools. <database/populate.go->populateSchool>")
 	}
 
-	if err := db.Create(&MainCategory{
+	if err := Tiukudb.Create(&MainCategory{
 		ID:        0,
 		Shorthand: "Lähi",
 		Finnish:   "Lähiopetus",
@@ -54,7 +54,7 @@ func PopulateSchool() {
 	}).Error; err != nil {
 		log.Printf("Problems creating main categories. <database/populate.go->populateSchool>")
 	}
-	if err := db.Create(&MainCategory{
+	if err := Tiukudb.Create(&MainCategory{
 		ID:        0,
 		Shorthand: "Etä",
 		Finnish:   "Etäopetus",
@@ -62,7 +62,7 @@ func PopulateSchool() {
 	}).Error; err != nil {
 		log.Printf("Problems creating main categories. <database/populate.go->populateSchool>")
 	}
-	if err := db.Create(&MainCategory{
+	if err := Tiukudb.Create(&MainCategory{
 		ID:        0,
 		Shorthand: "Itse",
 		Finnish:   "Itsenäinen opiskelu",
@@ -74,7 +74,7 @@ func PopulateSchool() {
 
 // Auto-generating student users for testing purposes
 func PopulateStudents(p int) {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	i := 0
@@ -88,7 +88,7 @@ func PopulateStudents(p int) {
 			classToAdd = "tit1"
 		}
 		//if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
-		if err := db.Create(&StudentUser{
+		if err := Tiukudb.Create(&StudentUser{
 			ID:          0,
 			StudentID:   "oppi" + strconv.Itoa(i),
 			AnonID:      "Anon" + strconv.Itoa(i),
@@ -106,7 +106,7 @@ func PopulateStudents(p int) {
 }
 
 func AutoCreateStudentUserTables() {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	numberOfStudentUsers := CountTableRows(studentsTableToEdit)
@@ -126,7 +126,7 @@ func AutoCreateStudentUserTables() {
 
 // Auto-generating courses for testing purposes
 func PopulateCourses(p int) {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	i := 0
@@ -140,7 +140,7 @@ func PopulateCourses(p int) {
 			archivedToAdd = false
 		}
 		//if err := db.Table(schoolShortName + "_Courses").Create(&Course{
-		if err := db.Create(&Course{
+		if err := Tiukudb.Create(&Course{
 			ID: 0,
 			//ResourceID:      0,
 			Degree: Degree{
@@ -168,7 +168,7 @@ func PopulateCourses(p int) {
 //	AutoCreateSegments for Courses
 //	comment: Modified code from CreateSegments
 func AutoCreateSegments() {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	numberOfCourses := CountTableRows(courseTableToEdit)
@@ -190,8 +190,8 @@ func AutoCreateSegments() {
 			}
 			c++
 			newSegment.CourseID = courseToAdd.ID
-			db.Model(&courseToAdd).Association("Segment").Append(newSegment)
-			db.Save(&courseToAdd)
+			Tiukudb.Model(&courseToAdd).Association("Segment").Append(newSegment)
+			Tiukudb.Save(&courseToAdd)
 			// Re-thinkin about categories, maybe only create when using other than 3 stock ones?
 			//newSegment.SegmentCategories = AutoCreateCategoriesForSegment(newSegment.ID)
 		}
@@ -204,14 +204,14 @@ func AutoCreateSegments() {
 // Auto creating catergories for segments
 // status: works, but decided to go with one shared table for categories.
 func AutoCreateCategoriesForSegment(segmentToAdd uint) string { //segmentToAdd Segment) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
 	segmentID := segmentToAdd //.ID
 	log.Println(segmentID)
 	tableToCreate := strconv.FormatUint(uint64(segmentID), 10) + "_categories"
-	if err := db.Table(tableToCreate).AutoMigrate(&SegmentCategory{
+	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&SegmentCategory{
 		ID:                 0,
 		MainCategory:       0,
 		SubCategory:        "",
@@ -224,19 +224,19 @@ func AutoCreateCategoriesForSegment(segmentToAdd uint) string { //segmentToAdd S
 		log.Println("Problems creating categories table for segment. <database/database_create->AutoCreateCategoriesForSegment>")
 	}
 
-	db.Table(tableToCreate).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
+	Tiukudb.Table(tableToCreate).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
 	return tableToCreate
 }
 
 // Auto Populate categories with test categories.
 func PopulateCategories() {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	c := CountTableRows(segmentTableToEdit)
 	i := 1
 	for i < c {
-		if err := db.Create(&SegmentCategory{
+		if err := Tiukudb.Create(&SegmentCategory{
 			ID:                 0,
 			SegmentID:          uint(i),
 			MainCategory:       1,
@@ -250,7 +250,7 @@ func PopulateCategories() {
 		}).Error; err != nil {
 			log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
 		}
-		if err := db.Create(&SegmentCategory{
+		if err := Tiukudb.Create(&SegmentCategory{
 			ID:                 0,
 			SegmentID:          uint(i),
 			MainCategory:       2,
@@ -264,7 +264,7 @@ func PopulateCategories() {
 		}).Error; err != nil {
 			log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
 		}
-		if err := db.Create(&SegmentCategory{
+		if err := Tiukudb.Create(&SegmentCategory{
 			ID:                 0,
 			SegmentID:          uint(i),
 			MainCategory:       3,
@@ -286,14 +286,14 @@ func PopulateCategories() {
 // Testing purposes generates faculty users
 //
 func PopulateFaculty(p int) {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	i := 0
 	for i < p {
 		i = i + 1
 		//if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
-		if err := db.Create(&FacultyUser{
+		if err := Tiukudb.Create(&FacultyUser{
 			ID:           0,
 			FacultyID:    "ope" + strconv.Itoa(i),
 			FacultyName:  "opettaja" + strconv.Itoa(i),
@@ -311,7 +311,7 @@ func PopulateFaculty(p int) {
 // Auto create table for Faculty Users
 // status: works, but not in use
 func AutoCreateFacultyUserTables() {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	numberOfFacultyUsers := CountTableRows(facultyTableToEdit)

@@ -16,7 +16,7 @@ import (
 // For creating Segments table for new Student users and adding it to student_user list
 // Status: Works
 func CreateStudentSegmentTable(student StudentUser) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	// Get Students data
@@ -27,12 +27,12 @@ func CreateStudentSegmentTable(student StudentUser) string {
 		log.Printf("Anon Id is: %s", student.StudentID)
 	}
 	tableToEdit := myAnonID + "_segments"
-	result := db.HasTable(tableToEdit)
+	result := Tiukudb.HasTable(tableToEdit)
 	if result {
 		log.Println("Error: Table already exists. <database/database_maintenance.go->CreateStudentSegmentTable>")
 		return "Error: Table already exists."
 	} else {
-		if err := db.Table(tableToEdit).AutoMigrate(&StudentSegment{
+		if err := Tiukudb.Table(tableToEdit).AutoMigrate(&StudentSegment{
 			ID:            0,
 			Course:        Course{},
 			SegmentNumber: 0,
@@ -45,7 +45,7 @@ func CreateStudentSegmentTable(student StudentUser) string {
 			log.Println("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
 		// Update the Student data with the name of the segment table
-		db.Model(&tempStudent).Where("student_id = ? ", tempStudent.StudentID).Update("student_segments", tableToEdit)
+		Tiukudb.Model(&tempStudent).Where("student_id = ? ", tempStudent.StudentID).Update("student_segments", tableToEdit)
 		if debugMode {
 			log.Println(tempStudent)
 		}
@@ -59,7 +59,7 @@ func CreateStudentSegmentTable(student StudentUser) string {
 // comment: Most likely unnecessary. Amount of segments for one student user shouldn't be that much
 // that we need another table for archiving.
 func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	// Get Students data
@@ -68,12 +68,12 @@ func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
 	myAnonID := newStudent.AnonID
 	tableToEdit := myAnonID + "_segments_archived"
 	// Check if the table already exists
-	result := db.HasTable(tableToEdit)
+	result := Tiukudb.HasTable(tableToEdit)
 	if result {
 		log.Println("Error: Table already exists. <database/database_maintenance.go->CreateStudentSegmentTable>")
 		return "Error: Table already exists."
 	} else {
-		if err := db.Table(tableToEdit).AutoMigrate(&StudentSegment{
+		if err := Tiukudb.Table(tableToEdit).AutoMigrate(&StudentSegment{
 			ID:            0,
 			Course:        Course{},
 			SegmentNumber: 0,
@@ -95,16 +95,16 @@ func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
 // Status: No clue, just copy+pasted and edited from CreateStudentSegmentTable
 // Not in use. Decided to go with one table for all faculty users
 func CreateFacultySegmentTable(newFaculty FacultyUser) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	tableToEdit := newFaculty.FacultyID + "_segments"
-	result := db.HasTable(tableToEdit)
+	result := Tiukudb.HasTable(tableToEdit)
 	if result {
 		log.Println("Error: Table already exists. <database/create_database.go->CreateFacultySegmentTable>")
 		return "Error: Table already exists."
 	} else {
-		if err := db.Table(tableToEdit).AutoMigrate(&FacultySegment{
+		if err := Tiukudb.Table(tableToEdit).AutoMigrate(&FacultySegment{
 			ID:                    0,
 			Course:                Course{},
 			SegmentNumber:         0,
@@ -122,7 +122,7 @@ func CreateFacultySegmentTable(newFaculty FacultyUser) string {
 // Status: Working, but not finished. Needs checking.
 func CreateCourse(w http.ResponseWriter, r *http.Request) string {
 	// Check if there is connection to database if not connect to it
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
@@ -164,7 +164,7 @@ func CreateCourse(w http.ResponseWriter, r *http.Request) string {
 	if err != nil {
 		log.Println("Problem with json decoding <database/database_create->CreateCourse")
 	}
-	db.Table(courseTableToEdit).Create(&newCourse)
+	Tiukudb.Table(courseTableToEdit).Create(&newCourse)
 	// Need to fix error checking.
 	/*
 		err2 := db.Table(tableToEdit).AutoMigrate(&newCourse)
@@ -185,7 +185,7 @@ func CreateCourse(w http.ResponseWriter, r *http.Request) string {
 // Create new Segment for course
 // Status: works
 func CreateSegment(w http.ResponseWriter, r *http.Request) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	//var response string
@@ -236,15 +236,15 @@ func CreateSegment(w http.ResponseWriter, r *http.Request) string {
 		log.Println("Problem with json decoding <database/database_create->CreateSegment")
 	}
 	//getCourseData.Segment[0] = newSegment
-	db.Model(&getCourseData).Association("Segment").Append(newSegment)
-	db.Save(&getCourseData)
+	Tiukudb.Model(&getCourseData).Association("Segment").Append(newSegment)
+	Tiukudb.Save(&getCourseData)
 	response := "Segment created"
 	return response //getCourseData
 
 }
 
 func CreateCategory(w http.ResponseWriter, r *http.Request) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
@@ -292,7 +292,7 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) string {
 	}
 	tempSegId := scripts.StringToUint(segmentID)
 	//tableToCreate := segmentID + "_categories"
-	if err := db.Table(segmentTableToEdit).AutoMigrate(&SegmentCategory{
+	if err := Tiukudb.Table(segmentTableToEdit).AutoMigrate(&SegmentCategory{
 		ID:                 0,
 		SegmentID:          tempSegId,
 		MainCategory:       newCategory.MainCategory,
@@ -310,7 +310,7 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) string {
 	//db.Table(segmentID).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
 	// For some reason have to manually set the
 	newCategory.SegmentID = tempSegId
-	db.Save(&newCategory)
+	Tiukudb.Save(&newCategory)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	response := "Created categories."
@@ -320,12 +320,12 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) string {
 // Create List to
 
 func CreateSchoolSegmentSession(segToAdd Segment) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	var returnString string
 	tableToCreate := scripts.UintToString(segToAdd.ID) + "_session"
-	if err := db.Table(tableToCreate).AutoMigrate(&SchoolSegmentsSession{
+	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&SchoolSegmentsSession{
 		ID:                      0,
 		AnonID:                  "",
 		StudentSegmentsSessions: "",
@@ -339,13 +339,13 @@ func CreateSchoolSegmentSession(segToAdd Segment) string {
 
 // Create SegmentSessionTable for active segments for new student user
 func CreateActiveSegmentSessionsTable(user StudentUser) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	//var newTable StudentSegmentSession
 	tableToCreate := user.AnonID + "_sessions"
 
-	if err := db.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{
+	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{
 		ID:              0,
 		StartTime:       "",
 		EndTime:         "",
@@ -365,12 +365,12 @@ func CreateActiveSegmentSessionsTable(user StudentUser) string {
 
 // Create Archive SegmentSessionTable for student user
 func CreateSegmentsSessionsArchive(user StudentUser) string {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	tableToCreate := user.AnonID + "_sessions_archived"
 
-	if err := db.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{
+	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{
 		ID:              0,
 		StartTime:       "",
 		EndTime:         "",

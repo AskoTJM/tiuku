@@ -8,7 +8,7 @@ import "log"
 
 // initDB() for creating needed tables for database
 func InitDB() {
-	if db == nil {
+	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
@@ -17,7 +17,7 @@ func InitDB() {
 		//if err := db.Table(schoolShortName + "_Courses").AutoMigrate(&Course{
 	}
 	//if err := db.Table(schoolShortName + "_Courses").AutoMigrate(&Course{
-	if err := db.AutoMigrate(&Course{
+	if err := Tiukudb.AutoMigrate(&Course{
 		ID: 0,
 		//ResourceID:      0,
 		Degree:          Degree{},
@@ -35,7 +35,7 @@ func InitDB() {
 	if debugMode {
 		log.Printf("Trying to AutoMigrate Segment table to database. <database/maintenance_database.go->initDB>")
 	}
-	if err := db.AutoMigrate(&Segment{
+	if err := Tiukudb.AutoMigrate(&Segment{
 		ID:          0,
 		CourseID:    0,
 		SegmentName: "",
@@ -49,7 +49,7 @@ func InitDB() {
 	}
 
 	// Creating MainCategory Table
-	if err := db.AutoMigrate(&MainCategory{
+	if err := Tiukudb.AutoMigrate(&MainCategory{
 		ID:        0,
 		Shorthand: "",
 		Finnish:   "",
@@ -59,7 +59,7 @@ func InitDB() {
 	}
 
 	// Table for SegmentCategories
-	if err := db.AutoMigrate(&SegmentCategory{
+	if err := Tiukudb.AutoMigrate(&SegmentCategory{
 		ID:                 0,
 		MainCategory:       0,
 		SubCategory:        "",
@@ -72,7 +72,7 @@ func InitDB() {
 		log.Println("Problems creating table for Categories. <database/maintenance_database.go->initDB>")
 	}
 
-	if err := db.AutoMigrate(&SchoolSegmentsSession{
+	if err := Tiukudb.AutoMigrate(&SchoolSegmentsSession{
 		ID:                      0,
 		SegmentID:               0,
 		AnonID:                  "",
@@ -114,7 +114,7 @@ func InitDB() {
 	*/
 	log.Printf("Trying to AutoMigrate StudentUsers table to database. <database/maintenance_database.go->initDB>")
 	//if err := db.Table(schoolShortName + "_StudentUsers").AutoMigrate(&StudentUser{
-	if err := db.AutoMigrate(&StudentUser{
+	if err := Tiukudb.AutoMigrate(&StudentUser{
 		ID:          0,
 		StudentID:   "",
 		AnonID:      "",
@@ -129,7 +129,7 @@ func InitDB() {
 
 	log.Printf("Trying to AutoMigrate FacultyUsers table to database. <database/maintenance_database.go->initDB>")
 	//if err := db.Table(schoolShortName + "_FacultyUsers").AutoMigrate(&FacultyUser{
-	if err := db.AutoMigrate(&FacultyUser{
+	if err := Tiukudb.AutoMigrate(&FacultyUser{
 		ID:           0,
 		FacultyID:    "",
 		FacultyName:  "",
@@ -142,7 +142,7 @@ func InitDB() {
 	// Tables for School data
 
 	log.Printf("Trying to AutoMigrate Schools table to database. <database/maintenance_database.go->initDB>")
-	if err := db.AutoMigrate(&School{
+	if err := Tiukudb.AutoMigrate(&School{
 		ID:        0,
 		Shorthand: "",
 		Finnish:   "",
@@ -152,7 +152,7 @@ func InitDB() {
 		log.Println("Problems creating table for School. <database/maintenance_database.go->initDB>")
 	}
 	//if err := db.Table(schoolShortName + "_Campuses").AutoMigrate(&Campus{
-	if err := db.AutoMigrate(&Campus{
+	if err := Tiukudb.AutoMigrate(&Campus{
 		ID:         0,
 		Shorthand:  "",
 		Finnish:    "",
@@ -162,7 +162,7 @@ func InitDB() {
 		log.Println("Problems creating table for Campuses. <database/maintenance_database.go->initDB>")
 	}
 	//if err := db.Table(schoolShortName + "_Apartments").AutoMigrate(&Apartment{
-	if err := db.AutoMigrate(&Apartment{
+	if err := Tiukudb.AutoMigrate(&Apartment{
 		ID:        0,
 		Shorthand: "",
 		Finnish:   "",
@@ -172,7 +172,7 @@ func InitDB() {
 		log.Println("Problems creating table for Apartments. <database/maintenance_database.go->initDB>")
 	}
 	//if err := db.Table(schoolShortName + "_Degrees").AutoMigrate(&Degree{
-	if err := db.AutoMigrate(&Degree{
+	if err := Tiukudb.AutoMigrate(&Degree{
 		ID:        0,
 		Shorthand: "",
 		Finnish:   "",
@@ -193,7 +193,7 @@ func initData() {
 }
 
 func initMainCategoryTable() {
-	if err := db.Create(&MainCategory{
+	if err := Tiukudb.Create(&MainCategory{
 		ID:        0,
 		Shorthand: "Lähi",
 		Finnish:   "Lähiopetus",
@@ -201,7 +201,7 @@ func initMainCategoryTable() {
 	}).Error; err != nil {
 		log.Printf("Problems creating main categories. <database/populate.go->populateSchool>")
 	}
-	if err := db.Create(&MainCategory{
+	if err := Tiukudb.Create(&MainCategory{
 		ID:        0,
 		Shorthand: "Etä",
 		Finnish:   "Etäopetus",
@@ -209,7 +209,7 @@ func initMainCategoryTable() {
 	}).Error; err != nil {
 		log.Printf("Problems creating main categories. <database/populate.go->populateSchool>")
 	}
-	if err := db.Create(&MainCategory{
+	if err := Tiukudb.Create(&MainCategory{
 		ID:        0,
 		Shorthand: "Itse",
 		Finnish:   "Itsenäinen opiskelu",
@@ -220,7 +220,7 @@ func initMainCategoryTable() {
 }
 
 func initSegmentCategoryTable() {
-	if err := db.Create(&SegmentCategory{
+	if err := Tiukudb.Create(&SegmentCategory{
 		ID:                 0,
 		SegmentID:          0,
 		MainCategory:       1,
@@ -234,7 +234,7 @@ func initSegmentCategoryTable() {
 	}).Error; err != nil {
 		log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
 	}
-	if err := db.Create(&SegmentCategory{
+	if err := Tiukudb.Create(&SegmentCategory{
 		ID:                 0,
 		SegmentID:          0,
 		MainCategory:       2,
@@ -248,7 +248,7 @@ func initSegmentCategoryTable() {
 	}).Error; err != nil {
 		log.Println("Problems populating categories table. <database/populate.go->populateCategories>")
 	}
-	if err := db.Create(&SegmentCategory{
+	if err := Tiukudb.Create(&SegmentCategory{
 		ID:                 0,
 		SegmentID:          0,
 		MainCategory:       3,
@@ -265,7 +265,7 @@ func initSegmentCategoryTable() {
 }
 
 func initSchool() {
-	if err := db.Create(&School{
+	if err := Tiukudb.Create(&School{
 		ID:        0,
 		Shorthand: "OAMK",
 		Finnish:   "Oulun Ammattikorkeakoulu",
