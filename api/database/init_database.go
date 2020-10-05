@@ -48,7 +48,7 @@ func InitDB() {
 		log.Println("Problems creating table for Segment. <database/maintenance_database.go->initDB>")
 	}
 
-	// desc: Creating MainCategory Table
+	// Creating MainCategory Table
 	if err := db.AutoMigrate(&MainCategory{
 		ID:        0,
 		Shorthand: "",
@@ -58,7 +58,7 @@ func InitDB() {
 		log.Println("Problems creating Main Category table. <database/maintenance_database.go->initDB>")
 	}
 
-	// desc: Table for SegmentCategories
+	// Table for SegmentCategories
 	if err := db.AutoMigrate(&SegmentCategory{
 		ID:                 0,
 		MainCategory:       0,
@@ -185,7 +185,7 @@ func InitDB() {
 
 }
 
-// desc: inital data for tables
+// inital data for tables
 func initData() {
 	initSchool()
 	initMainCategoryTable()

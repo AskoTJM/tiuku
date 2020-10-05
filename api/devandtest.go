@@ -70,7 +70,7 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 
 	}
 	if h == "createcourse" {
-		return database.CreateCourse(r)
+		return database.CreateCourse(w, r)
 	}
 	if h == "getstudentdata" {
 		user := r.Header.Get("X-User")

@@ -20,7 +20,7 @@ var db *gorm.DB
 
 // Global variables for School, etc
 // Should be temporary solution, now just easier to change naming conventions
-// Maybe replace with configuration file?
+// Maybe at least replace with configuration file?
 //var schoolShortName = "OAMK"
 var courseTableToEdit = "courses"
 var segmentTableToEdit = "segments"
@@ -31,7 +31,7 @@ var categoriesTableToEdit = "segment_categories"
 // Debug mode for spamming your logs
 var debugMode bool = true
 
-// Desc: Establish connection to database
+// Establish connection to database
 // Status: Done
 func ConnectToDB() {
 	var err error
@@ -55,7 +55,7 @@ func ConnectToDB() {
 	fmt.Printf("%s", db.Error)
 }
 
-// Desc: Check if Student user exists
+// Check if Student user exists student users table, returns ID if does.
 // Status: Works, maybe with slight changes could be used for all row counting?
 func CheckIfUserExists(StudentID string) int64 {
 	if db == nil {
@@ -112,7 +112,7 @@ func CheckAssociation(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// desc: Count how many rows there are in the table.
+// Count how many rows there are in the table. Can be used to count users, segments, course etc in table.
 // status:
 func CountTableRows(tableToEdit string) int {
 	if db == nil {
@@ -123,7 +123,7 @@ func CountTableRows(tableToEdit string) int {
 	return numberOfRows
 }
 
-// desc: Toggle Archive status of course, it's segments and categories, true to archive, false to un-archive
+// Toggle Archive status of course, it's segments and categories, true to archive, false to un-archive
 // status:
 func ArchiveCourse(courseToArchive Course, archive bool) {
 	if db == nil {
@@ -163,4 +163,27 @@ func ArchiveCourse(courseToArchive Course, archive bool) {
 			db.Save(&tempCat2)
 		}
 	}
+}
+
+// Test if required tables exist
+func CheckIfRequiredTablesExist() bool {
+	if db == nil {
+		ConnectToDB()
+	}
+	if !db.HasTable(courseTableToEdit) {
+		return false
+	}
+	if !db.HasTable(segmentTableToEdit) {
+		return false
+	}
+	if !db.HasTable(studentsTableToEdit) {
+		return false
+	}
+	if !db.HasTable(facultyTableToEdit) {
+		return false
+	}
+	if !db.HasTable(categoriesTableToEdit) {
+		return false
+	}
+	return true
 }

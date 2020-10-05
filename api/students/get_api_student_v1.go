@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// desc: Get list of courses available
+// Get list of courses available
 // status:
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 
@@ -28,7 +28,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// desc: Get list of segments on the {course}
+// Get list of segments on the {course}
 // status:
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -47,7 +47,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// desc: Get your data for specific Segment
+// Get your data for specific Segment
 // status:
 // comment: Maybe add information if enrolled to it already?
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +68,7 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// desc: Get categories used for {segment}
+// Get categories used for {segment}
 // status:
 func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -83,20 +83,20 @@ func GetSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// desc: Get value of {setting} for {segment}
+// Get value of {setting} for {segment}
 // status:
 func GetSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-// desc: ??
+// ??
 func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-// desc: Get list of active segments for student user
+// Get list of active segments for student user
 // status:
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
@@ -121,7 +121,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// desc: Get Session data for {segment}
+// Get Session data for {segment}
 func GetUserSegmentsResourceID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

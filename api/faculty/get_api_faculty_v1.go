@@ -15,7 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// desc: List of active courses
+// List of active courses
 // status: works
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 
@@ -30,7 +30,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// desc: Get {course} information
+// Get {course} information
 // status: Works. Doesn't give any information about segments
 func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
@@ -47,7 +47,7 @@ func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// desc: Get list of segments for {course}
+// Get list of segments for {course}
 // status: Works
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
@@ -67,7 +67,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// desc: Get data/sessions of the {segment} in the {course}
+// Get data/sessions of the {segment} in the {course}
 // status: Works
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -87,30 +87,42 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// desc: Get categories for the {Segment}
+// Get spesific category for the {Segment}
 // status:
 func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r *http.Request) {
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.WriteHeader(http.StatusOK)
+	vars := mux.Vars(r)
+	catCode := vars["category"]
+	catRes := database.GetCategoryById(scripts.StringToUint(catCode))
+
+	anon, _ := json.Marshal(catRes)
+	n := len(anon)
+	s := string(anon[:n])
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
 }
 
-// desc: Wtf?
-// status:
+// Get specific settings of {category}
+// Not sure if this is needed. Better to serve all settings at once.
 func GetCoursesCourseSegmentsSegmentCategoriesCategorySettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-// desc: Change(GET) {setting} in {category}
-// status: Unnecessary? Better way to do this. Or least should be PUT/PATCH
+// Change(GET) {setting} in {category}
+// status: Unnecessary? Better way to do this by sending all the new settings. Or least should be PUT/PATCH
 // ToDo: Remove or repurpose
 func GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-// desc: Get Categories for {segment} of the {course}
-// status: Not sure about this one either
+// Get Categories for {segment} of the {course}
+// status: works
 // todo: Think about this.
 func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Request) {
 	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -121,7 +133,7 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 	//result := database.GetCourseTableById(segId)
 	// Get segment data
 	res := scripts.StringToUint(segId)
-	result2 := database.GetCategoriesBySegmentId(res)
+	result2 := database.GetCategoriesBySegmentId(res, true)
 	// Transform results to json
 	anon, _ := json.Marshal(result2)
 	n := len(anon)
@@ -133,7 +145,7 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 
 }
 
-// desc: Get segments table for Faculty User
+// Get segments table for Faculty User
 // status: Works, I think
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 

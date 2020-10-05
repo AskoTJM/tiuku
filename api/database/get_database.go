@@ -32,7 +32,7 @@ func GetStudentUser(StudentID string) StudentUser {
 	return tempStudent
 }
 
-// desc: Get segments of student user
+// Get segments of student user
 // status:
 func GetUserSegments(r *http.Request) []StudentSegment {
 	if db == nil {
@@ -145,7 +145,7 @@ func GetFacultyUser(FacultyID string) FacultyUser {
 	return tempFaculty
 }
 
-// desc: Get segments of faculty user, active and with parameters, archived=yes and archived=only
+// Get segments of faculty user, active and with parameters, archived=yes and archived=only
 // status:
 // comment: New version as added Archived bool, makes search simpler, doesn't require reading Courses tables.
 func GetFacultyUserSegments(r *http.Request) []Segment {
@@ -194,7 +194,7 @@ func GetFacultyUserSegments(r *http.Request) []Segment {
 	return returnSegments
 }
 
-// desc: Find course by courseCode
+// Find course by courseCode
 // Status: Unclear
 func GetCourseTableByCode(courseCode string) Course {
 	if db == nil {
@@ -205,7 +205,7 @@ func GetCourseTableByCode(courseCode string) Course {
 	return tempCourse
 }
 
-// desc: Find course by id
+// Find course by id
 // Status: Unclear
 func GetCourseTableById(id string) Course {
 	if db == nil {
@@ -216,7 +216,7 @@ func GetCourseTableById(id string) Course {
 	return tempCourse
 }
 
-// desc: Find segment by id
+// Find segment by id
 // status:
 func GetSegmentDataById(id uint) Segment {
 	if db == nil {
@@ -249,14 +249,33 @@ func GetSegmentTableByCourseId(courseID uint) []Segment {
 	return returnSegment
 }
 
-// desc: Find ALL categories belonging to segment
+// Get Category by ID number
+// comment:
+func GetCategoryById(categoryID uint) SegmentCategory {
+	if db == nil {
+		ConnectToDB()
+	}
+	var tempCategory SegmentCategory
+	result := db.Table(categoriesTableToEdit).Where("id = ?", categoryID).Find(&tempCategory)
+	if result != nil {
+		log.Println(result)
+	}
+	return tempCategory
+}
+
+// Find ALL categories belonging to segment, true include 0 defaults / false only segments own categories.
 // comment: If using categories table for all segments
-func GetCategoriesBySegmentId(segmentID uint) []SegmentCategory {
+func GetCategoriesBySegmentId(segmentID uint, includeZero bool) []SegmentCategory {
 	if db == nil {
 		ConnectToDB()
 	}
 	var tempSegment []SegmentCategory
-	result := db.Table(categoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
+	var result *gorm.DB
+	if includeZero {
+		result = db.Table(categoriesTableToEdit).Where("segment_id = ?", segmentID).Or("segment_id = ?", 0).Find(&tempSegment)
+	} else {
+		result = db.Table(categoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
+	}
 	if result != nil {
 		log.Println(result)
 	}
@@ -274,7 +293,7 @@ func GetCategoriesBySegmentId(segmentID uint) []SegmentCategory {
 
 // Desc: GetAnonId with StudentID
 // HOX! AnonID SHOULD NOT LEAVE OUTSIDE OF THE API
-// Status: Done but REMOVED, smarter to use GetStudentUser
+// Status: Done but REMOVED, better to use GetStudentUser
 /*
 func GetAnonId(StudentID string) string {
 	if db == nil {
@@ -297,7 +316,7 @@ func GetAnonId(StudentID string) string {
 */
 
 // desc: Get name of the student with StudentID
-// Status: Removed,not in use and GetStudentUser is smarter to use
+// Status: Removed,not in use, just use GetStudentUser
 /*
 func GetStudentName(StudentID string) string {
 	if db == nil {

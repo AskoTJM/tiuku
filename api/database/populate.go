@@ -13,7 +13,7 @@ import (
 )
 
 // OBSOLETE! Replaced by initDB scripts.
-// desc: Populating School data and maincategories
+// Populating School data and maincategories
 func PopulateSchool() {
 	if db == nil {
 		ConnectToDB()
@@ -72,7 +72,7 @@ func PopulateSchool() {
 	}
 }
 
-// desc: Auto-generating student users for testing purposes
+// Auto-generating student users for testing purposes
 func PopulateStudents(p int) {
 	if db == nil {
 		ConnectToDB()
@@ -124,7 +124,7 @@ func AutoCreateStudentUserTables() {
 	}
 }
 
-// desc: Auto-generating courses for testing purposes
+// Auto-generating courses for testing purposes
 func PopulateCourses(p int) {
 	if db == nil {
 		ConnectToDB()
@@ -165,7 +165,7 @@ func PopulateCourses(p int) {
 
 }
 
-//	desc: AutoCreateSegments for Courses
+//	AutoCreateSegments for Courses
 //	comment: Modified code from CreateSegments
 func AutoCreateSegments() {
 	if db == nil {
@@ -201,7 +201,7 @@ func AutoCreateSegments() {
 	//return courseToAdd
 }
 
-// desc: Auto creating catergories for segments
+// Auto creating catergories for segments
 // status: works, but decided to go with one shared table for categories.
 func AutoCreateCategoriesForSegment(segmentToAdd uint) string { //segmentToAdd Segment) string {
 	if db == nil {
@@ -228,7 +228,7 @@ func AutoCreateCategoriesForSegment(segmentToAdd uint) string { //segmentToAdd S
 	return tableToCreate
 }
 
-// desc: Auto Populate categories with test categories.
+// Auto Populate categories with test categories.
 func PopulateCategories() {
 	if db == nil {
 		ConnectToDB()
@@ -283,7 +283,7 @@ func PopulateCategories() {
 
 }
 
-// desc: Testing purposes generates faculty users
+// Testing purposes generates faculty users
 //
 func PopulateFaculty(p int) {
 	if db == nil {
@@ -308,7 +308,8 @@ func PopulateFaculty(p int) {
 	}
 }
 
-// desc: Auto create table for Faculty Users
+// Auto create table for Faculty Users
+// status: works, but not in use
 func AutoCreateFacultyUserTables() {
 	if db == nil {
 		ConnectToDB()

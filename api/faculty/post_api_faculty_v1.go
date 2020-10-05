@@ -5,67 +5,46 @@ package faculty
 // Description: POST request functions for Faculty users
 */
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/database"
 )
 
-// desc: Create new Course in course table
-// Status: Need to clean and re-think, but works.
-// Probably doesn't need so much to response stuff
+// Create new Course in course table
+// Status: Works
 func PostCourses(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	//w.WriteHeader(http.StatusOK)
 
-	rbody := database.CreateCourse(r)
-	if rbody != "Error" {
-		t := &http.Response{
-			Status:     "200 OK",
-			StatusCode: 200,
-			Proto:      "HTTP/1.1",
-			ProtoMajor: 1,
-			ProtoMinor: 1,
-			//Header:     //map[string][]string{},
-			Body: ioutil.NopCloser(bytes.NewBufferString(rbody)),
-			//ContentLength:    0,
-			//TransferEncoding: []string{},
-			///Request: r,
-			//TLS:              &tls.ConnectionState{},
-		}
-		buff := bytes.NewBuffer(nil)
-		err := t.Write(buff)
-		if err != nil {
-			log.Println(err)
-		}
-		fmt.Fprintf(w, "%s", buff)
-	}
+	result := database.CreateCourse(w, r)
+	//anon, _ := json.Marshal(result)
+	//n := len(anon)
+	//s := string(anon[:n])
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", result)
 
 }
 
-// desc: New segment for the course
+// New segment for the course
 // status: Works
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
 
-	result := database.CreateSegment(r)
-	anon, _ := json.Marshal(result)
-	n := len(anon)
-	s := string(anon[:n])
-
-	fmt.Fprintf(w, "%s", s)
+	result := database.CreateSegment(w, r)
+	//anon, _ := json.Marshal(result)
+	//n := len(anon)
+	//s := string(anon[:n])
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", result)
 
 }
 
-// desc: Add New categories for segment
+// Add New category for segment
 // status:
 func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	database.CreateCategoriesForSegment(r)
+
+	result := database.CreateCategory(w, r)
+	fmt.Fprintf(w, "%s", result)
 }

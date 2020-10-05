@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Desc: For creating Segments table for new Student users and adding it to student_user list
+// For creating Segments table for new Student users and adding it to student_user list
 // Status: Works
 func CreateStudentSegmentTable(student StudentUser) string {
 	if db == nil {
@@ -54,7 +54,7 @@ func CreateStudentSegmentTable(student StudentUser) string {
 	}
 }
 
-// Desc: For creating Archive Segment table for containing old segments
+// For creating Archive Segment table for containing old segments
 // Status: Works
 // comment: Most likely unnecessary. Amount of segments for one student user shouldn't be that much
 // that we need another table for archiving.
@@ -91,8 +91,9 @@ func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
 	}
 }
 
-// Desc: Create Segment table for new Faculty users
+// Create Segment table for new Faculty users
 // Status: No clue, just copy+pasted and edited from CreateStudentSegmentTable
+// Not in use. Decided to go with one table for all faculty users
 func CreateFacultySegmentTable(newFaculty FacultyUser) string {
 	if db == nil {
 		ConnectToDB()
@@ -117,70 +118,113 @@ func CreateFacultySegmentTable(newFaculty FacultyUser) string {
 	}
 }
 
-// Desc: Create new course in Courses table.
+// Create new course in Courses table.
 // Status: Working, but not finished. Needs checking.
-func CreateCourse(r *http.Request) string {
+func CreateCourse(w http.ResponseWriter, r *http.Request) string {
 	// Check if there is connection to database if not connect to it
 	if db == nil {
 		ConnectToDB()
 	}
 
 	// Check if there is table for courses.
-
-	result := db.HasTable(courseTableToEdit)
+	result := CheckIfRequiredTablesExist()
+	//result := db.HasTable(courseTableToEdit)
 
 	if !result {
-		log.Println("Problems creating new Course, table for courses doesn't exist. <database/database_create->CreateCourse>")
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusInternalServerError)
+		response := "Problems creating new Course, required tables do not exist. <database/create_database->CreateCourse>"
+		return response
 	} else {
 		// Check if content type is set.
 		if r.Header.Get("Content-Type") == "" {
-			log.Println("Problems creating new Course, no body in request information. <database/database_create->CreateCourse>")
-			log.Println("Error: No body information available.")
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusNoContent)
+			response := "Problems creating new Course, no body in request information. <database/create_database->CreateCourse> Error: No body information available."
+			return response
 		} else {
 			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
 			rbody := r.Header.Get("Content-Type")
 			// Check if content type is correct one.
 			if rbody != "application/json" {
-				log.Println("Error: Content-Type is not application/json.")
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusNotAcceptable)
+				response := "Error: Content-Type is not application/json."
+				return response
 			}
 
 		}
-
-		dec := json.NewDecoder(r.Body)
-		dec.DisallowUnknownFields()
-		var newCourse Course
-		err := dec.Decode(&newCourse)
-		if err != nil {
-			log.Println("Problem with json decoding <database/database_create->CreateCourse")
-		}
-		db.Table(courseTableToEdit).Create(&newCourse)
-		// Need to fix error checking.
-		/*
-			err2 := db.Table(tableToEdit).AutoMigrate(&newCourse)
-			if err2 != nil {
-				log.Println("Problems creating new course on course table. <database/database_create->CreateCourse>")
-				log.Println(err2)
-			}
-		*/
-		return "Done adding"
-		//log.Println(newCourse)
 
 	}
-	return "Error: This should not happen."
+
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	var newCourse Course
+	err := dec.Decode(&newCourse)
+	if err != nil {
+		log.Println("Problem with json decoding <database/database_create->CreateCourse")
+	}
+	db.Table(courseTableToEdit).Create(&newCourse)
+	// Need to fix error checking.
+	/*
+		err2 := db.Table(tableToEdit).AutoMigrate(&newCourse)
+		if err2 != nil {
+			log.Println("Problems creating new course on course table. <database/database_create->CreateCourse>")
+			log.Println(err2)
+		}
+	*/
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	//db.Preload()
+	response := "Course created"
+	return response
+	//log.Println(newCourse)
+
 }
 
-// desc: Create new Segment for course
+// Create new Segment for course
 // Status: works
-func CreateSegment(r *http.Request) Course {
+func CreateSegment(w http.ResponseWriter, r *http.Request) string {
 	if db == nil {
 		ConnectToDB()
 	}
+	//var response string
 	//For what course is this
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
-	log.Printf("CourseCode is: %s", courseCode)
+	//log.Printf("CourseCode is: %s", courseCode)
 	getCourseData := GetCourseTableById(courseCode)
 
+	// Check if we have necessary tables
+	// := CheckIfRequiredTablesExist()
+	//result := db.HasTable(segmentTableToEdit)
+
+	if !CheckIfRequiredTablesExist() {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusInternalServerError)
+		response := "Problems creating new Segment, required tables do not exist. <database/create_database->CreateSegment>"
+		return response
+	} else {
+		// Check if content type is set.
+		if r.Header.Get("Content-Type") == "" {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusNoContent)
+			response := "Problems creating new Course, no body in request information. <database/create_database->CreateSegment> Error: No body information available."
+			return response
+		} else {
+			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+			rbody := r.Header.Get("Content-Type")
+			// Check if content type is correct one.
+			if rbody != "application/json" {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusNotAcceptable)
+				response := "Error: Content-Type is not application/json."
+				return response
+			}
+
+		}
+
+	}
 	dec := json.NewDecoder(r.Body)
 
 	dec.DisallowUnknownFields()
@@ -194,37 +238,86 @@ func CreateSegment(r *http.Request) Course {
 	//getCourseData.Segment[0] = newSegment
 	db.Model(&getCourseData).Association("Segment").Append(newSegment)
 	db.Save(&getCourseData)
-	//db.Preload()
-	return getCourseData
+	response := "Segment created"
+	return response //getCourseData
 
 }
 
-func CreateCategoriesForSegment(r *http.Request) {
+func CreateCategory(w http.ResponseWriter, r *http.Request) string {
 	if db == nil {
 		ConnectToDB()
 	}
 
-	vars := mux.Vars(r)
-	segmentID := vars["segment"]
-	log.Println(segmentID)
-	tableToCreate := segmentID + "_categories"
-	if err := db.Table(tableToCreate).AutoMigrate(&SegmentCategory{
-		ID:                 0,
-		MainCategory:       0,
-		SubCategory:        "",
-		MandatoryToTrack:   false,
-		MandatoryToComment: false,
-		Tickable:           false,
-		LocationNeeded:     false,
-		Active:             false,
-	}).Error; err != nil {
-		log.Println("Problems creating categories table for segment. <database/database_create->CreateCategoriesForSegment>")
+	if !CheckIfRequiredTablesExist() {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusInternalServerError)
+		response := "Problems creating new Category, required tables do not exist. <database/create_database->func CreateCategory>"
+		return response
+	} else {
+		// Check if content type is set.
+		if r.Header.Get("Content-Type") == "" {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusNoContent)
+			response := "Problems creating new Category, no body in request information. <database/create_database->CreateCategory> Error: No body information available."
+			return response
+		} else {
+			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+			rbody := r.Header.Get("Content-Type")
+			// Check if content type is correct one.
+			if rbody != "application/json" {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusNotAcceptable)
+				response := "Error: Content-Type is not application/json."
+				return response
+			}
+
+		}
+
+	}
+	dec := json.NewDecoder(r.Body)
+
+	dec.DisallowUnknownFields()
+	log.Println(dec)
+
+	var newCategory SegmentCategory
+	err := dec.Decode(&newCategory)
+	if err != nil {
+		log.Println("Problem with json decoding <database/create_database->CreateCategory")
 	}
 
-	db.Table(tableToCreate).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
+	vars := mux.Vars(r)
+	segmentID := vars["segment"]
+	if debugMode {
+		log.Println(segmentID)
+	}
+	tempSegId := scripts.StringToUint(segmentID)
+	//tableToCreate := segmentID + "_categories"
+	if err := db.Table(segmentTableToEdit).AutoMigrate(&SegmentCategory{
+		ID:                 0,
+		SegmentID:          tempSegId,
+		MainCategory:       newCategory.MainCategory,
+		SubCategory:        newCategory.SubCategory,
+		MandatoryToTrack:   newCategory.MandatoryToTrack,
+		MandatoryToComment: newCategory.MandatoryToComment,
+		Tickable:           newCategory.Tickable,
+		LocationNeeded:     newCategory.LocationNeeded,
+		Active:             newCategory.Active,
+		Archived:           newCategory.Archived,
+	}).Error; err != nil {
+		log.Println("Problems creating categories table for segment. <database/database_create->CreateCategories>")
+	}
+
+	//db.Table(segmentID).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
+	// For some reason have to manually set the
+	newCategory.SegmentID = tempSegId
+	db.Save(&newCategory)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	response := "Created categories."
+	return response
 }
 
-// desc: Create List to
+// Create List to
 
 func CreateSchoolSegmentSession(segToAdd Segment) string {
 	if db == nil {
@@ -244,7 +337,7 @@ func CreateSchoolSegmentSession(segToAdd Segment) string {
 	return returnString
 }
 
-// desc: Create SegmentSessionTable for active segments for new student user
+// Create SegmentSessionTable for active segments for new student user
 func CreateActiveSegmentSessionsTable(user StudentUser) string {
 	if db == nil {
 		ConnectToDB()
@@ -270,7 +363,7 @@ func CreateActiveSegmentSessionsTable(user StudentUser) string {
 	return tableToCreate
 }
 
-// desc: Create Archive SegmentSessionTable for student user
+// Create Archive SegmentSessionTable for student user
 func CreateSegmentsSessionsArchive(user StudentUser) string {
 	if db == nil {
 		ConnectToDB()

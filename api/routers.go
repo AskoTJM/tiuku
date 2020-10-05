@@ -164,7 +164,7 @@ var routes = Routes{
 		students.PatchSegmentsSegmentSettingsSetting,
 	},
 
-	// desc: Adding student to segment
+	// Adding student to segment
 	Route{
 		"PostCoursesCourseSegmentsSegment",
 		strings.ToUpper("Post"),
