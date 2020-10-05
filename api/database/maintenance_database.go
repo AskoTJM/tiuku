@@ -27,7 +27,7 @@ var segmentTableToEdit = "segments"
 var studentsTableToEdit = "student_users"
 var facultyTableToEdit = "faculty_users"
 var categoriesTableToEdit = "segment_categories"
-var participationTableToEdit = "school_segments_sessions"
+var enrollmentSegmentList = "school_segments_sessions"
 
 // Debug mode for spamming your logs
 var debugMode bool = true

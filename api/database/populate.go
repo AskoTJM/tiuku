@@ -144,7 +144,7 @@ func PopulateCourses(p int) {
 			ID: 0,
 			//ResourceID:      0,
 			Degree: Degree{
-				ID:          0,
+				ID:          1, // Change to zero if problems
 				ApartmentID: 0,
 				Shorthand:   "",
 				Finnish:     "",

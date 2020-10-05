@@ -34,21 +34,23 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
 		studentToJoin := database.GetStudentUser(user)
-		res := database.UpdateParticipationToSegment(studentToJoin, resSeg)
+		res := database.AddStudentToSegment(studentToJoin, resSeg)
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "%s", res)
 	}
 
 }
 
-// Add or start new session to {segment} tab
+// Add or start new session to {segment} table
 // status:
 func PostSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-// Add new Segment to CourseList
-// comment: Not sure if this is needed, should be happen automatically when we join segment
+// Add Segment to Students CourseList
+// comment: Not sure this is needed. Segment should be automatically added on Students segments anyway.
 func PostUserSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

@@ -2,7 +2,7 @@ package database
 
 /*
 // create_database.go
-// Description: Creating and adding tables to database
+// Description: Creating and adding to tables on database
 */
 import (
 	"encoding/json"
@@ -33,9 +33,9 @@ func CreateStudentSegmentTable(student StudentUser) string {
 		return "Error: Table already exists."
 	} else {
 		if err := Tiukudb.Table(tableToEdit).AutoMigrate(&StudentSegment{
-			ID:            0,
-			Course:        Course{},
-			SegmentNumber: 0,
+			ID:        0,
+			Course:    Course{},
+			SegmentID: 0,
 			//StudentSegmentSessions: StudentSegmentSession{},
 			//SegmentCategory:        SegmentCategory{},
 			StudentSegmentSessions: "",
@@ -74,9 +74,9 @@ func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
 		return "Error: Table already exists."
 	} else {
 		if err := Tiukudb.Table(tableToEdit).AutoMigrate(&StudentSegment{
-			ID:            0,
-			Course:        Course{},
-			SegmentNumber: 0,
+			ID:        0,
+			Course:    Course{},
+			SegmentID: 0,
 			//StudentSegmentSessions: StudentSegmentSession{},
 			//SegmentCategory:        SegmentCategory{},
 			StudentSegmentSessions: "",
@@ -386,4 +386,37 @@ func CreateSegmentsSessionsArchive(user StudentUser) string {
 	}
 
 	return tableToCreate
+}
+
+// Joining Student user to segment
+// status: works
+func AddStudentToSegment(joiningStudent StudentUser, segmentToJoin Segment) string {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	if err := Tiukudb.Table(enrollmentSegmentList).Create(&SchoolSegmentsSession{
+		ID:                      0,
+		SegmentID:               segmentToJoin.ID,
+		AnonID:                  joiningStudent.AnonID,
+		StudentSegmentsSessions: joiningStudent.AnonID + "_sessions",
+		Privacy:                 "",
+	}).Error; err != nil {
+		response := "Error joining Segment. <database/update_database->UpdataParticipationToSegment>"
+		return response
+	}
+	response := "Participated to Segment"
+	return response
+}
+
+func AddJoinedSegmentToStudentsSegments(joiningStudent StudentUser, segmentToJoin Segment) string {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	if err := Tiukudb.Table(enrollmentSegmentList).Create(&StudentSegment{}).Error; err != nil {
+		response := "Error joining Segment. <database/update_database->UpdataParticipationToSegment>"
+		return response
+	}
+	response := "Participated to Segment"
+	return response
 }

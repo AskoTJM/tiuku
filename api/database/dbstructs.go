@@ -130,7 +130,7 @@ type StudentSegment struct {
 type StudentSegment struct {
 	ID                     uint `gorm:"primary_key"`
 	Course                 Course
-	SegmentNumber          uint
+	SegmentID              uint
 	StudentSegmentSessions string
 	SegmentCategory        string
 	Archived               bool
