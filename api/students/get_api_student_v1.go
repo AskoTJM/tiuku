@@ -93,7 +93,7 @@ func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Re
 
 }
 
-// desc:Get 'Your' Sessions for {segment}
+// desc:Get particular {session} from {segment}
 // status:
 func GetSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -101,14 +101,15 @@ func GetSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get value of {setting} for {segment}
-// Can't remember what this was about
+// 'GET particular Setting of the Segment'
+// Can't remember what this was about, or is it actually needed
 func GetSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
 }
 
-// What is this
+// Get settings for segment, ? Same as getting categories?
 func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -139,7 +140,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Get Session data for {segment}
+// Get Session data for {segment}, filtered with Resource ID to filter out deleted data.
 // Not sure if this is needed, probably already have different endpoint to handle this
 func GetUserSegmentsResourceID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

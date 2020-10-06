@@ -2,7 +2,7 @@ package database
 
 /*
 // create_database.go
-// Description: Creating and adding to tables on database
+// Description: Creating tables on database
 */
 import (
 	"encoding/json"
@@ -33,14 +33,14 @@ func CreateStudentSegmentTable(student StudentUser) string {
 		return "Error: Table already exists."
 	} else {
 		if err := Tiukudb.Table(tableToEdit).AutoMigrate(&StudentSegment{
-			ID:        0,
-			Course:    Course{},
+			ID: 0,
+			//Course:    Course{},
 			SegmentID: 0,
 			//StudentSegmentSessions: StudentSegmentSession{},
 			//SegmentCategory:        SegmentCategory{},
 			StudentSegmentSessions: "",
-			SegmentCategory:        "",
-			Archived:               false,
+			//SegmentCategory:        "",
+			Archived: false,
 		}).Error; err != nil {
 			log.Println("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
@@ -74,14 +74,14 @@ func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
 		return "Error: Table already exists."
 	} else {
 		if err := Tiukudb.Table(tableToEdit).AutoMigrate(&StudentSegment{
-			ID:        0,
-			Course:    Course{},
-			SegmentID: 0,
+			ID:                     0,
+			SegmentID:              0,
+			StudentSegmentSessions: "",
+			Archived:               false,
+			//Course:    Course{},
 			//StudentSegmentSessions: StudentSegmentSession{},
 			//SegmentCategory:        SegmentCategory{},
-			StudentSegmentSessions: "",
-			SegmentCategory:        "",
-			Archived:               false,
+			//SegmentCategory:        "",
 		}).Error; err != nil {
 			log.Println("Problems creating Segment table of StudentUsers. <database/database_create->CreateStudentSegmentTable>")
 		}
@@ -94,6 +94,7 @@ func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
 // Create Segment table for new Faculty users
 // Status: No clue, just copy+pasted and edited from CreateStudentSegmentTable
 // Not in use. Decided to go with one table for all faculty users
+/*
 func CreateFacultySegmentTable(newFaculty FacultyUser) string {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -117,6 +118,7 @@ func CreateFacultySegmentTable(newFaculty FacultyUser) string {
 		return tableToEdit
 	}
 }
+*/
 
 // Create new course in Courses table.
 // Status: Working, but not finished. Needs checking.
@@ -345,18 +347,7 @@ func CreateActiveSegmentSessionsTable(user StudentUser) string {
 	//var newTable StudentSegmentSession
 	tableToCreate := user.AnonID + "_sessions"
 
-	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{
-		ID:              0,
-		StartTime:       "",
-		EndTime:         "",
-		CreatedAt:       "",
-		UpdateAt:        "",
-		DeletedAt:       "",
-		SegmentCategory: "",
-		Comment:         "",
-		Version:         0,
-		Locations:       "",
-	}).Error; err != nil {
+	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{}).Error; err != nil {
 		log.Println("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable>")
 	}
 
@@ -370,53 +361,9 @@ func CreateSegmentsSessionsArchive(user StudentUser) string {
 	}
 	tableToCreate := user.AnonID + "_sessions_archived"
 
-	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{
-		ID:              0,
-		StartTime:       "",
-		EndTime:         "",
-		CreatedAt:       "",
-		UpdateAt:        "",
-		DeletedAt:       "",
-		SegmentCategory: "",
-		Comment:         "",
-		Version:         0,
-		Locations:       "",
-	}).Error; err != nil {
+	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{}).Error; err != nil {
 		log.Println("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable>")
 	}
 
 	return tableToCreate
-}
-
-// Joining Student user to segment
-// status: works
-func AddStudentToSegment(joiningStudent StudentUser, segmentToJoin Segment) string {
-	if Tiukudb == nil {
-		ConnectToDB()
-	}
-
-	if err := Tiukudb.Table(enrollmentSegmentList).Create(&SchoolSegmentsSession{
-		ID:                      0,
-		SegmentID:               segmentToJoin.ID,
-		AnonID:                  joiningStudent.AnonID,
-		StudentSegmentsSessions: joiningStudent.AnonID + "_sessions",
-		Privacy:                 "",
-	}).Error; err != nil {
-		response := "Error joining Segment. <database/update_database->UpdataParticipationToSegment>"
-		return response
-	}
-	response := "Participated to Segment"
-	return response
-}
-
-func AddJoinedSegmentToStudentsSegments(joiningStudent StudentUser, segmentToJoin Segment) string {
-	if Tiukudb == nil {
-		ConnectToDB()
-	}
-	if err := Tiukudb.Table(enrollmentSegmentList).Create(&StudentSegment{}).Error; err != nil {
-		response := "Error joining Segment. <database/update_database->UpdataParticipationToSegment>"
-		return response
-	}
-	response := "Participated to Segment"
-	return response
 }

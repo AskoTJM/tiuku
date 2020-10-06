@@ -269,6 +269,7 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
+
 	var tempSegment []SegmentCategory
 	var result *gorm.DB
 
@@ -316,6 +317,118 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 		returnSegment = append(returnSegment, tempSegment2)
 	}
 	return returnSegment
+}
+
+// Get degree with ID number, 0 returns all degrees
+func GetDegree(degreeID uint) []Degree {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var result *gorm.DB
+	var tempDegree []Degree
+	if degreeID == 0 {
+		result = Tiukudb.Table(degreeTableToEdit).Find(&tempDegree)
+	} else {
+		result = Tiukudb.Table(degreeTableToEdit).Where("id = ?", degreeID).Find(&tempDegree)
+	}
+	returnDegree := make([]Degree, 0)
+	result2, _ := result.Rows()
+
+	var tempDegree2 Degree
+	for result2.Next() {
+
+		if err3 := result.ScanRows(result2, &tempDegree2); err3 != nil {
+			log.Println(err3)
+		}
+		returnDegree = append(returnDegree, tempDegree2)
+	}
+
+	return returnDegree
+}
+
+// Get Apartment info with ID number, 0 returns all apartments
+func GetApartment(apartmentID uint) []Apartment {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var result *gorm.DB
+	var tempApartment []Apartment
+	if apartmentID == 0 {
+		result = Tiukudb.Table(apartmentTableToEdit).Find(&tempApartment)
+	} else {
+		result = Tiukudb.Table(apartmentTableToEdit).Where("id = ?", apartmentID).Find(&tempApartment)
+	}
+	returnApartment := make([]Apartment, 0)
+	result2, _ := result.Rows()
+
+	var tempApartment2 Apartment
+	for result2.Next() {
+
+		if err3 := result.ScanRows(result2, &tempApartment2); err3 != nil {
+			log.Println(err3)
+		}
+		returnApartment = append(returnApartment, tempApartment2)
+	}
+
+	return returnApartment
+}
+
+// Get Campus info with ID number, 0 returns all campuses
+func GetCampus(campusID uint) []Campus {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var result *gorm.DB
+	var tempCampus []Campus
+	if campusID == 0 {
+		result = Tiukudb.Table(campusTableToEdit).Find(&tempCampus)
+	} else {
+		result = Tiukudb.Table(campusTableToEdit).Where("id = ?", campusID).Find(&tempCampus)
+	}
+	returnCampus := make([]Campus, 0)
+	result2, _ := result.Rows()
+
+	var tempCampus2 Campus
+	for result2.Next() {
+
+		if err3 := result.ScanRows(result2, &tempCampus2); err3 != nil {
+			log.Println(err3)
+		}
+		returnCampus = append(returnCampus, tempCampus2)
+	}
+
+	return returnCampus
+}
+
+// Get School info with ID number, 0 returns all schools
+func GetSchool(schoolID uint) []School {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var result *gorm.DB
+	var tempSchool []School
+	if schoolID == 0 {
+		result = Tiukudb.Table(schoolsTableToEdit).Find(&tempSchool)
+	} else {
+		result = Tiukudb.Table(schoolsTableToEdit).Where("id = ?", schoolID).Find(&tempSchool)
+	}
+	returnSchool := make([]School, 0)
+	result2, _ := result.Rows()
+
+	var tempSchool2 School
+	for result2.Next() {
+
+		if err3 := result.ScanRows(result2, &tempSchool2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSchool = append(returnSchool, tempSchool2)
+	}
+
+	return returnSchool
 }
 
 // Desc: GetAnonId with StudentID

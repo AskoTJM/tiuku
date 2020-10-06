@@ -135,7 +135,7 @@ func InitDB() {
 		FacultyName:  "",
 		FacultyEmail: "",
 		//FacultySegment: FacultySegment{},
-		FacultySegment: "",
+		//FacultySegment: "",
 	}).Error; err != nil {
 		log.Println("Problems creating table for FacultyUsers. <database/maintenance_database.go->initDB>")
 	}

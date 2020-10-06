@@ -18,8 +18,7 @@ import (
 // Join {segment} of the {course}
 // status:
 func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
+
 	vars := mux.Vars(r)
 	segCode := vars["segment"]
 	resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
@@ -45,8 +44,28 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 // Add or start new session to {segment} table
 // status:
 func PostSegmentsSegment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+
+	// := mux.Vars(r)
+	//segCode := vars["segment"]
+	//resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
+
+	user := r.Header.Get("X-User")
+	returnNum := database.CheckIfUserExists(user)
+	if returnNum == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "%s", "Incorrect request")
+	} else if returnNum > 1 {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	} else {
+		//	studentNow := database.GetStudentUser(user)
+
+		//res := database.AddStudentToSegment(studentNow, resSeg)
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		//	fmt.Fprintf(w, "%s", res)
+	}
 }
 
 // Add Segment to Students CourseList

@@ -9,6 +9,8 @@ package database
 import (
 	"log"
 	"strconv"
+
+	"github.com/AskoTJM/tiuku/api/scripts"
 	//"github.com/AskoTJM/tiuku/api/database"
 )
 
@@ -177,12 +179,12 @@ func AutoCreateSegments() {
 		courseToAdd := GetCourseTableById(strconv.Itoa(i))
 		log.Print(courseToAdd.ID)
 		c := 1
-		for c < 4 {
+		for c < 7 {
 			newSegment := &Segment{
 				ID:          0,
 				CourseID:    courseToAdd.ID,
 				SegmentName: "segment " + strconv.Itoa(c),
-				TeacherID:   0,
+				TeacherID:   scripts.IntToUint(c),
 				Scope:       3,
 				//SegmentCategories:     "", //SegmentCategory{},
 				ExpectedAttendance:    15,
@@ -299,8 +301,8 @@ func PopulateFaculty(p int) {
 			FacultyName:  "opettaja" + strconv.Itoa(i),
 			FacultyEmail: "opettaja" + strconv.Itoa(i) + "@oppilaitos.fi",
 			//School:         School{},
-			Apartment:      Apartment{},
-			FacultySegment: "", //CreateFacultySegmentTable("ope" + strconv.Itoa(i))"",
+			Apartment: Apartment{},
+			//FacultySegment: "", //CreateFacultySegmentTable("ope" + strconv.Itoa(i))"",
 			//FacultySegment: FacultySegment{},
 		}).Error; err != nil {
 			log.Println("Problems populating table of StudentUsers. <database/populate.go->populateStudents>")
@@ -310,6 +312,7 @@ func PopulateFaculty(p int) {
 
 // Auto create table for Faculty Users
 // status: works, but not in use
+/*
 func AutoCreateFacultyUserTables() {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -322,3 +325,4 @@ func AutoCreateFacultyUserTables() {
 		i++
 	}
 }
+*/

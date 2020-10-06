@@ -15,7 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Leave segment of the course
+// Leave {segment} of the {course}
 func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	//w.WriteHeader(http.StatusOK)
@@ -33,7 +33,7 @@ func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) 
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
 		studentToJoin := database.GetStudentUser(user)
-		res := database.RemoveStudentFromSegment(studentToJoin, resSeg)
+		res := database.DeleteStudentFromSegment(studentToJoin, resSeg)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "%s", res)

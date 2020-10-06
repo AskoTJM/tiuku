@@ -66,7 +66,8 @@ var routes = Routes{
 		students.DeleteCoursesCourseSegmentsSegment,
 	},
 
-	// DELETE Session from Segment
+	// DELETE {session} from {segment}
+	// Should use soft delete
 	Route{
 		"DeleteSegmentsSegmentSession",
 		strings.ToUpper("Delete"),
@@ -106,7 +107,7 @@ var routes = Routes{
 		students.GetCoursesCourseSegmentsSegmentCategories,
 	},
 
-	// GET particular Session data from Segment
+	// GET particular {session} data from {segment}
 	Route{
 		"GetSegmentsSegmentSession",
 		strings.ToUpper("Get"),
@@ -122,27 +123,30 @@ var routes = Routes{
 		students.GetSegmentsSegmentSettingsSetting,
 	},
 
+	// Get settings for {segment}
+	// Same as /course/{course}/segment/{segment}/categories ?
+	// Maybe add settings for automatic notifications etc?
 	Route{
 		"GetUserSegmentSettings",
 		strings.ToUpper("Get"),
 		"/students/v1/segment/{segment}/settings",
 		students.GetUserSegmentsSettings,
 	},
-
+	// Get Student users segments list
 	Route{
 		"GetUserSegments",
 		strings.ToUpper("Get"),
 		"/students/v1/segments",
 		students.GetUserSegments,
 	},
-
+	// Get student users session on
 	Route{
 		"GetUserSegmentsResourceID",
 		strings.ToUpper("Get"),
 		"/students/v1/segments/{segment}",
 		students.GetUserSegmentsResourceID,
 	},
-
+	// Patch, i.e. change setting for segment
 	Route{
 		"PatchSegmentSegmentSettings",
 		strings.ToUpper("Patch"),
@@ -150,13 +154,14 @@ var routes = Routes{
 		students.PatchSegmentSegmentSettings,
 	},
 
+	// Patch, stop {session} data
 	Route{
 		"PatchSegmentsSegmentSession",
 		strings.ToUpper("Patch"),
 		"/students/v1/segments/{segment}/{session}",
 		students.PatchSegmentsSegmentSession,
 	},
-
+	// Patch, change setting of {segment}
 	Route{
 		"PatchSegmentsSegmentSettingsSetting",
 		strings.ToUpper("Patch"),
@@ -164,28 +169,30 @@ var routes = Routes{
 		students.PatchSegmentsSegmentSettingsSetting,
 	},
 
-	// Adding student to segment
+	// Adding student to {segment}
 	Route{
 		"PostCoursesCourseSegmentsSegment",
 		strings.ToUpper("Post"),
 		"/students/v1/courses/{course}/segments/{segment}",
 		students.PostCoursesCourseSegmentsSegment,
 	},
-
+	// Start session on {segment}, or transfer local data to tiuku
 	Route{
 		"PostSegmentsSegment",
 		strings.ToUpper("Post"),
 		"/students/v1/segments/{segment}",
 		students.PostSegmentsSegment,
 	},
-
+	// Add segment to Student users segment list,
+	// unnecessary until it's possible for user to create own categories.
 	Route{
 		"PostUserSegments",
 		strings.ToUpper("Post"),
 		"/students/v1/segments",
 		students.PostUserSegments,
 	},
-
+	// Replace {session} from {segment}
+	// If needed to edit or
 	Route{
 		"PutSegmentsSegmentSession",
 		strings.ToUpper("Put"),

@@ -1,8 +1,8 @@
 package scripts
 
 /*
-// scripts
-// Description: functions independent of database or http connections, mostly to make somethings easier.
+// scripts.go
+// Description: functions independent of database or http connections, mostly short snippets to make things easier.
 */
 import (
 	"fmt"
@@ -43,6 +43,16 @@ func StringToUint64(newString string) uint64 {
 	s1, _ := strconv.ParseUint(newString, 10, 32)
 	//s2 := uint32(s1)
 	return s1
+}
+
+// Turn int to uint
+func IntToUint(newInt int) uint {
+	return uint(newInt)
+}
+
+// Turn uint to int
+func UintToInt(newUint uint) int {
+	return int(newUint)
 }
 
 func TestResponse(w http.ResponseWriter, r *http.Request) {

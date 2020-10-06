@@ -1,23 +1,16 @@
 package database
 
+import (
+	"time"
+)
+
 /*
 // dbstructs.go
 // Description: Structs used in tiuku
 */
 
 // Table for StudentUsers
-/*
-type StudentUser struct {
-	ID              uint `gorm:"primary_key"`
-	StudentID       string
-	AnonID          string
-	StudentName     string
-	StudentSegments StudentSegment
-	StudentEmail    string
-	StudentClass    string
-}
-*/
-// Restructed
+
 type StudentUser struct {
 	ID              uint   `gorm:"primary_key"`
 	StudentID       string `gorm:"not null"`
@@ -34,10 +27,10 @@ type FacultyUser struct {
 	FacultyID    string `gorm:"not null"`
 	FacultyName  string
 	FacultyEmail string
+	Apartment    Apartment
 	//School       School
-	Apartment Apartment
 	//FacultySegment FacultySegment
-	FacultySegment string
+	//FacultySegment string
 }
 
 type StudentClass struct {
@@ -45,16 +38,6 @@ type StudentClass struct {
 	Campus    Campus
 	Apartment Apartment
 	Degree    Degree
-}
-
-// Table of Faculty(in this case Teachers), to save their Segments
-type FacultySegment struct {
-	ID                    uint `gorm:"primary_key"`
-	Course                Course
-	SegmentNumber         uint
-	SchoolSegmentsSession SchoolSegmentsSession
-	SegmentCategories     SegmentCategory
-	Archived              bool
 }
 
 // Table for course
@@ -73,6 +56,7 @@ type Course struct {
 type Segment struct {
 	ID          uint `gorm:"primary_key"`
 	CourseID    uint `gorm:"not null"`
+	Course      Course
 	SegmentName string
 	TeacherID   uint
 	Scope       uint
@@ -98,6 +82,7 @@ type SchoolSegmentsSession struct {
 type SegmentCategory struct {
 	ID                 uint `gorm:"primary_key"`
 	SegmentID          uint
+	Segment            Segment
 	MainCategory       uint `gorm:"not null"`
 	SubCategory        string
 	MandatoryToTrack   bool
@@ -115,60 +100,36 @@ type MainCategory struct {
 	English   string
 }
 
-// What Segments of Courses student is tracking.
-/*
+// Students Segments list
 type StudentSegment struct {
 	ID                     uint `gorm:"primary_key"`
-	Course                 Course
-	SegmentNumber          uint
-	StudentSegmentSessions StudentSegmentSession
-	SegmentCategory        SegmentCategory
-	Archived               bool
-}
-*/
-// Revamped
-type StudentSegment struct {
-	ID                     uint `gorm:"primary_key"`
-	Course                 Course
 	SegmentID              uint
 	StudentSegmentSessions string
-	SegmentCategory        string
 	Archived               bool
+	// Not needed as categories are searched with segment id
+	//SegmentCategory        string
+	// Can get course from segmentID when needed
+	//Course                 Course
+
 }
 
 // Students Sessions for Segment
-/*
 type StudentSegmentSession struct {
 	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
 	//gorm.Model
-	ID              uint `gorm:"primary_key"`
-	StartTime       string
-	EndTime         string
-	CreatedAt       string
-	UpdateAt        string
-	DeletedAt       string
-	SegmentCategory SegmentCategory
-	Comment         string
-	Version         uint
-	Locations       string
-}
-*/
-// Restruct
-type StudentSegmentSession struct {
-	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
-	//gorm.Model
-	ID              uint `gorm:"primary_key"`
-	SegmentID       uint
-	Segment         Segment
-	StartTime       string
-	EndTime         string
-	CreatedAt       string
-	UpdateAt        string
-	DeletedAt       string
-	SegmentCategory string `gorm:"not null"`
-	Comment         string
-	Version         uint
-	Locations       string
+	ID         uint `gorm:"primary_key"`
+	ResourceID uint `gorm:"not null"`
+	SegmentID  uint `gorm:"not null"`
+	Segment    Segment
+	StartTime  string
+	EndTime    string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  *time.Time
+	Comment    string
+	Version    uint
+	Locations  string
+	//SegmentCategory string `gorm:"not null"`
 }
 
 // Table for School. School can have multiple campuses
@@ -208,11 +169,68 @@ type Apartment struct {
 // Degree in the Apartment.
 type Degree struct {
 	ID          uint `gorm:"primary_key"`
-	ApartmentID uint
 	Shorthand   string
 	Finnish     string
 	English     string
+	ApartmentID uint
 }
+
+// Old and obselete Structs here for storage until sure they're not needed anymore
+
+// Old StudentUser struct
+/*
+type StudentUser struct {
+	ID              uint `gorm:"primary_key"`
+	StudentID       string
+	AnonID          string
+	StudentName     string
+	StudentSegments StudentSegment
+	StudentEmail    string
+	StudentClass    string
+}
+*/
+// Students Sessions for Segment
+/*
+type StudentSegmentSession struct {
+	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
+	//gorm.Model
+	ID              uint `gorm:"primary_key"`
+	StartTime       string
+	EndTime         string
+	CreatedAt       string
+	UpdateAt        string
+	DeletedAt       string
+	SegmentCategory SegmentCategory
+	Comment         string
+	Version         uint
+	Locations       string
+}
+*/
+
+// Table of Faculty(in this case Teachers), to save their Segments
+// Not used as decided to use single table for faculty and their segments
+/*
+type FacultySegment struct {
+	ID                    uint `gorm:"primary_key"`
+	Course                Course
+	SegmentNumber         uint
+	SchoolSegmentsSession SchoolSegmentsSession
+	SegmentCategories     SegmentCategory
+	Archived              bool
+}
+*/
+
+// What Segments of Courses student is tracking.
+/*
+type StudentSegment struct {
+	ID                     uint `gorm:"primary_key"`
+	Course                 Course
+	SegmentNumber          uint
+	StudentSegmentSessions StudentSegmentSession
+	SegmentCategory        SegmentCategory
+	Archived               bool
+}
+*/
 
 /*
 func (Degree) TableName() string {

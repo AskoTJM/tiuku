@@ -29,6 +29,11 @@ var facultyTableToEdit = "faculty_users"
 var categoriesTableToEdit = "segment_categories"
 var enrollmentSegmentList = "school_segments_sessions"
 
+var degreeTableToEdit = "degrees"
+var apartmentTableToEdit = "apartments"
+var campusTableToEdit = "campus"
+var schoolsTableToEdit = "schools"
+
 // Debug mode for spamming your logs
 var debugMode bool = true
 
@@ -166,7 +171,19 @@ func ArchiveCourse(courseToArchive Course, archive bool) {
 	}
 }
 
-// Test if required tables exist
+// Fix archive status of courses segments and categories
+// Should work by working through courses and checking that their segments and categories have same archive status
+//
+func CheckArchiveConflicts() int {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var numberOfFixes int
+
+	return numberOfFixes
+}
+
+// Test if required tables exist, should include all the necessary table or fail
 func CheckIfRequiredTablesExist() bool {
 	if Tiukudb == nil {
 		ConnectToDB()

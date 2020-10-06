@@ -8,7 +8,7 @@ package database
 
 // Joining Student user to segment
 // status: Works
-func RemoveStudentFromSegment(joiningStudent StudentUser, segmentToJoin Segment) string {
+func DeleteStudentFromSegment(joiningStudent StudentUser, segmentToJoin Segment) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
