@@ -79,33 +79,31 @@ func GetUserSegments(student StudentUser, params string) []StudentSegment {
 
 // Get Courses, default only active. with "archived=yes" all courses, "archived=only" to get only archived ones.
 // Status: Works
-func GetCourses(r *http.Request) []Course {
+func GetCourses(choice string) []Course {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
 	var tempCourses []Course
-	var result *gorm.DB //db.Table(courseTableToEdit)
-	paramTest := r.URL.Query()
-	filter, params := paramTest["archived"]
+	var result *gorm.DB
 
-	if !params || len(filter) == 0 {
+	if choice == "no" {
 		result = Tiukudb.Table(CourseTableToEdit).Where("archived = ?", false).Find(&tempCourses)
 		if result != nil {
 			log.Println(result.Error)
 		}
-	} else if paramTest.Get("archived") == "yes" {
+	} else if choice == "yes" {
 		result = Tiukudb.Table(CourseTableToEdit).Find(&tempCourses)
 		if result != nil {
 			log.Println(result.Error)
 		}
-	} else if paramTest.Get("archived") == "only" {
+	} else if choice == "only" {
 		result = Tiukudb.Table(CourseTableToEdit).Where("archived = ?", true).Find(&tempCourses)
 		if result != nil {
 			log.Println(result)
 		}
 	} else {
-		fmt.Println("Error: Invalid parameters.")
+		log.Println("Error: Invalid parameters.")
 	}
 
 	returnCourses := make([]Course, 0)

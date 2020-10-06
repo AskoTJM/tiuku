@@ -20,7 +20,20 @@ import (
 // status: works
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 
-	result := database.GetCourses(r)
+	paramTest := r.URL.Query()
+	filter, params := paramTest["archived"]
+	var choice string
+	if !params || len(filter) == 0 {
+		choice = "no"
+	} else if paramTest.Get("archived") == "yes" {
+		choice = "yes"
+	} else if paramTest.Get("archived") == "only" {
+		choice = "only"
+	} else {
+		log.Println("Error: Invalid parameters.")
+	}
+
+	result := database.GetCourses(choice)
 
 	anon, _ := json.Marshal(result)
 	n := len(anon)

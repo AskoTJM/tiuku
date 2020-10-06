@@ -8,6 +8,7 @@ package students
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/database"
@@ -18,8 +19,21 @@ import (
 // Get list of courses available
 // status:
 func GetCourses(w http.ResponseWriter, r *http.Request) {
+	paramTest := r.URL.Query()
+	filter, params := paramTest["archived"]
+	var choice string
+	if !params || len(filter) == 0 {
+		choice = "no"
+	} else if paramTest.Get("archived") == "yes" {
+		choice = "yes"
+	} else if paramTest.Get("archived") == "only" {
+		choice = "only"
+	} else {
+		log.Println("Error: Invalid parameters.")
+	}
 
-	result := database.GetCourses(r)
+	result := database.GetCourses(choice)
+
 	anon, _ := json.Marshal(result)
 	n := len(anon)
 	s := string(anon[:n])
