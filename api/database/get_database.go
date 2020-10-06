@@ -22,7 +22,7 @@ func GetStudentUser(StudentID string) StudentUser {
 
 	var tempStudent StudentUser
 
-	result := Tiukudb.Table(studentsTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
+	result := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 	if result == nil {
 		log.Println(result)
 	}
@@ -34,35 +34,32 @@ func GetStudentUser(StudentID string) StudentUser {
 
 // Get segments of student user
 // status:
-func GetUserSegments(r *http.Request) []StudentSegment {
+func GetUserSegments(student StudentUser, params string) []StudentSegment {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
 	var tempSegment []StudentSegment
-	myAnonID := GetStudentUser(r.Header.Get("X-User")).AnonID
+	myAnonID := student.AnonID
 	tableToEdit := myAnonID + "_segments"
-	result := Tiukudb.Table(tableToEdit)
-	paramTest := r.URL.Query()
-	filter, params := paramTest["archived"]
-
-	if !params || len(filter) == 0 {
+	var result *gorm.DB //:= Tiukudb.Table(tableToEdit)
+	if params == "no" {
 		result = Tiukudb.Table(tableToEdit).Where("archived = ?", false).Find(&tempSegment)
 		if result != nil {
 			log.Println(result.Error)
 		}
-	} else if paramTest.Get("archived") == "yes" {
+	} else if params == "yes" {
 		result = Tiukudb.Table(tableToEdit).Find(&tempSegment)
 		if result != nil {
 			log.Println(result.Error)
 		}
-	} else if paramTest.Get("archived") == "only" {
+	} else if params == "only" {
 		result = Tiukudb.Table(tableToEdit).Where("archived = ?", true).Find(&tempSegment)
 		if result != nil {
-			log.Println(result)
+			log.Println(result.Error)
 		}
 	} else {
-		fmt.Println("Error: Invalid parameters.")
+		log.Printf("Error: Invalid parameters.")
 	}
 
 	returnSegments := make([]StudentSegment, 0)
@@ -93,17 +90,17 @@ func GetCourses(r *http.Request) []Course {
 	filter, params := paramTest["archived"]
 
 	if !params || len(filter) == 0 {
-		result = Tiukudb.Table(courseTableToEdit).Where("archived = ?", false).Find(&tempCourses)
+		result = Tiukudb.Table(CourseTableToEdit).Where("archived = ?", false).Find(&tempCourses)
 		if result != nil {
 			log.Println(result.Error)
 		}
 	} else if paramTest.Get("archived") == "yes" {
-		result = Tiukudb.Table(courseTableToEdit).Find(&tempCourses)
+		result = Tiukudb.Table(CourseTableToEdit).Find(&tempCourses)
 		if result != nil {
 			log.Println(result.Error)
 		}
 	} else if paramTest.Get("archived") == "only" {
-		result = Tiukudb.Table(courseTableToEdit).Where("archived = ?", true).Find(&tempCourses)
+		result = Tiukudb.Table(CourseTableToEdit).Where("archived = ?", true).Find(&tempCourses)
 		if result != nil {
 			log.Println(result)
 		}
@@ -137,7 +134,7 @@ func GetFacultyUser(FacultyID string) FacultyUser {
 
 	var tempFaculty FacultyUser
 
-	result := Tiukudb.Table(facultyTableToEdit).Where("faculty_id = ?", FacultyID).First(&tempFaculty)
+	result := Tiukudb.Table(FacultyTableToEdit).Where("faculty_id = ?", FacultyID).First(&tempFaculty)
 	if result == nil {
 		log.Println(result)
 	}
@@ -161,17 +158,17 @@ func GetFacultyUserSegments(r *http.Request) []Segment {
 	paramTest := r.URL.Query()
 	filter, params := paramTest["archived"]
 	if !params || len(filter) == 0 {
-		result = Tiukudb.Table(segmentTableToEdit).Where("teacher_id = ?", teacher.ID).Where("archived = ?", false).Find(&tempSegment)
+		result = Tiukudb.Table(SegmentTableToEdit).Where("teacher_id = ?", teacher.ID).Where("archived = ?", false).Find(&tempSegment)
 		if result != nil {
 			log.Println(result.Error)
 		}
 	} else if paramTest.Get("archived") == "yes" {
-		result = Tiukudb.Table(segmentTableToEdit).Where("teacher_id = ?", teacher.ID).Find(&tempSegment)
+		result = Tiukudb.Table(SegmentTableToEdit).Where("teacher_id = ?", teacher.ID).Find(&tempSegment)
 		if result != nil {
 			log.Println(result.Error)
 		}
 	} else if paramTest.Get("archived") == "only" {
-		result = Tiukudb.Table(segmentTableToEdit).Where("teacher_id = ?", teacher.ID).Where("archived = ?", true).Find(&tempSegment)
+		result = Tiukudb.Table(SegmentTableToEdit).Where("teacher_id = ?", teacher.ID).Where("archived = ?", true).Find(&tempSegment)
 		if result != nil {
 			log.Println(result.Error)
 		}
@@ -201,18 +198,18 @@ func GetCourseTableByCode(courseCode string) Course {
 		ConnectToDB()
 	}
 	var tempCourse Course
-	Tiukudb.Table(courseTableToEdit).Where("course_code = ?", courseCode).Find(&tempCourse).Row()
+	Tiukudb.Table(CourseTableToEdit).Where("course_code = ?", courseCode).Find(&tempCourse).Row()
 	return tempCourse
 }
 
 // Find course by id
 // Status: Unclear
-func GetCourseTableById(id string) Course {
+func GetCourseTableById(id uint) Course {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	var tempCourse Course
-	Tiukudb.Table(courseTableToEdit).Where("id = ?", id).Find(&tempCourse).Row()
+	Tiukudb.Table(CourseTableToEdit).Where("id = ?", id).Find(&tempCourse).Row()
 	return tempCourse
 }
 
@@ -223,7 +220,7 @@ func GetSegmentDataById(id uint) Segment {
 		ConnectToDB()
 	}
 	var tempSegment Segment
-	Tiukudb.Table(segmentTableToEdit).Where("id = ?", id).Find(&tempSegment).Row()
+	Tiukudb.Table(SegmentTableToEdit).Where("id = ?", id).Find(&tempSegment).Row()
 	return tempSegment
 }
 
@@ -233,7 +230,7 @@ func GetSegmentTableByCourseId(courseID uint) []Segment {
 	}
 	var tempSegment []Segment
 	//tempSegment := make([]Segment, 0)
-	result := Tiukudb.Table(segmentTableToEdit).Where("course_id = ?", courseID).Find(&tempSegment)
+	result := Tiukudb.Table(SegmentTableToEdit).Where("course_id = ?", courseID).Find(&tempSegment)
 	if result != nil {
 		log.Println(result)
 	}
@@ -256,7 +253,7 @@ func GetCategoryById(categoryID uint) SegmentCategory {
 		ConnectToDB()
 	}
 	var tempCategory SegmentCategory
-	result := Tiukudb.Table(categoriesTableToEdit).Where("id = ?", categoryID).Find(&tempCategory)
+	result := Tiukudb.Table(CategoriesTableToEdit).Where("id = ?", categoryID).Find(&tempCategory)
 	if result != nil {
 		log.Println(result)
 	}
@@ -275,12 +272,12 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 
 	if includeInActive {
 		if includeZero {
-			result = Tiukudb.Table(categoriesTableToEdit).Where("segment_id = ?", segmentID).Or("segment_id = ?", 0).Find(&tempSegment)
+			result = Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", segmentID).Or("segment_id = ?", 0).Find(&tempSegment)
 			if debugMode {
 				log.Printf("IncludeZero and IncludeInActive")
 			}
 		} else {
-			result = Tiukudb.Table(categoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
+			result = Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
 			if debugMode {
 				log.Printf("No IncludeZero and IncludeInActive")
 			}
@@ -291,13 +288,13 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 	} else {
 		if includeZero {
 			// With Segment_Id 0 value should always be active as it is mandatory category for all segments i.e. no need to check it
-			result = Tiukudb.Table(categoriesTableToEdit).Where("active = ? AND segment_id = ?", true, segmentID).Or("segment_id = ?", 0).Find(&tempSegment)
+			result = Tiukudb.Table(CategoriesTableToEdit).Where("active = ? AND segment_id = ?", true, segmentID).Or("segment_id = ?", 0).Find(&tempSegment)
 
 			if debugMode {
 				log.Printf("IncludeZero and No IncludeInActive")
 			}
 		} else {
-			result = Tiukudb.Table(categoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
+			result = Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
 			if debugMode {
 				log.Printf("No IncludeZero and IncludeInActive")
 			}
@@ -328,9 +325,9 @@ func GetDegree(degreeID uint) []Degree {
 	var result *gorm.DB
 	var tempDegree []Degree
 	if degreeID == 0 {
-		result = Tiukudb.Table(degreeTableToEdit).Find(&tempDegree)
+		result = Tiukudb.Table(DegreeTableToEdit).Find(&tempDegree)
 	} else {
-		result = Tiukudb.Table(degreeTableToEdit).Where("id = ?", degreeID).Find(&tempDegree)
+		result = Tiukudb.Table(DegreeTableToEdit).Where("id = ?", degreeID).Find(&tempDegree)
 	}
 	returnDegree := make([]Degree, 0)
 	result2, _ := result.Rows()
@@ -356,9 +353,9 @@ func GetApartment(apartmentID uint) []Apartment {
 	var result *gorm.DB
 	var tempApartment []Apartment
 	if apartmentID == 0 {
-		result = Tiukudb.Table(apartmentTableToEdit).Find(&tempApartment)
+		result = Tiukudb.Table(ApartmentTableToEdit).Find(&tempApartment)
 	} else {
-		result = Tiukudb.Table(apartmentTableToEdit).Where("id = ?", apartmentID).Find(&tempApartment)
+		result = Tiukudb.Table(ApartmentTableToEdit).Where("id = ?", apartmentID).Find(&tempApartment)
 	}
 	returnApartment := make([]Apartment, 0)
 	result2, _ := result.Rows()
@@ -384,9 +381,9 @@ func GetCampus(campusID uint) []Campus {
 	var result *gorm.DB
 	var tempCampus []Campus
 	if campusID == 0 {
-		result = Tiukudb.Table(campusTableToEdit).Find(&tempCampus)
+		result = Tiukudb.Table(CampusTableToEdit).Find(&tempCampus)
 	} else {
-		result = Tiukudb.Table(campusTableToEdit).Where("id = ?", campusID).Find(&tempCampus)
+		result = Tiukudb.Table(CampusTableToEdit).Where("id = ?", campusID).Find(&tempCampus)
 	}
 	returnCampus := make([]Campus, 0)
 	result2, _ := result.Rows()
@@ -412,9 +409,9 @@ func GetSchool(schoolID uint) []School {
 	var result *gorm.DB
 	var tempSchool []School
 	if schoolID == 0 {
-		result = Tiukudb.Table(schoolsTableToEdit).Find(&tempSchool)
+		result = Tiukudb.Table(SchoolsTableToEdit).Find(&tempSchool)
 	} else {
-		result = Tiukudb.Table(schoolsTableToEdit).Where("id = ?", schoolID).Find(&tempSchool)
+		result = Tiukudb.Table(SchoolsTableToEdit).Where("id = ?", schoolID).Find(&tempSchool)
 	}
 	returnSchool := make([]School, 0)
 	result2, _ := result.Rows()

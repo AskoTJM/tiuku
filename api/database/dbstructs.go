@@ -21,7 +21,7 @@ type StudentUser struct {
 	StudentClass    string
 }
 
-// Table for FacultyUsers f the API
+// Table for FacultyUsers of the API
 type FacultyUser struct {
 	ID           uint   `gorm:"primary_key"`
 	FacultyID    string `gorm:"not null"`

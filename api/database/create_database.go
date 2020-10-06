@@ -5,12 +5,9 @@ package database
 // Description: Creating tables on database
 */
 import (
-	"encoding/json"
 	"log"
-	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/scripts"
-	"github.com/gorilla/mux"
 )
 
 // For creating Segments table for new Student users and adding it to student_user list
@@ -122,199 +119,102 @@ func CreateFacultySegmentTable(newFaculty FacultyUser) string {
 
 // Create new course in Courses table.
 // Status: Working, but not finished. Needs checking.
-func CreateCourse(w http.ResponseWriter, r *http.Request) string {
+func CreateCourse(newCourse Course, tableToEdit string) string {
 	// Check if there is connection to database if not connect to it
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
-	// Check if there is table for courses.
-	result := CheckIfRequiredTablesExist()
-	//result := db.HasTable(courseTableToEdit)
+	Tiukudb.Table(tableToEdit).Create(&newCourse)
 
-	if !result {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusInternalServerError)
-		response := "Problems creating new Course, required tables do not exist. <database/create_database->CreateCourse>"
-		return response
-	} else {
-		// Check if content type is set.
-		if r.Header.Get("Content-Type") == "" {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusNoContent)
-			response := "Problems creating new Course, no body in request information. <database/create_database->CreateCourse> Error: No body information available."
-			return response
-		} else {
-			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
-			rbody := r.Header.Get("Content-Type")
-			// Check if content type is correct one.
-			if rbody != "application/json" {
-				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-				w.WriteHeader(http.StatusNotAcceptable)
-				response := "Error: Content-Type is not application/json."
-				return response
-			}
-
-		}
-
-	}
-
-	dec := json.NewDecoder(r.Body)
-	dec.DisallowUnknownFields()
-	var newCourse Course
-	err := dec.Decode(&newCourse)
-	if err != nil {
-		log.Println("Problem with json decoding <database/database_create->CreateCourse")
-	}
-	Tiukudb.Table(courseTableToEdit).Create(&newCourse)
-	// Need to fix error checking.
-	/*
-		err2 := db.Table(tableToEdit).AutoMigrate(&newCourse)
-		if err2 != nil {
-			log.Println("Problems creating new course on course table. <database/database_create->CreateCourse>")
-			log.Println(err2)
-		}
-	*/
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
-	//db.Preload()
-	response := "Course created"
+	response := "Course created" + newCourse.CourseCode
 	return response
-	//log.Println(newCourse)
-
 }
 
 // Create new Segment for course
 // Status: works
-func CreateSegment(w http.ResponseWriter, r *http.Request) string {
+func CreateSegment(newSegment Segment, tableToEdit string) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	//var response string
-	//For what course is this
-	vars := mux.Vars(r)
-	courseCode := vars["course"]
-	//log.Printf("CourseCode is: %s", courseCode)
-	getCourseData := GetCourseTableById(courseCode)
 
-	// Check if we have necessary tables
-	// := CheckIfRequiredTablesExist()
-	//result := db.HasTable(segmentTableToEdit)
-
-	if !CheckIfRequiredTablesExist() {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusInternalServerError)
-		response := "Problems creating new Segment, required tables do not exist. <database/create_database->CreateSegment>"
-		return response
-	} else {
-		// Check if content type is set.
-		if r.Header.Get("Content-Type") == "" {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusNoContent)
-			response := "Problems creating new Course, no body in request information. <database/create_database->CreateSegment> Error: No body information available."
-			return response
-		} else {
-			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
-			rbody := r.Header.Get("Content-Type")
-			// Check if content type is correct one.
-			if rbody != "application/json" {
-				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-				w.WriteHeader(http.StatusNotAcceptable)
-				response := "Error: Content-Type is not application/json."
-				return response
-			}
-
-		}
-
-	}
-	dec := json.NewDecoder(r.Body)
-
-	dec.DisallowUnknownFields()
-	log.Println(dec)
-
-	var newSegment Segment
-	err := dec.Decode(&newSegment)
-	if err != nil {
-		log.Println("Problem with json decoding <database/database_create->CreateSegment")
-	}
-	//getCourseData.Segment[0] = newSegment
+	getCourseData := GetCourseTableById(newSegment.CourseID)
 	Tiukudb.Model(&getCourseData).Association("Segment").Append(newSegment)
 	Tiukudb.Save(&getCourseData)
-	response := "Segment created"
+	response := "Segment created " + newSegment.SegmentName
 	return response //getCourseData
 
 }
 
-func CreateCategory(w http.ResponseWriter, r *http.Request) string {
+func CreateCategory(newCategory SegmentCategory, tableToEdit string) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-
-	if !CheckIfRequiredTablesExist() {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusInternalServerError)
-		response := "Problems creating new Category, required tables do not exist. <database/create_database->func CreateCategory>"
-		return response
-	} else {
-		// Check if content type is set.
-		if r.Header.Get("Content-Type") == "" {
+	/*
+		if !CheckIfRequiredTablesExist() {
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusNoContent)
-			response := "Problems creating new Category, no body in request information. <database/create_database->CreateCategory> Error: No body information available."
+			w.WriteHeader(http.StatusInternalServerError)
+			response := "Problems creating new Category, required tables do not exist. <database/create_database->func CreateCategory>"
 			return response
 		} else {
-			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
-			rbody := r.Header.Get("Content-Type")
-			// Check if content type is correct one.
-			if rbody != "application/json" {
+			// Check if content type is set.
+			if r.Header.Get("Content-Type") == "" {
 				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-				w.WriteHeader(http.StatusNotAcceptable)
-				response := "Error: Content-Type is not application/json."
+				w.WriteHeader(http.StatusNoContent)
+				response := "Problems creating new Category, no body in request information. <database/create_database->CreateCategory> Error: No body information available."
 				return response
+			} else {
+				//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+				rbody := r.Header.Get("Content-Type")
+				// Check if content type is correct one.
+				if rbody != "application/json" {
+					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+					w.WriteHeader(http.StatusNotAcceptable)
+					response := "Error: Content-Type is not application/json."
+					return response
+				}
+
 			}
 
 		}
+		dec := json.NewDecoder(r.Body)
 
-	}
-	dec := json.NewDecoder(r.Body)
+		dec.DisallowUnknownFields()
+		//log.Println(dec)
 
-	dec.DisallowUnknownFields()
-	log.Println(dec)
+		var newCategory SegmentCategory
+		err := dec.Decode(&newCategory)
+		if err != nil {
+			log.Println("Problem with json decoding <database/create_database->CreateCategory")
+		}
 
-	var newCategory SegmentCategory
-	err := dec.Decode(&newCategory)
-	if err != nil {
-		log.Println("Problem with json decoding <database/create_database->CreateCategory")
-	}
+		vars := mux.Vars(r)
+		segmentID := vars["segment"]
+		if debugMode {
+			log.Println(segmentID)
+		}
+		tempSegId := scripts.StringToUint(segmentID)
+		//tableToCreate := segmentID + "_categories"
+		if err := Tiukudb.Table(SegmentTableToEdit).AutoMigrate(&SegmentCategory{
+			ID:                 0,
+			SegmentID:          tempSegId,
+			MainCategory:       newCategory.MainCategory,
+			SubCategory:        newCategory.SubCategory,
+			MandatoryToTrack:   newCategory.MandatoryToTrack,
+			MandatoryToComment: newCategory.MandatoryToComment,
+			Tickable:           newCategory.Tickable,
+			LocationNeeded:     newCategory.LocationNeeded,
+			Active:             newCategory.Active,
+			Archived:           newCategory.Archived,
+		}).Error; err != nil {
+			log.Println("Problems creating categories table for segment. <database/database_create->CreateCategories>")
+		}
 
-	vars := mux.Vars(r)
-	segmentID := vars["segment"]
-	if debugMode {
-		log.Println(segmentID)
-	}
-	tempSegId := scripts.StringToUint(segmentID)
-	//tableToCreate := segmentID + "_categories"
-	if err := Tiukudb.Table(segmentTableToEdit).AutoMigrate(&SegmentCategory{
-		ID:                 0,
-		SegmentID:          tempSegId,
-		MainCategory:       newCategory.MainCategory,
-		SubCategory:        newCategory.SubCategory,
-		MandatoryToTrack:   newCategory.MandatoryToTrack,
-		MandatoryToComment: newCategory.MandatoryToComment,
-		Tickable:           newCategory.Tickable,
-		LocationNeeded:     newCategory.LocationNeeded,
-		Active:             newCategory.Active,
-		Archived:           newCategory.Archived,
-	}).Error; err != nil {
-		log.Println("Problems creating categories table for segment. <database/database_create->CreateCategories>")
-	}
-
-	//db.Table(segmentID).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
-	// For some reason have to manually set the
-	newCategory.SegmentID = tempSegId
+		//db.Table(segmentID).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
+		// For some reason have to manually set the
+		newCategory.SegmentID = tempSegId
+	*/
 	Tiukudb.Save(&newCategory)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
 	response := "Created categories."
 	return response
 }

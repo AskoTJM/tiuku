@@ -13,7 +13,7 @@ func DeleteStudentFromSegment(joiningStudent StudentUser, segmentToJoin Segment)
 		ConnectToDB()
 	}
 
-	if err := Tiukudb.Table(enrollmentSegmentList).Where("anon_id = ? AND segment_id = ?", joiningStudent.AnonID, segmentToJoin.ID).Delete(&SchoolSegmentsSession{}).Error; err != nil {
+	if err := Tiukudb.Table(EnrollmentSegmentList).Where("anon_id = ? AND segment_id = ?", joiningStudent.AnonID, segmentToJoin.ID).Delete(&SchoolSegmentsSession{}).Error; err != nil {
 		response := "Error removing Student from Segment. <database/update_database->RemoveStudentFromSegment>"
 		return response
 	}

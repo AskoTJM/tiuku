@@ -37,7 +37,7 @@ func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
-	result := database.GetCourseTableById(courseCode)
+	result := database.GetCourseTableById(scripts.StringToUint(courseCode))
 
 	anon, _ := json.Marshal(result)
 	n := len(anon)
@@ -55,7 +55,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
 	// Get course information
-	result := database.GetCourseTableById(courseCode)
+	result := database.GetCourseTableById(scripts.StringToUint(courseCode))
 	// Get segment data
 	result2 := database.GetSegmentTableByCourseId(result.ID)
 	//Transform results to json

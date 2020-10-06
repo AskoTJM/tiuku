@@ -5,46 +5,87 @@ package faculty
 // Description: POST request functions for Faculty users
 */
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/database"
+	"github.com/AskoTJM/tiuku/api/scripts"
+	"github.com/gorilla/mux"
 )
 
 // Create new Course in course table
 // Status: Works
 func PostCourses(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
 
-	result := database.CreateCourse(w, r)
-	//anon, _ := json.Marshal(result)
-	//n := len(anon)
-	//s := string(anon[:n])
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "%s", result)
+	res := database.CheckJSONContent(w, r)
+	if res != "PASS" {
+		fmt.Fprintf(w, "%s", res)
+	} else {
+		dec := json.NewDecoder(r.Body)
+		dec.DisallowUnknownFields()
+		var newCourse database.Course
+		err := dec.Decode(&newCourse)
+		if err != nil {
+			log.Println(err)
+		}
+		result := database.CreateCourse(newCourse, database.CourseTableToEdit)
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusCreated)
+		fmt.Fprintf(w, "%s", result)
+	}
 
 }
 
 // New segment for the course
-// status: Works
+// status: Revised, Works
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
-	result := database.CreateSegment(w, r)
-	//anon, _ := json.Marshal(result)
-	//n := len(anon)
-	//s := string(anon[:n])
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "%s", result)
+	res := database.CheckJSONContent(w, r)
+	if res != "PASS" {
+		fmt.Fprintf(w, "%s", res)
+	} else {
+		dec := json.NewDecoder(r.Body)
+		dec.DisallowUnknownFields()
+		var newSegment database.Segment
+		err := dec.Decode(&newSegment)
+		if err != nil {
+			log.Println(err)
+		}
+		vars := mux.Vars(r)
+		courseCode := vars["course"]
+		newSegment.CourseID = scripts.StringToUint(courseCode)
+		result := database.CreateSegment(newSegment, database.SegmentTableToEdit)
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusCreated)
+		fmt.Fprintf(w, "%s", result)
+	}
 
 }
 
 // Add New category for segment
-// status:
+// status: Works
 func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 
-	result := database.CreateCategory(w, r)
-	fmt.Fprintf(w, "%s", result)
+	res := database.CheckJSONContent(w, r)
+	if res != "PASS" {
+		fmt.Fprintf(w, "%s", res)
+	} else {
+		dec := json.NewDecoder(r.Body)
+		dec.DisallowUnknownFields()
+		var newCategory database.SegmentCategory
+		err := dec.Decode(&newCategory)
+		if err != nil {
+			log.Println(err)
+		}
+		vars := mux.Vars(r)
+		segmentCode := vars["segment"]
+		newCategory.SegmentID = scripts.StringToUint(segmentCode)
+		result := database.CreateCategory(newCategory, database.CategoriesTableToEdit)
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusCreated)
+		fmt.Fprintf(w, "%s", result)
+	}
+
 }

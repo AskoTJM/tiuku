@@ -12,7 +12,7 @@ func AddStudentToSegment(joiningStudent StudentUser, segmentToJoin Segment) stri
 		ConnectToDB()
 	}
 
-	if err := Tiukudb.Table(enrollmentSegmentList).Create(&SchoolSegmentsSession{
+	if err := Tiukudb.Table(EnrollmentSegmentList).Create(&SchoolSegmentsSession{
 		ID:                      0,
 		SegmentID:               segmentToJoin.ID,
 		AnonID:                  joiningStudent.AnonID,
@@ -34,15 +34,31 @@ func AddSegmentToStudentsSegments(joiningStudent StudentUser, segmentToJoin Segm
 	}
 
 	tableToEdit := joiningStudent.AnonID + "_segments"
-	if err := Tiukudb.Table(tableToEdit).Create(&StudentSegment{
-		ID:                     0,
-		SegmentID:              segmentToJoin.ID,
-		StudentSegmentSessions: joiningStudent.AnonID + "_sessions",
-		Archived:               false,
-	}).Error; err != nil {
-		response := "Error joining Segment. <database/update_database->UpdataParticipationToSegment>"
+	if Tiukudb.HasTable(tableToEdit) {
+		if err := Tiukudb.Table(tableToEdit).Create(&StudentSegment{
+			ID:                     0,
+			SegmentID:              segmentToJoin.ID,
+			StudentSegmentSessions: joiningStudent.AnonID + "_sessions",
+			Archived:               false,
+		}).Error; err != nil {
+			response := "Error joining Segment. <database/update_database->AddSegmentToStudentsSegment>"
+			return response
+		}
+	} else {
+		response := "Error joining. Student user doesn't have segments table. <database/update_database->AddSegmentToStudentsSegment>"
 		return response
 	}
+
 	response := "Participated to Segment"
+	return response
+}
+
+// Add/Start Session
+func AddSessionToSegment(StudentUser StudentUser, newSession StudentSegmentSession) string {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var response string
+
 	return response
 }

@@ -111,7 +111,7 @@ func AutoCreateStudentUserTables() {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	numberOfStudentUsers := CountTableRows(studentsTableToEdit)
+	numberOfStudentUsers := CountTableRows(StudentsTableToEdit)
 	i := 1
 	for i < (numberOfStudentUsers + 1) {
 		newStudent := GetStudentUser("oppi" + strconv.Itoa(i))
@@ -173,10 +173,10 @@ func AutoCreateSegments() {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	numberOfCourses := CountTableRows(courseTableToEdit)
+	numberOfCourses := CountTableRows(CourseTableToEdit)
 	i := 1
 	for i < numberOfCourses {
-		courseToAdd := GetCourseTableById(strconv.Itoa(i))
+		courseToAdd := GetCourseTableById(scripts.IntToUint(i))
 		log.Print(courseToAdd.ID)
 		c := 1
 		for c < 7 {
@@ -235,7 +235,7 @@ func PopulateCategories() {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	c := CountTableRows(segmentTableToEdit)
+	c := CountTableRows(SegmentTableToEdit)
 	i := 1
 	for i < c {
 		if err := Tiukudb.Create(&SegmentCategory{

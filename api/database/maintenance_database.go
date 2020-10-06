@@ -22,17 +22,17 @@ var Tiukudb *gorm.DB
 // Should be temporary solution, now just easier to change naming conventions
 // Maybe at least replace with configuration file?
 //var schoolShortName = "OAMK"
-var courseTableToEdit = "courses"
-var segmentTableToEdit = "segments"
-var studentsTableToEdit = "student_users"
-var facultyTableToEdit = "faculty_users"
-var categoriesTableToEdit = "segment_categories"
-var enrollmentSegmentList = "school_segments_sessions"
+var CourseTableToEdit = "courses"
+var SegmentTableToEdit = "segments"
+var StudentsTableToEdit = "student_users"
+var FacultyTableToEdit = "faculty_users"
+var CategoriesTableToEdit = "segment_categories"
+var EnrollmentSegmentList = "school_segments_sessions"
 
-var degreeTableToEdit = "degrees"
-var apartmentTableToEdit = "apartments"
-var campusTableToEdit = "campus"
-var schoolsTableToEdit = "schools"
+var DegreeTableToEdit = "degrees"
+var ApartmentTableToEdit = "apartments"
+var CampusTableToEdit = "campus"
+var SchoolsTableToEdit = "schools"
 
 // Debug mode for spamming your logs
 var debugMode bool = true
@@ -71,7 +71,7 @@ func CheckIfUserExists(StudentID string) int64 {
 	//tableToEdit := schoolShortName + "_StudentUsers"
 	var tempStudent StudentUser
 
-	result := Tiukudb.Table(studentsTableToEdit).Where("student_id = ?", StudentID).Find(&tempStudent)
+	result := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", StudentID).Find(&tempStudent)
 
 	return result.RowsAffected
 }
@@ -84,7 +84,7 @@ func CheckIfFacultyUserExists(FacultyID string) int64 {
 	//tableToEdit := schoolShortName + "_StudentUsers"
 	var tempFaculty FacultyUser
 
-	result := Tiukudb.Table(facultyTableToEdit).Where("faculty_id = ?", FacultyID).Find(&tempFaculty)
+	result := Tiukudb.Table(FacultyTableToEdit).Where("faculty_id = ?", FacultyID).Find(&tempFaculty)
 
 	return result.RowsAffected
 }
@@ -140,7 +140,7 @@ func ArchiveCourse(courseToArchive Course, archive bool) {
 	Tiukudb.Save(&courseToArchive)
 	// Set Courses Segment to Archived
 	var tempSegment []Segment
-	result := Tiukudb.Table(segmentTableToEdit).Where("course_id = ?", courseToArchive.ID).Find(&tempSegment)
+	result := Tiukudb.Table(SegmentTableToEdit).Where("course_id = ?", courseToArchive.ID).Find(&tempSegment)
 	if result != nil {
 		log.Println(result)
 	}
@@ -154,7 +154,7 @@ func ArchiveCourse(courseToArchive Course, archive bool) {
 		Tiukudb.Save(&tempSegment2)
 		// Change Categories for Segment to Archived
 		var tempCat []SegmentCategory
-		resultSeg := Tiukudb.Table(categoriesTableToEdit).Where("segment_id = ?", tempSegment2.ID).Find(&tempCat)
+		resultSeg := Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", tempSegment2.ID).Find(&tempCat)
 		if resultSeg != nil {
 			log.Println(resultSeg)
 		}
@@ -188,20 +188,42 @@ func CheckIfRequiredTablesExist() bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	if !Tiukudb.HasTable(courseTableToEdit) {
+	if !Tiukudb.HasTable(CourseTableToEdit) {
 		return false
 	}
-	if !Tiukudb.HasTable(segmentTableToEdit) {
+	if !Tiukudb.HasTable(SegmentTableToEdit) {
 		return false
 	}
-	if !Tiukudb.HasTable(studentsTableToEdit) {
+	if !Tiukudb.HasTable(StudentsTableToEdit) {
 		return false
 	}
-	if !Tiukudb.HasTable(facultyTableToEdit) {
+	if !Tiukudb.HasTable(FacultyTableToEdit) {
 		return false
 	}
-	if !Tiukudb.HasTable(categoriesTableToEdit) {
+	if !Tiukudb.HasTable(CategoriesTableToEdit) {
 		return false
 	}
 	return true
+}
+
+// Check if content of request is JSON
+func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
+	if r.Header.Get("Content-Type") == "" {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusNoContent)
+		response := "Problems creating new Course, no body in request information. <database/create_database->CreateCourse> Error: No body information available."
+		return response
+	} else {
+		//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+		rbody := r.Header.Get("Content-Type")
+		// Check if content type is correct one.
+		if rbody != "application/json" {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusNotAcceptable)
+			response := "Error: Content-Type is not application/json."
+			return response
+		}
+
+	}
+	return "PASS"
 }

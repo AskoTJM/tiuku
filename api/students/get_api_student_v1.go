@@ -35,7 +35,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
 	// Get course information
-	result := database.GetCourseTableById(courseCode)
+	result := database.GetCourseTableById(scripts.StringToUint(courseCode))
 	// Get segment data
 	result2 := database.GetSegmentTableByCourseId(result.ID)
 	// Transform results to json
@@ -128,7 +128,20 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
-		result := database.GetUserSegments(r)
+		var choice string
+		paramTest := r.URL.Query()
+		filter, params := paramTest["archived"]
+		if !params || len(filter) == 0 {
+			choice = "no"
+		} else if paramTest.Get("archived") == "yes" {
+			choice = "yes"
+		} else if paramTest.Get("archived") == "only" {
+			choice = "only"
+		} else {
+			fmt.Println("Error: Invalid parameters.")
+		}
+		usedStudent := database.GetStudentUser(user)
+		result := database.GetUserSegments(usedStudent, choice)
 		anon, _ := json.Marshal(result)
 		n := len(anon)
 		s := string(anon[:n])
