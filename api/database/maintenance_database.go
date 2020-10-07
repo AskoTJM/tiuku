@@ -185,9 +185,10 @@ func CheckIfRequiredTablesExist() bool {
 // Check if content of request is JSON
 func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
 	if r.Header.Get("Content-Type") == "" {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusNoContent)
-		response := "Problems creating new Course, no body in request information. <database/create_database->CreateCourse> Error: No body information available."
+		// Removed to be able to use this code with empty values
+		//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		//w.WriteHeader(http.StatusNoContent)
+		response := "EMPTY"
 		return response
 	} else {
 		//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
@@ -196,7 +197,7 @@ func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
 		if rbody != "application/json" {
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusNotAcceptable)
-			response := "Error: Content-Type is not application/json."
+			response := "TYPE_ERROR"
 			return response
 		}
 

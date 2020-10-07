@@ -25,9 +25,7 @@ func GetStudentUser(StudentID string) StudentUser {
 	if result == nil {
 		log.Println(result)
 	}
-	if debugMode {
-		log.Printf("tempStudent has value of: %s", tempStudent.AnonID)
-	}
+
 	return tempStudent
 }
 
@@ -306,7 +304,23 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 	return returnSegment
 }
 
-// Get Session
+// Get Status of Last Session
+func GetOpenSession(student StudentUser) StudentSegmentSession {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	//var response string
+	tableToEdit := student.AnonID + "_sessions"
+	var editSession StudentSegmentSession
+
+	err := Tiukudb.Table(tableToEdit).Where("end_date = ?", nil).Find(&editSession)
+	if err != nil {
+		log.Printf("Error with finding possible ongoing session.")
+	}
+	//editSession.EndTime = time.Now()
+	//editSession.EndTime.Time = time.Now()
+	return editSession
+}
 
 // Get degree with ID number, 0 returns all degrees
 func GetDegree(degreeID uint) []Degree {

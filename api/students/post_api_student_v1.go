@@ -7,11 +7,15 @@ package students
 */
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/AskoTJM/tiuku/api/database"
 	"github.com/AskoTJM/tiuku/api/scripts"
+	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
@@ -41,8 +45,8 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Add or start new session to {segment} table
-// status:
+// Add or start new session to {segment} table with empty body start time is inserted automatically
+// status: At least partially working, not tested with JSON body
 func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 	// := mux.Vars(r)
@@ -50,6 +54,7 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	//resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
 
 	user := r.Header.Get("X-User")
+
 	returnNum := database.CheckIfUserExists(user)
 	if returnNum == 0 {
 		w.WriteHeader(http.StatusBadRequest)
@@ -58,32 +63,34 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
-		// Check if content is valid
-		if r.Header.Get("Content-Type") == "" {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusNoContent)
-			response := "Problems creating new Course, no body in request information. <database/create_database->CreateCourse> Error: No body information available."
-			fmt.Fprintf(w, "%s", response)
+
+		res := database.CheckJSONContent(w, r)
+		if res == "TYPE_ERROR" {
+			log.Printf("Type Error with body.")
 		} else {
-			//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
-			rbody := r.Header.Get("Content-Type")
-			// Check if content type is correct one.
-			if rbody != "application/json" {
-				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-				w.WriteHeader(http.StatusNotAcceptable)
-				response := "Error: Content-Type is not application/json."
-				fmt.Fprintf(w, "%s", response)
+
+			studentNow := database.GetStudentUser(user)
+			var session database.StudentSegmentSession
+			if res == "PASS" {
+				dec := json.NewDecoder(r.Body)
+				dec.DisallowUnknownFields()
+				err := dec.Decode(&session)
+				if err != nil {
+					log.Println(err)
+				}
+			} else if res == "EMPTY" {
+				session.StartTime = time.Now()
+				session.EndTime = mysql.NullTime{}
+
 			}
-
+			vars := mux.Vars(r)
+			seg := vars["segment"]
+			session.SegmentID = scripts.StringToUint(seg)
+			response := database.AddSessionToSegment(studentNow, session)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprintf(w, "%s", response)
 		}
-
-		studentNow := database.GetStudentUser(user)
-		var session database.StudentSegmentSession
-
-		res := database.AddSessionToSegment(studentNow, session)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s", res)
 	}
 }
 

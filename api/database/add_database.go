@@ -1,5 +1,7 @@
 package database
 
+import "log"
+
 /*
 // add_database.go
 // Code to add data to database
@@ -54,11 +56,22 @@ func AddSegmentToStudentsSegments(joiningStudent StudentUser, segmentToJoin Segm
 }
 
 // Add/Start Session
-func AddSessionToSegment(StudentUser StudentUser, newSession StudentSegmentSession) string {
+func AddSessionToSegment(student StudentUser, newSession StudentSegmentSession) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	var response string
+	tableToEdit := student.AnonID + "_sessions"
+	if err := Tiukudb.Table(tableToEdit).Create(&newSession).Error; err != nil {
+		response = "Error in starting Session"
+		log.Printf("Error in adding ")
+	} else {
+		response = "Done starting sessions"
+	}
 
 	return response
+}
+
+func AddStopToSession(student StudentUser, newSession StudentSegmentSession) {
+
 }

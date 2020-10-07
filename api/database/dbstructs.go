@@ -2,6 +2,8 @@ package database
 
 import (
 	"time"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 /*
@@ -121,8 +123,8 @@ type StudentSegmentSession struct {
 	ResourceID uint `gorm:"not null"`
 	SegmentID  uint `gorm:"not null"`
 	Segment    Segment
-	StartTime  string
-	EndTime    string
+	StartTime  time.Time
+	EndTime    mysql.NullTime
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	DeletedAt  *time.Time

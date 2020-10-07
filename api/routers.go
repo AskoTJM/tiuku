@@ -186,7 +186,7 @@ var routes = Routes{
 	},
 	// Start session on {segment}, or transfer local data to tiuku
 	Route{
-		"PostSegmentsSegment",
+		"PostSegmentsSegmentSessions",
 		strings.ToUpper("Post"),
 		"/students/v1/segments/{segment}/sessions",
 		students.PostSegmentsSegmentSessions,
