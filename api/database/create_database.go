@@ -221,12 +221,12 @@ func CreateCategory(newCategory SegmentCategory, tableToEdit string) string {
 
 // Create List to
 
-func CreateSchoolSegmentSession(segToAdd Segment) string {
+func CreateSchoolSegmentSession(newSeg Segment) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	var returnString string
-	tableToCreate := scripts.UintToString(segToAdd.ID) + "_session"
+	tableToCreate := scripts.UintToString(newSeg.ID) + "_session"
 	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&SchoolSegmentsSession{
 		ID:                      0,
 		AnonID:                  "",

@@ -80,10 +80,6 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		w.WriteHeader(http.StatusOK)
 		return s
 	}
-	if h == "findasso" {
-		database.CheckAssociation(w, r)
-
-	}
 	if h == "populatesegments" {
 		database.AutoCreateSegments()
 		//database.AutoCreateStudentUserTables()

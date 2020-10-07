@@ -5,7 +5,6 @@ package database
 // Description: code for maintenance of API
 */
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -94,29 +93,6 @@ func CheckIfAnonIdExists(anonid string) int {
 
 }
 */
-
-// DOESN'T WORK! DON'T USE!
-func CheckAssociation(w http.ResponseWriter, r *http.Request) {
-	if Tiukudb == nil {
-		ConnectToDB()
-	}
-
-	var checkSchool School
-	var checkCampus Campus
-	result := Tiukudb.Model(&checkSchool).Association("Campus").Find(&checkCampus)
-	if result.Error != nil {
-		log.Println(result)
-	} else {
-		anon, _ := json.Marshal(result)
-		log.Println(anon)
-		n := len(anon)
-		s := string(anon[:n])
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		log.Println(s)
-		fmt.Fprintf(w, "%s", s)
-	}
-}
 
 // Count how many rows there are in the table. Can be used to count users, segments, course etc in table.
 // status:

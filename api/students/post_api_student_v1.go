@@ -43,7 +43,7 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 // Add or start new session to {segment} table
 // status:
-func PostSegmentsSegment(w http.ResponseWriter, r *http.Request) {
+func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 	// := mux.Vars(r)
 	//segCode := vars["segment"]

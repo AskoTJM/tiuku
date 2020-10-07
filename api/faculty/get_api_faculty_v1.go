@@ -165,6 +165,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
 	returnNum := database.CheckIfFacultyUserExists(user)
+	var choice string
 	//log.Println(returnNum)
 	if returnNum == 0 {
 		w.WriteHeader(http.StatusBadRequest)
@@ -173,8 +174,21 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
+		paramTest := r.URL.Query()
+		filter, params := paramTest["archived"]
+		if !params || len(filter) == 0 {
+			choice = "no"
 
-		result := database.GetFacultyUserSegments(r)
+		} else if paramTest.Get("archived") == "yes" {
+			choice = "yes"
+
+		} else if paramTest.Get("archived") == "only" {
+			choice = "only"
+
+		} else {
+			fmt.Println("Error: Invalid parameters.")
+		}
+		result := database.GetFacultyUserSegments(user, choice)
 		anon, _ := json.Marshal(result)
 
 		n := len(anon)

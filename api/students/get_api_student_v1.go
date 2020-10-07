@@ -86,13 +86,10 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 // Get categories used for {segment}
 // status:
 func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
+
 	vars := mux.Vars(r)
 	segId := vars["segment"]
-	// Get course information
-	//result := database.GetCourseTableById(segId)
-	// Get segment data
+
 	res := scripts.StringToUint(segId)
 	// Get categories for segment, filter out InActive ones.
 	result2 := database.GetCategoriesBySegmentId(res, true, false)
@@ -107,11 +104,32 @@ func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Re
 
 }
 
-// desc:Get particular {session} from {segment}
+// desc:Get sessions for {segment}
 // status:
-func GetSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
+func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
+	//vars := mux.Vars(r)
+	//segId := vars["segment"]
+
+	//anon, _ := json.Marshal(result)
+	//n := len(anon)
+	//s := string(anon[:n])
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", "Sessions")
+}
+
+// desc:Get particular {session} for {segment}
+// status:
+func GetSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
+	//vars := mux.Vars(r)
+	//segId := vars["segment"]
+
+	//anon, _ := json.Marshal(result)
+	//n := len(anon)
+	//s := string(anon[:n])
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", "SessionsSession")
 }
 
 // Get value of {setting} for {segment}

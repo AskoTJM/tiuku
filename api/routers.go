@@ -107,12 +107,20 @@ var routes = Routes{
 		students.GetCoursesCourseSegmentsSegmentCategories,
 	},
 
+	// GET sessions for  {segment}
+	Route{
+		"GetSegmentsSegmentSession",
+		strings.ToUpper("Get"),
+		"/students/v1/segments/{segment}/sessions",
+		students.GetSegmentsSegmentSessions,
+	},
+
 	// GET particular {session} data from {segment}
 	Route{
 		"GetSegmentsSegmentSession",
 		strings.ToUpper("Get"),
-		"/students/v1/segments/{segment}/{session}",
-		students.GetSegmentsSegmentSession,
+		"/students/v1/segments/{segment}/sessions/{session}",
+		students.GetSegmentsSegmentSessionsSession,
 	},
 
 	// GET particular Setting of the Segment
@@ -180,8 +188,8 @@ var routes = Routes{
 	Route{
 		"PostSegmentsSegment",
 		strings.ToUpper("Post"),
-		"/students/v1/segments/{segment}",
-		students.PostSegmentsSegment,
+		"/students/v1/segments/{segment}/sessions",
+		students.PostSegmentsSegmentSessions,
 	},
 	// Add segment to Student users segment list,
 	// unnecessary until it's possible for user to create own categories.
@@ -196,8 +204,8 @@ var routes = Routes{
 	Route{
 		"PutSegmentsSegmentSession",
 		strings.ToUpper("Put"),
-		"/students/v1/segments/{segment}/{session}",
-		students.PutSegmentsSegmentSession,
+		"/students/v1/segments/{segment}/sessions/{session}",
+		students.PutSegmentsSegmentSessionsSession,
 	},
 
 	// Faculty v1 RAW Routes

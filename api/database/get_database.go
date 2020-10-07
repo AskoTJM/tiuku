@@ -7,7 +7,6 @@ package database
 import (
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -143,29 +142,27 @@ func GetFacultyUser(FacultyID string) FacultyUser {
 // Get segments of faculty user, active and with parameters, archived=yes and archived=only
 // status:
 // comment: New version as added Archived bool, makes search simpler, doesn't require reading Courses tables.
-func GetFacultyUserSegments(r *http.Request) []Segment {
+func GetFacultyUserSegments(user string, params string) []Segment {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	var tempSegment []Segment
 	var result *gorm.DB //db.Table(segmentTableToEdit)
-	user := r.Header.Get("X-User")
+	//user := r.Header.Get("X-User")
 	// Get teachers ID number
 	teacher := GetFacultyUser(user)
 
-	paramTest := r.URL.Query()
-	filter, params := paramTest["archived"]
-	if !params || len(filter) == 0 {
+	if params == "no" {
 		result = Tiukudb.Table(SegmentTableToEdit).Where("teacher_id = ?", teacher.ID).Where("archived = ?", false).Find(&tempSegment)
 		if result != nil {
 			log.Println(result.Error)
 		}
-	} else if paramTest.Get("archived") == "yes" {
+	} else if params == "yes" {
 		result = Tiukudb.Table(SegmentTableToEdit).Where("teacher_id = ?", teacher.ID).Find(&tempSegment)
 		if result != nil {
 			log.Println(result.Error)
 		}
-	} else if paramTest.Get("archived") == "only" {
+	} else if params == "only" {
 		result = Tiukudb.Table(SegmentTableToEdit).Where("teacher_id = ?", teacher.ID).Where("archived = ?", true).Find(&tempSegment)
 		if result != nil {
 			log.Println(result.Error)
@@ -280,14 +277,11 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 				log.Printf("No IncludeZero and IncludeInActive")
 			}
 		}
-		//if result != nil {
-		//	log.Println(result)
-		//}
+
 	} else {
 		if includeZero {
 			// With Segment_Id 0 value should always be active as it is mandatory category for all segments i.e. no need to check it
 			result = Tiukudb.Table(CategoriesTableToEdit).Where("active = ? AND segment_id = ?", true, segmentID).Or("segment_id = ?", 0).Find(&tempSegment)
-
 			if debugMode {
 				log.Printf("IncludeZero and No IncludeInActive")
 			}
@@ -297,9 +291,7 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 				log.Printf("No IncludeZero and IncludeInActive")
 			}
 		}
-		//if result != nil {
-		//	log.Println(result)
-		//}
+
 	}
 
 	returnSegment := make([]SegmentCategory, 0)
@@ -313,6 +305,8 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 	}
 	return returnSegment
 }
+
+// Get Session
 
 // Get degree with ID number, 0 returns all degrees
 func GetDegree(degreeID uint) []Degree {
