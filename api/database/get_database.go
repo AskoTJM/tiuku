@@ -304,7 +304,7 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 	return returnSegment
 }
 
-// Get Session data with ID
+// Get Session data with it's ID
 func GetSession(student StudentUser, sessionID uint) StudentSegmentSession {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -321,6 +321,32 @@ func GetSession(student StudentUser, sessionID uint) StudentSegmentSession {
 	//Tiukudb.Save()
 	return tempSession
 
+}
+
+// Get all Sessions for the Segment
+func GetAllSessions(student string, segmentID uint) []StudentSegmentSession {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	studentData := GetStudentUser(student)
+	tableToEdit := studentData.AnonID + "_sessions"
+
+	var result *gorm.DB
+
+	var tempSessions []StudentSegmentSession
+	result = Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempSessions)
+
+	returnSegments := make([]StudentSegmentSession, 0)
+	result2, _ := result.Rows()
+	var tempSegment2 StudentSegmentSession
+	for result2.Next() {
+		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSegments = append(returnSegments, tempSegment2)
+	}
+	return returnSegments
 }
 
 // Get Status of Last Session

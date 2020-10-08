@@ -5,7 +5,6 @@ package database
 // Description: code for maintenance of API
 */
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -57,7 +56,7 @@ func ConnectToDB() {
 	}
 
 	//initDB()
-	fmt.Printf("%s", Tiukudb.Error)
+	//fmt.Printf("%s", Tiukudb.Error)
 }
 
 // Check if Student user exists student users table, returns ID if does.
