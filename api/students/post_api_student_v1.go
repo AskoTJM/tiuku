@@ -15,7 +15,6 @@ import (
 
 	"github.com/AskoTJM/tiuku/api/database"
 	"github.com/AskoTJM/tiuku/api/scripts"
-	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
@@ -79,14 +78,16 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 					log.Println(err)
 				}
 			} else if res == "EMPTY" {
-				session.StartTime = time.Now()
-				session.EndTime = mysql.NullTime{}
+				session.StartTime = time.Now().Format(time.RFC3339)
+				session.CreatedAt = time.Now().Format(time.RFC3339)
+				session.UpdatedAt = time.Now().Format(time.RFC3339)
+				//session.EndTime = mysql.NullTime{}
 
 			}
 			vars := mux.Vars(r)
 			seg := vars["segment"]
 			session.SegmentID = scripts.StringToUint(seg)
-			response := database.AddSessionToSegment(studentNow, session)
+			response := database.CreateSessionToSegment(studentNow, session)
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "%s", response)

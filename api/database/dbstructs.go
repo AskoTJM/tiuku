@@ -1,11 +1,5 @@
 package database
 
-import (
-	"time"
-
-	"github.com/go-sql-driver/mysql"
-)
-
 /*
 // dbstructs.go
 // Description: Structs used in tiuku
@@ -123,17 +117,18 @@ type StudentSegmentSession struct {
 	ResourceID uint `gorm:"not null"`
 	SegmentID  uint `gorm:"not null"`
 	Segment    Segment
-	StartTime  time.Time
-	EndTime    mysql.NullTime
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	DeletedAt  *time.Time
+	StartTime  string //`gorm:"type:datetime" json:"start_time,omitempty"`
+	EndTime    string //`gorm:"type:datetime" json:"end_time,omitempty"`
+	CreatedAt  string //time.Time
+	UpdatedAt  string //time.Time
+	DeletedAt  string //*time.Time
 	Comment    string
 	Version    uint
 	Locations  string
 	//SegmentCategory string `gorm:"not null"`
 }
 
+//mysql.NullTime
 // Table for School. School can have multiple campuses
 type School struct {
 	ID        uint `gorm:"primary_key"`

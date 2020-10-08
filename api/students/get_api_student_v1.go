@@ -105,7 +105,7 @@ func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Re
 }
 
 // desc:Get sessions for {segment}
-// status:
+// status: ToDo
 func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	//vars := mux.Vars(r)
 	//segId := vars["segment"]

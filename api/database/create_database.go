@@ -267,3 +267,20 @@ func CreateSegmentsSessionsArchive(user StudentUser) string {
 
 	return tableToCreate
 }
+
+// Add/Start Session
+func CreateSessionToSegment(student StudentUser, newSession StudentSegmentSession) string {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var response string
+	tableToEdit := student.AnonID + "_sessions"
+	if err := Tiukudb.Table(tableToEdit).Create(&newSession).Error; err != nil {
+		response = "Error in starting Session"
+		log.Printf("Error in adding ")
+	} else {
+		response = "Done starting sessions"
+	}
+
+	return response
+}

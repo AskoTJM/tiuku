@@ -23,7 +23,7 @@ func PatchSegmentSegmentSettings(w http.ResponseWriter, r *http.Request) {
 
 // Stop session by inserting Stop time
 // status:
-func PatchSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
+func PatchSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 	user := r.Header.Get("X-User")
 
 	returnNum := database.CheckIfUserExists(user)
@@ -35,13 +35,12 @@ func PatchSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
 
-		studentNow := database.GetStudentUser(user)
-		var session database.StudentSegmentSession
-
+		//studentNow := database.GetStudentUser(user)
+		//var session database.StudentSegmentSession
+		//session := database.GetOpenSession(studentNow)
 		vars := mux.Vars(r)
-		seg := vars["segment"]
-		session.SegmentID = scripts.StringToUint(seg)
-		response := database.AddSessionToSegment(studentNow, session)
+		seg := vars["session"]
+		response := database.StopActiveSession(user, scripts.StringToUint(seg))
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "%s", response)

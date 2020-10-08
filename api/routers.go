@@ -164,10 +164,10 @@ var routes = Routes{
 
 	// Patch, stop {session} data
 	Route{
-		"PatchSegmentsSegmentSession",
+		"PatchSegmentsSegmentSessionsSession",
 		strings.ToUpper("Patch"),
-		"/students/v1/segments/{segment}/{session}",
-		students.PatchSegmentsSegmentSession,
+		"/students/v1/segments/{segment}/sessions/{session}",
+		students.PatchSegmentsSegmentSessionsSession,
 	},
 	// Patch, change setting of {segment}
 	Route{

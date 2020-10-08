@@ -304,6 +304,25 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 	return returnSegment
 }
 
+// Get Session data with ID
+func GetSession(student StudentUser, sessionID uint) StudentSegmentSession {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var tempSession StudentSegmentSession
+	tableToEdit := student.AnonID + "_sessions"
+	if debugMode {
+		log.Println(sessionID)
+		log.Println(tableToEdit)
+	}
+	Tiukudb.Table(tableToEdit).Where("id = ?", sessionID).Find(&tempSession)
+	tempSession.Comment = "Testi"
+	Tiukudb.Table(tableToEdit).Save(&tempSession)
+	//Tiukudb.Save()
+	return tempSession
+
+}
+
 // Get Status of Last Session
 func GetOpenSession(student StudentUser) StudentSegmentSession {
 	if Tiukudb == nil {
