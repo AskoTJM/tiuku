@@ -324,22 +324,22 @@ func GetSession(student StudentUser, sessionID uint) StudentSegmentSession {
 }
 
 // Get all Sessions for the Segment
-func GetAllSessions(student string, segmentID uint) []StudentSegmentSession {
+func GetAllSessionsForSegment(student string, segmentID uint) []StudentSegmentSession {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
+	var tempSessions []StudentSegmentSession
+	var result *gorm.DB
 
 	studentData := GetStudentUser(student)
 	tableToEdit := studentData.AnonID + "_sessions"
 
-	var result *gorm.DB
-
-	var tempSessions []StudentSegmentSession
 	result = Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempSessions)
 
 	returnSegments := make([]StudentSegmentSession, 0)
 	result2, _ := result.Rows()
 	var tempSegment2 StudentSegmentSession
+
 	for result2.Next() {
 		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
 			log.Println(err3)
