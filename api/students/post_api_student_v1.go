@@ -24,7 +24,6 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	segCode := vars["segment"]
-	resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
 
 	user := r.Header.Get("X-User")
 	returnNum := database.CheckIfUserExists(user)
@@ -35,8 +34,8 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
-		studentToJoin := database.GetStudentUser(user)
-		res := database.AddStudentToSegment(studentToJoin, resSeg)
+
+		res := database.AddStudentToSegment(user, scripts.StringToUint(segCode))
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "%s", res)
@@ -78,9 +77,10 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 					log.Println(err)
 				}
 			} else if res == "EMPTY" {
+				session.ResourceID = session.ID
 				session.StartTime = time.Now().Format(time.RFC3339)
-				session.CreatedAt = time.Now().Format(time.RFC3339)
-				session.UpdatedAt = time.Now().Format(time.RFC3339)
+				session.Created = time.Now().Format(time.RFC3339)
+				session.Updated = time.Now().Format(time.RFC3339)
 				//session.EndTime = mysql.NullTime{}
 
 			}

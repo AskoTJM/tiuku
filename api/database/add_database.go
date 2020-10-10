@@ -7,10 +7,13 @@ package database
 
 // Joining Student user to segment
 // status: works
-func AddStudentToSegment(joiningStudent StudentUser, segmentToJoin Segment) string {
+func AddStudentToSegment(user string, segmentId uint) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
+
+	segmentToJoin := GetSegmentDataById(segmentId)
+	joiningStudent := GetStudentUser(user)
 
 	if err := Tiukudb.Table(EnrollmentSegmentList).Create(&SchoolSegmentsSession{
 		ID:                      0,

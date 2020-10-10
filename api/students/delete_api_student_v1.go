@@ -17,11 +17,10 @@ import (
 
 // Leave {segment} of the {course}
 func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
+
 	vars := mux.Vars(r)
 	segCode := vars["segment"]
-	resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
+	//resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
 
 	user := r.Header.Get("X-User")
 	returnNum := database.CheckIfUserExists(user)
@@ -32,8 +31,8 @@ func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
-		studentToJoin := database.GetStudentUser(user)
-		res := database.DeleteStudentFromSegment(studentToJoin, resSeg)
+		//studentToJoin := database.GetStudentUser(user)
+		res := database.DeleteStudentFromSegment(user, scripts.StringToUint(segCode))
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "%s", res)
@@ -41,7 +40,24 @@ func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) 
 }
 
 // Remove {session} from {segment}
-func DeleteSegmentsSegmentSession(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+func DeleteSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
+	user := r.Header.Get("X-User")
+
+	returnNum := database.CheckIfUserExists(user)
+	if returnNum == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "%s", "Incorrect request")
+	} else if returnNum > 1 {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	} else {
+
+		vars := mux.Vars(r)
+		resSes := vars["session"]
+		res := database.DeleteSessionFromStudent(user, scripts.StringToUint(resSes))
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		//res := "NotReadyYet"
+		fmt.Fprintf(w, "%s", res)
+	}
 }

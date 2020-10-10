@@ -254,7 +254,7 @@ func GetCategoryById(categoryID uint) SegmentCategory {
 }
 
 // Find ALL categories belonging to segment, true include 0 defaults / false only segments own categories.
-// comment: If using categories table for all segments
+// Works , comment: If using categories table for all segments
 func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive bool) []SegmentCategory {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -305,6 +305,7 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 }
 
 // Get Session data with it's ID
+// Works
 func GetSession(student StudentUser, sessionID uint) StudentSegmentSession {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -316,25 +317,26 @@ func GetSession(student StudentUser, sessionID uint) StudentSegmentSession {
 		log.Println(tableToEdit)
 	}
 	Tiukudb.Table(tableToEdit).Where("id = ?", sessionID).Find(&tempSession)
-	tempSession.Comment = "Testi"
-	Tiukudb.Table(tableToEdit).Save(&tempSession)
+	//tempSession.Comment = "Testi"
+	//Tiukudb.Table(tableToEdit).Save(&tempSession)
 	//Tiukudb.Save()
 	return tempSession
 
 }
 
-// Get all Sessions for the Segment
-func GetAllSessionsForSegment(student string, segmentID uint) []StudentSegmentSession {
+// Get all Students Sessions for the Segment
+// Works
+func GetAllStudentSessionsForSegment(student string, segmentID uint) []StudentSegmentSession {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	var tempSessions []StudentSegmentSession
-	var result *gorm.DB
+	//var result *gorm.DB
 
 	studentData := GetStudentUser(student)
 	tableToEdit := studentData.AnonID + "_sessions"
 
-	result = Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempSessions)
+	result := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempSessions)
 
 	returnSegments := make([]StudentSegmentSession, 0)
 	result2, _ := result.Rows()

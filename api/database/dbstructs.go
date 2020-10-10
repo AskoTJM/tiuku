@@ -119,9 +119,9 @@ type StudentSegmentSession struct {
 	Segment    Segment
 	StartTime  string //`gorm:"type:datetime" json:"start_time,omitempty"`
 	EndTime    string //`gorm:"type:datetime" json:"end_time,omitempty"`
-	CreatedAt  string //time.Time
-	UpdatedAt  string //time.Time
-	DeletedAt  string //*time.Time
+	Created    string //time.Time
+	Updated    string //time.Time
+	Deleted    string //*time.Time
 	Comment    string
 	Version    uint
 	Locations  string

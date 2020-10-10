@@ -119,7 +119,9 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
-		result := database.GetAllSessionsForSegment(user, scripts.StringToUint(segId))
+		log.Println(segId)
+		log.Println(user)
+		result := database.GetAllStudentSessionsForSegment(user, scripts.StringToUint(segId))
 		anon, _ := json.Marshal(result)
 		n := len(anon)
 		s := string(anon[:n])
@@ -129,7 +131,7 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// desc:Get particular {session} for {segment}
+// desc: Get particular {session} for {segment}
 // status:
 func GetSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 	//vars := mux.Vars(r)

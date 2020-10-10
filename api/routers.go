@@ -69,10 +69,10 @@ var routes = Routes{
 	// DELETE {session} from {segment}
 	// Should use soft delete
 	Route{
-		"DeleteSegmentsSegmentSession",
+		"DeleteSegmentsSegmentSessionsSession",
 		strings.ToUpper("Delete"),
-		"/students/v1/segments/{segment}/{session}",
-		students.DeleteSegmentsSegmentSession,
+		"/students/v1/segments/{segment}/sessions/{session}",
+		students.DeleteSegmentsSegmentSessionsSession,
 	},
 
 	// GET available Courses
