@@ -16,7 +16,15 @@ import (
 )
 
 // Change settings for the {segment}
+// Not needed until we implement personal categories
 func PatchSegmentSegmentSettings(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
+// Update {setting} for {segment}
+//
+func PatchSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
@@ -35,9 +43,6 @@ func PatchSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request)
 		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
 	} else {
 
-		//studentNow := database.GetStudentUser(user)
-		//var session database.StudentSegmentSession
-		//session := database.GetOpenSession(studentNow)
 		vars := mux.Vars(r)
 		seg := vars["session"]
 		response := database.StopActiveSession(user, scripts.StringToUint(seg))
@@ -46,10 +51,4 @@ func PatchSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request)
 		fmt.Fprintf(w, "%s", response)
 	}
 
-}
-
-//Update {setting} for {segment}
-func PatchSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
 }

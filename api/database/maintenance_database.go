@@ -33,7 +33,7 @@ var CampusTableToEdit = "campus"
 var SchoolsTableToEdit = "schools"
 
 // Debug mode for spamming your logs
-var debugMode bool = true
+var DebugMode bool = true
 
 // Establish connection to database
 // Status: Done
@@ -42,7 +42,7 @@ func ConnectToDB() {
 
 	//Maybe use global variables for database settings. But for now this is fine...
 	//var dbconn = "\"" + usernamedb + ":" + userpassdb + "@tcp(db:3306)/tiukuDB?charset=utf8mb4"
-	if debugMode {
+	if DebugMode {
 		log.Printf("Trying to connect to database. <database/database.go->connectToDB>")
 	}
 	//For GORM v2 following should be used, but doesn't seem to work.

@@ -10,9 +10,9 @@ package database
 type StudentUser struct {
 	ID              uint   `gorm:"primary_key"`
 	StudentID       string `gorm:"not null"`
-	AnonID          string `gorm:"not null"`
+	AnonID          string `json:"-"` // `gorm:"not null"`
 	StudentName     string
-	StudentSegments string
+	StudentSegments string `json:"-"`
 	StudentEmail    string
 	StudentClass    string
 }
@@ -114,14 +114,15 @@ type StudentSegmentSession struct {
 	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
 	//gorm.Model
 	ID         uint `gorm:"primary_key"`
-	ResourceID uint `gorm:"not null"`
+	ResourceID uint
 	SegmentID  uint `gorm:"not null"`
 	Segment    Segment
+	Category   uint
 	StartTime  string //`gorm:"type:datetime" json:"start_time,omitempty"`
-	EndTime    string //`gorm:"type:datetime" json:"end_time,omitempty"`
+	EndTime    string //`gorm:"default=FUGorm"` //`gorm:"type:datetime" json:"end_time,omitempty"`
 	Created    string //time.Time
 	Updated    string //time.Time
-	Deleted    string //*time.Time
+	Deleted    string //`gorm:"default=FUGorm"` //`default:"NotSet"` //*time.Time
 	Comment    string
 	Version    uint
 	Locations  string

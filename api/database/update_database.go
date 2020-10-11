@@ -1,7 +1,6 @@
 package database
 
 import (
-	"log"
 	"time"
 )
 
@@ -17,19 +16,13 @@ func StopActiveSession(student string, editSession uint) string {
 		ConnectToDB()
 	}
 	var response string
-	var tempSession StudentSegmentSession
+	//var tempSession StudentSegmentSession
 	studentNow := GetStudentUser(student)
 	tableToEdit := studentNow.AnonID + "_sessions"
-	num := Tiukudb.Table(tableToEdit).Where("end_time != ?", "").Last(&tempSession)
-	log.Println(num)
+	//Tiukudb.Table(tableToEdit).Where("end_time != ?", "").Last(&tempSession)
+	//log.Println(num)
 
-	err := Tiukudb.Table(tableToEdit).Where("id = ?", editSession).Updates(StudentSegmentSession{EndTime: time.Now().Format(time.RFC3339), Updated: time.Now().Format(time.RFC3339)})
-	// Gets error but works, weird
-	if err != nil {
-		log.Println("Error updating data for session. database/update_database->StopActiveSession")
-		log.Println(err)
-		return "Error"
-	}
+	Tiukudb.Table(tableToEdit).Where("id = ?", editSession).Updates(StudentSegmentSession{EndTime: time.Now().Format(time.RFC3339), Updated: time.Now().Format(time.RFC3339)})
 
 	response = "Session stopped"
 	return response

@@ -115,7 +115,7 @@ func AutoCreateStudentUserTables() {
 	i := 1
 	for i < (numberOfStudentUsers + 1) {
 		newStudent := GetStudentUser("oppi" + strconv.Itoa(i))
-		if debugMode {
+		if DebugMode {
 			log.Printf("newStudent has value of: %d", i)
 			log.Printf("newStudent AnonID is : %s", newStudent.AnonID)
 		}

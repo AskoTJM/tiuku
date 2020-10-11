@@ -12,7 +12,7 @@ func InitDB() {
 		ConnectToDB()
 	}
 
-	if debugMode {
+	if DebugMode {
 		log.Printf("Trying to AutoMigrate Course table to database. <database/maintenance_database.go->initDB>")
 		//if err := db.Table(schoolShortName + "_Courses").AutoMigrate(&Course{
 	}
@@ -32,7 +32,7 @@ func InitDB() {
 	}
 
 	// This should be created and named when creating Segment
-	if debugMode {
+	if DebugMode {
 		log.Printf("Trying to AutoMigrate Segment table to database. <database/maintenance_database.go->initDB>")
 	}
 	if err := Tiukudb.AutoMigrate(&Segment{

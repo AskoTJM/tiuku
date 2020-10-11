@@ -43,7 +43,7 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Add or start new session to {segment} table with empty body start time is inserted automatically
+// Add or start NEW session to {segment} table with empty body the start time is inserted automatically
 // status: At least partially working, not tested with JSON body
 func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
@@ -67,8 +67,9 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Type Error with body.")
 		} else {
 
-			studentNow := database.GetStudentUser(user)
+			//studentNow := database.GetStudentUser(user)
 			var session database.StudentSegmentSession
+			// If body has content and is JSON then...
 			if res == "PASS" {
 				dec := json.NewDecoder(r.Body)
 				dec.DisallowUnknownFields()
@@ -76,18 +77,25 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					log.Println(err)
 				}
-			} else if res == "EMPTY" {
-				session.ResourceID = session.ID
-				session.StartTime = time.Now().Format(time.RFC3339)
-				session.Created = time.Now().Format(time.RFC3339)
-				session.Updated = time.Now().Format(time.RFC3339)
-				//session.EndTime = mysql.NullTime{}
 
+				// If there is no content we start new Session
+			} else if res == "EMPTY" {
+				session.StartTime = time.Now().Format(time.RFC3339)
+				session.EndTime = "NotSet"
 			}
+			// Set/OverWrite values by the system
+			//
 			vars := mux.Vars(r)
 			seg := vars["segment"]
+
 			session.SegmentID = scripts.StringToUint(seg)
-			response := database.CreateSessionToSegment(studentNow, session)
+			session.Version = 1
+			session.Created = time.Now().Format(time.RFC3339)
+			session.Updated = time.Now().Format(time.RFC3339)
+			// Maybe check if not deleted by client app and then set it to NotSet if needed
+			session.Deleted = "NotSet"
+
+			response := database.StartSessionOnSegment(user, session)
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "%s", response)
@@ -96,7 +104,8 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 }
 
 // Add Segment to Students CourseList
-// comment: Not sure this is needed. Segment should be automatically added on Students segments anyway.
+// comment: This is needed unless implemented personal segments.
+// Segments on School should be automatically added on Students segments when joining them anyway.
 func PostUserSegments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

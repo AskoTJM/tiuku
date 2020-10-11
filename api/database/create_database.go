@@ -20,7 +20,7 @@ func CreateStudentSegmentTable(student StudentUser) string {
 	tempStudent := student //.StudentID)
 	// Get AnonID for data
 	myAnonID := tempStudent.AnonID
-	if debugMode {
+	if DebugMode {
 		log.Printf("Anon Id is: %s", student.StudentID)
 	}
 	tableToEdit := myAnonID + "_segments"
@@ -43,7 +43,7 @@ func CreateStudentSegmentTable(student StudentUser) string {
 		}
 		// Update the Student data with the name of the segment table
 		Tiukudb.Model(&tempStudent).Where("student_id = ? ", tempStudent.StudentID).Update("student_segments", tableToEdit)
-		if debugMode {
+		if DebugMode {
 			log.Println(tempStudent)
 		}
 		return tableToEdit
@@ -150,70 +150,7 @@ func CreateCategory(newCategory SegmentCategory, tableToEdit string) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	/*
-		if !CheckIfRequiredTablesExist() {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusInternalServerError)
-			response := "Problems creating new Category, required tables do not exist. <database/create_database->func CreateCategory>"
-			return response
-		} else {
-			// Check if content type is set.
-			if r.Header.Get("Content-Type") == "" {
-				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-				w.WriteHeader(http.StatusNoContent)
-				response := "Problems creating new Category, no body in request information. <database/create_database->CreateCategory> Error: No body information available."
-				return response
-			} else {
-				//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
-				rbody := r.Header.Get("Content-Type")
-				// Check if content type is correct one.
-				if rbody != "application/json" {
-					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-					w.WriteHeader(http.StatusNotAcceptable)
-					response := "Error: Content-Type is not application/json."
-					return response
-				}
 
-			}
-
-		}
-		dec := json.NewDecoder(r.Body)
-
-		dec.DisallowUnknownFields()
-		//log.Println(dec)
-
-		var newCategory SegmentCategory
-		err := dec.Decode(&newCategory)
-		if err != nil {
-			log.Println("Problem with json decoding <database/create_database->CreateCategory")
-		}
-
-		vars := mux.Vars(r)
-		segmentID := vars["segment"]
-		if debugMode {
-			log.Println(segmentID)
-		}
-		tempSegId := scripts.StringToUint(segmentID)
-		//tableToCreate := segmentID + "_categories"
-		if err := Tiukudb.Table(SegmentTableToEdit).AutoMigrate(&SegmentCategory{
-			ID:                 0,
-			SegmentID:          tempSegId,
-			MainCategory:       newCategory.MainCategory,
-			SubCategory:        newCategory.SubCategory,
-			MandatoryToTrack:   newCategory.MandatoryToTrack,
-			MandatoryToComment: newCategory.MandatoryToComment,
-			Tickable:           newCategory.Tickable,
-			LocationNeeded:     newCategory.LocationNeeded,
-			Active:             newCategory.Active,
-			Archived:           newCategory.Archived,
-		}).Error; err != nil {
-			log.Println("Problems creating categories table for segment. <database/database_create->CreateCategories>")
-		}
-
-		//db.Table(segmentID).AddForeignKey("main_category", "main_categories(id)", "RESTRICT", "RESTRICT")
-		// For some reason have to manually set the
-		newCategory.SegmentID = tempSegId
-	*/
 	Tiukudb.Save(&newCategory)
 	response := "Created categories."
 	return response
@@ -269,18 +206,21 @@ func CreateSegmentsSessionsArchive(user StudentUser) string {
 }
 
 // Add/Start Session
-func CreateSessionToSegment(student StudentUser, newSession StudentSegmentSession) string {
+func StartSessionOnSegment(student string, newSession StudentSegmentSession) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
+	studentNow := GetStudentUser(student)
 	var response string
-	tableToEdit := student.AnonID + "_sessions"
+	tableToEdit := studentNow.AnonID + "_sessions"
 	if err := Tiukudb.Table(tableToEdit).Create(&newSession).Error; err != nil {
 		response = "Error in starting Session"
 		log.Printf("Error in adding ")
 	} else {
-		response = "Done starting sessions"
-	}
+		//newSession.ResourceID = newSession.ID
+		Tiukudb.Table(tableToEdit).Where("id = ?", newSession.ID).Updates(StudentSegmentSession{ResourceID: newSession.ID})
+		response = "Started sessions"
 
+	}
 	return response
 }

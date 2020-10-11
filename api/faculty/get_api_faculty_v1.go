@@ -45,7 +45,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get {course} information
-// status: Works. Doesn't give any information about segments
+// status: Works.
 func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

@@ -25,8 +25,36 @@ func GetStudentUser(StudentID string) StudentUser {
 	if result == nil {
 		log.Println(result)
 	}
-
 	return tempStudent
+}
+
+// Desc: Get All Students data with given id,
+// Status: Works, but needs more. Return value and obfuscing of AnonID if used outside
+func GetStudentUsers(StudentID string) []StudentUser {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var tempStudent StudentUser
+
+	result := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", StudentID).Find(&tempStudent)
+	if result == nil {
+		log.Println(result)
+	}
+
+	returnSegments := make([]StudentUser, 0)
+	result2, _ := result.Rows()
+
+	var tempSegments2 StudentUser
+	for result2.Next() {
+
+		if err3 := result.ScanRows(result2, &tempSegments2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSegments = append(returnSegments, tempSegments2)
+	}
+
+	return returnSegments
 }
 
 // Get segments of student user
@@ -266,12 +294,12 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 	if includeInActive {
 		if includeZero {
 			result = Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", segmentID).Or("segment_id = ?", 0).Find(&tempSegment)
-			if debugMode {
+			if DebugMode {
 				log.Printf("IncludeZero and IncludeInActive")
 			}
 		} else {
 			result = Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
-			if debugMode {
+			if DebugMode {
 				log.Printf("No IncludeZero and IncludeInActive")
 			}
 		}
@@ -280,12 +308,12 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 		if includeZero {
 			// With Segment_Id 0 value should always be active as it is mandatory category for all segments i.e. no need to check it
 			result = Tiukudb.Table(CategoriesTableToEdit).Where("active = ? AND segment_id = ?", true, segmentID).Or("segment_id = ?", 0).Find(&tempSegment)
-			if debugMode {
+			if DebugMode {
 				log.Printf("IncludeZero and No IncludeInActive")
 			}
 		} else {
 			result = Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSegment)
-			if debugMode {
+			if DebugMode {
 				log.Printf("No IncludeZero and IncludeInActive")
 			}
 		}
@@ -304,15 +332,17 @@ func GetCategoriesBySegmentId(segmentID uint, includeZero bool, includeInActive 
 	return returnSegment
 }
 
-// Get Session data with it's ID
+// Get Student Session data with it's ID
 // Works
-func GetSession(student StudentUser, sessionID uint) StudentSegmentSession {
+func GetSession(studentId string, sessionID uint) StudentSegmentSession {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
+
 	var tempSession StudentSegmentSession
-	tableToEdit := student.AnonID + "_sessions"
-	if debugMode {
+	studentData := GetStudentUser(studentId)
+	tableToEdit := studentData.AnonID + "_sessions"
+	if DebugMode {
 		log.Println(sessionID)
 		log.Println(tableToEdit)
 	}

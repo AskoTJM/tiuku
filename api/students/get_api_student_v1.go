@@ -43,15 +43,29 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
+// Get {course} information
+// status: Works.
+func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	courseCode := vars["course"]
+	result := database.GetCourseTableById(scripts.StringToUint(courseCode))
+
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+}
+
 // Get list of segments on the {course}
 // status:
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
-	// Get course information
-	result := database.GetCourseTableById(scripts.StringToUint(courseCode))
-	// Get segment data
-	result2 := database.GetSegmentTableByCourseId(result.ID)
+	result2 := database.GetSegmentTableByCourseId(scripts.StringToUint(courseCode))
 	// Transform results to json
 	anon, _ := json.Marshal(result2)
 	n := len(anon)
@@ -67,11 +81,9 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 // comment: Maybe add information if enrolled to it already?
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	//courseCode := vars["course"]
+
 	segCode := vars["segment"]
-	// Get course information
-	//courseRes := database.FindCourseTableById(courseCode)
-	// Get segment data
+
 	segRes := database.GetSegmentDataById(scripts.StringToUint(segCode))
 	//Transform results to json
 	anon, _ := json.Marshal(segRes)
@@ -110,6 +122,9 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	segId := vars["segment"]
 	user := r.Header.Get("X-User")
+
+	// Migrate UserChecking to next func ?
+	// would be more consistent with dividing of work
 	returnNum := database.CheckIfUserExists(user)
 	if returnNum == 0 {
 		w.WriteHeader(http.StatusBadRequest)
@@ -117,10 +132,8 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	} else if returnNum > 1 {
 		log.Printf("Error: Found %d with userId %s", returnNum, user)
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+		fmt.Fprintf(w, "%s", "Problems with user identification, please try again later.")
 	} else {
-		log.Println(segId)
-		log.Println(user)
 		result := database.GetAllStudentSessionsForSegment(user, scripts.StringToUint(segId))
 		anon, _ := json.Marshal(result)
 		n := len(anon)
@@ -134,15 +147,18 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 // desc: Get particular {session} for {segment}
 // status:
 func GetSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
-	//segId := vars["segment"]
 
-	//anon, _ := json.Marshal(result)
-	//n := len(anon)
-	//s := string(anon[:n])
+	vars := mux.Vars(r)
+	segId := vars["segment"]
+	user := r.Header.Get("X-User")
+	result := database.GetSession(user, scripts.StringToUint(segId))
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "%s", "SessionsSession")
+	fmt.Fprintf(w, "%s", s)
 }
 
 // Get value of {setting} for {segment}
@@ -154,7 +170,7 @@ func GetSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Get settings for segment, ? Same as getting categories?
+// Get settings for segment, ? Wut?
 func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

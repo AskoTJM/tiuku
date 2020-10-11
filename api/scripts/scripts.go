@@ -81,3 +81,9 @@ func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
 	}
 	return "PASS"
 }
+
+func CleanJSON(jsonToCheck string) string {
+	var response string
+
+	return response
+}

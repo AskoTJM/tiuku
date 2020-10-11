@@ -83,6 +83,13 @@ var routes = Routes{
 		students.GetCourses,
 	},
 
+	Route{
+		"GetCoursesCourse",
+		strings.ToUpper("Get"),
+		"/students/v1/courses/{course}",
+		students.GetCoursesCourse,
+	},
+
 	// GET Segments for the Course
 	Route{
 		"GetCoursesCourseSegments",
@@ -147,7 +154,7 @@ var routes = Routes{
 		"/students/v1/segments",
 		students.GetUserSegments,
 	},
-	// Get student users session on
+	// Get all data student user has on session
 	Route{
 		"GetUserSegmentsResourceID",
 		strings.ToUpper("Get"),
