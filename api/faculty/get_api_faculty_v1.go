@@ -101,11 +101,24 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
+func GetCoursesCourseSegmentsSegmentStudents(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	segCode := vars["segment"]
+	studentResult := database.GetStudentsJoinedOnSegment(scripts.StringToUint(segCode))
+	anon, _ := json.Marshal(studentResult)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
 // Get spesific category for the {Segment}
 // status:
 func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
+
 	vars := mux.Vars(r)
 	catCode := vars["category"]
 	catRes := database.GetCategoryById(scripts.StringToUint(catCode))
@@ -189,6 +202,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Error: Invalid parameters.")
 		}
 		result := database.GetFacultyUserSegments(user, choice)
+
 		anon, _ := json.Marshal(result)
 
 		n := len(anon)

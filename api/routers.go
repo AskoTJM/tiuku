@@ -246,6 +246,13 @@ var routes = Routes{
 	},
 
 	Route{
+		"GetCoursesCourseSegmentsSegmentStudents",
+		strings.ToUpper("Get"),
+		"/faculty/v1/courses/{course}/segments/{segment}/students",
+		faculty.GetCoursesCourseSegmentsSegmentStudents,
+	},
+
+	Route{
 		"GetCoursesCourseSegmentsSegmentCategoriesCategory",
 		strings.ToUpper("Get"),
 		"/faculty/v1/courses/{course}/segments/{segment}/categories/{category}",

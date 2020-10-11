@@ -29,7 +29,7 @@ func GetStudentUser(StudentID string) StudentUser {
 }
 
 // Desc: Get All Students data with given id,
-// Status: Works, but needs more. Return value and obfuscing of AnonID if used outside
+// T0D0
 func GetStudentUsers(StudentID string) []StudentUser {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -52,6 +52,59 @@ func GetStudentUsers(StudentID string) []StudentUser {
 			log.Println(err3)
 		}
 		returnSegments = append(returnSegments, tempSegments2)
+	}
+
+	return returnSegments
+}
+
+// Get Student user with AnonID
+//
+func GetStudentUserWithAnonID(anonID string) StudentUser {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var returnStudent StudentUser
+	log.Println(anonID)
+	res := Tiukudb.Table(StudentsTableToEdit).Where("anon_id = ?", anonID).Find(&returnStudent)
+	if res == nil {
+		log.Println("Error in GetStudentUserWithAnonID. Error: ")
+		log.Println(res)
+	}
+	log.Println(returnStudent.StudentName)
+	return returnStudent
+}
+
+// Get Students participating on Segment
+// T0D0
+func GetStudentsJoinedOnSegment(segmentID uint) []StudentUser {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var tempSegs []SchoolSegmentsSession
+	result := Tiukudb.Table(SchoolParticipationList).Find(&tempSegs)
+	if result == nil {
+		log.Println(result)
+	}
+	//log.Println(result.RowsAffected)
+	returnSegments := make([]StudentUser, 0)
+	result2, _ := result.Rows()
+
+	var tempSegments2 SchoolSegmentsSession
+	for result2.Next() {
+
+		if err3 := result.ScanRows(result2, &tempSegments2); err3 != nil {
+			log.Println(err3)
+		}
+		log.Println(tempSegments2.AnonID)
+		tempStudentData := GetStudentUserWithAnonID(tempSegments2.AnonID)
+		//var tempStudent StudentUser
+		//result3 := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", tempSegments2.ID).Find(&tempStudent)
+		//if result3 == nil {
+		//	log.Println(result3)
+		//}
+		//log.Println(tempSegments2.StudentName)
+		returnSegments = append(returnSegments, tempStudentData)
 	}
 
 	return returnSegments
@@ -379,6 +432,29 @@ func GetAllStudentSessionsForSegment(student string, segmentID uint) []StudentSe
 		returnSegments = append(returnSegments, tempSegment2)
 	}
 	return returnSegments
+}
+
+// GET all Sessions for Segment
+// T0D0
+func GetAllSessionsForSegment(segmentID uint) []StudentSegmentSession {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var tempSessions []StudentSegmentSession
+	result := Tiukudb.Table(SegmentTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSessions)
+	returnSegments := make([]StudentSegmentSession, 0)
+	result2, _ := result.Rows()
+	var tempSegment2 StudentSegmentSession
+
+	for result2.Next() {
+		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSegments = append(returnSegments, tempSegment2)
+	}
+	return returnSegments
+
 }
 
 // Get Status of Last Session

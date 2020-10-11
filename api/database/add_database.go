@@ -15,7 +15,7 @@ func AddStudentToSegment(user string, segmentId uint) string {
 	segmentToJoin := GetSegmentDataById(segmentId)
 	joiningStudent := GetStudentUser(user)
 
-	if err := Tiukudb.Table(EnrollmentSegmentList).Create(&SchoolSegmentsSession{
+	if err := Tiukudb.Table(SchoolParticipationList).Create(&SchoolSegmentsSession{
 		ID:                      0,
 		SegmentID:               segmentToJoin.ID,
 		AnonID:                  joiningStudent.AnonID,
