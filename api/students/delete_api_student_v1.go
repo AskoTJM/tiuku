@@ -16,6 +16,7 @@ import (
 )
 
 // Leave {segment} of the {course}
+// W0rks
 func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -39,7 +40,8 @@ func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// Remove {session} from {segment}
+// Remove {session} from {segment}, SoftDelete
+// W0rks
 func DeleteSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 	user := r.Header.Get("X-User")
 

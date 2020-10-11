@@ -30,7 +30,7 @@ func PatchSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request)
 }
 
 // Stop session by inserting Stop time
-// status:
+// W0rks
 func PatchSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 	user := r.Header.Get("X-User")
 

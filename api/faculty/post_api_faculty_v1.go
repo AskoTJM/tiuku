@@ -16,7 +16,7 @@ import (
 )
 
 // Create new Course in course table
-// Status: Works
+// W0rks
 func PostCourses(w http.ResponseWriter, r *http.Request) {
 
 	res := database.CheckJSONContent(w, r)
@@ -39,7 +39,7 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 // New segment for the course
-// status: Revised, Works
+// W0rks
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
 	res := database.CheckJSONContent(w, r)
@@ -65,7 +65,7 @@ func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 }
 
 // Add New category for segment
-// status: Works
+// W0rks
 func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 
 	res := database.CheckJSONContent(w, r)

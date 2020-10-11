@@ -17,7 +17,7 @@ import (
 )
 
 // List of active courses
-// status: works
+// W0rks
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 
 	paramTest := r.URL.Query()
@@ -45,7 +45,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get {course} information
-// status: Works.
+// W0rks.
 func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -62,7 +62,7 @@ func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get list of segments for {course}
-// status: Works
+// W0rks
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -81,8 +81,8 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// Get data/sessions of the {segment} in the {course}
-// status: Works
+// Get data of the {segment} in the {course}
+// W0rks
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	//courseCode := vars["course"]
@@ -101,9 +101,12 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
+// Get Students for the {segment}
+// W0rks
 func GetCoursesCourseSegmentsSegmentStudents(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	segCode := vars["segment"]
+
 	studentResult := database.GetStudentsJoinedOnSegment(scripts.StringToUint(segCode))
 	anon, _ := json.Marshal(studentResult)
 	n := len(anon)
@@ -115,8 +118,8 @@ func GetCoursesCourseSegmentsSegmentStudents(w http.ResponseWriter, r *http.Requ
 
 }
 
-// Get spesific category for the {Segment}
-// status:
+// Get {category} for the {Segment}
+// W0rks
 func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -142,7 +145,7 @@ func GetCoursesCourseSegmentsSegmentCategoriesCategorySettings(w http.ResponseWr
 
 // Change(GET) {setting} in {category}
 // status: Unnecessary? Better way to do this by sending all the new settings. Or least should be PUT/PATCH
-// ToDo: Remove or repurpose
+// T0D0 : Remove or repurpose
 func GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -150,18 +153,15 @@ func GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting(w http.Res
 
 // Get Categories for {segment} of the {course}
 // status: works
-// todo: Think about this.
+// T0D0 : Think about this.
 func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
+
 	vars := mux.Vars(r)
 	segId := vars["segment"]
-	// Get course information
-	//result := database.GetCourseTableById(segId)
-	// Get segment data
+
 	res := scripts.StringToUint(segId)
 	result2 := database.GetCategoriesBySegmentId(res, true, true)
-	// Transform results to json
+
 	anon, _ := json.Marshal(result2)
 	n := len(anon)
 	s := string(anon[:n])
@@ -173,13 +173,12 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 }
 
 // Get segments table for Faculty User
-// status: Works, I think
+// W0rks , I think
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
 	returnNum := database.CheckIfFacultyUserExists(user)
 	var choice string
-	//log.Println(returnNum)
 	if returnNum == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "%s", "Incorrect request")

@@ -19,7 +19,7 @@ import (
 )
 
 // Join {segment} of the {course}
-// status:
+// W0rks
 func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -44,7 +44,7 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 }
 
 // Add or start NEW session to {segment} table with empty body the start time is inserted automatically
-// status: At least partially working, not tested with JSON body
+// W0rks
 func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 	// := mux.Vars(r)

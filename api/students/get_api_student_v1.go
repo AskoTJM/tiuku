@@ -17,7 +17,7 @@ import (
 )
 
 // Get list of courses available
-// status:
+// W0rks
 func GetCourses(w http.ResponseWriter, r *http.Request) {
 	paramTest := r.URL.Query()
 	filter, params := paramTest["archived"]
@@ -44,7 +44,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get {course} information
-// status: Works.
+// W0rks
 func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -61,7 +61,7 @@ func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get list of segments on the {course}
-// status:
+// W0rks
 func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	courseCode := vars["course"]
@@ -77,7 +77,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get your data for specific Segment
-// status:
+// T0D0
 // comment: Maybe add information if enrolled to it already?
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -95,8 +95,8 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// Get categories used for {segment}
-// status:
+// Get categories for {segment}
+// W0rks
 func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -117,7 +117,7 @@ func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Re
 }
 
 // desc:Get sessions for {segment}
-// status: ToDo
+// W0rks
 func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	segId := vars["segment"]
@@ -145,7 +145,7 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 }
 
 // desc: Get particular {session} for {segment}
-// status:
+// W0rks
 func GetSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -177,7 +177,7 @@ func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get list of active segments for student user
-// status:
+// W0rks
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
