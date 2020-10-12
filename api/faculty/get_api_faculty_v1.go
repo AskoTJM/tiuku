@@ -16,6 +16,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Get school, campus, apartments and degrees...
+func GetSchool(w http.ResponseWriter, r *http.Request) {
+
+	result := database.GetSchool(0)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
 // List of active courses
 // W0rks
 func GetCourses(w http.ResponseWriter, r *http.Request) {

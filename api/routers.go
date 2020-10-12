@@ -218,6 +218,13 @@ var routes = Routes{
 	// Faculty v1 RAW Routes
 
 	Route{
+		"GetSchool",
+		strings.ToUpper("Get"),
+		"/faculty/v1/school",
+		faculty.GetSchool,
+	},
+
+	Route{
 		"GetCourses",
 		strings.ToUpper("Get"),
 		"/faculty/v1/courses",
