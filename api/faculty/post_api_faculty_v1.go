@@ -89,3 +89,15 @@ func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.R
 	}
 
 }
+
+// Add New School
+// T0D0
+
+// Add New Campus
+// T0D0
+
+// Add New Apartment
+// T0D0
+
+// Add New Degree
+// T0D0

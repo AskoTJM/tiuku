@@ -97,12 +97,12 @@ type SegmentCategory struct {
 	Segment            Segment
 	MainCategory       uint `gorm:"not null"`
 	SubCategory        string
-	MandatoryToTrack   bool
-	MandatoryToComment bool
-	Tickable           bool
-	LocationNeeded     bool
-	Active             bool
-	Archived           bool
+	MandatoryToTrack   bool // Have to see student name, Warning if not
+	MandatoryToComment bool // Comment field can't be empty, Warning if not
+	Tickable           bool // Faculty only wants to see if tracked or not, time spent not needed
+	LocationNeeded     bool // Not used
+	Active             bool // Visible to Student Users
+	Archived           bool // Archived, Not visible to Student Users and maybe helps with sorting if many categories.
 }
 
 type MainCategory struct {

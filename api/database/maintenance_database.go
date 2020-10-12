@@ -32,6 +32,9 @@ var ApartmentTableToEdit = "apartments"
 var CampusTableToEdit = "campus"
 var SchoolsTableToEdit = "schools"
 
+// Variable for empty field in mySQL, because GORM
+var StringForEmpy = "N0TS3T"
+
 // Debug mode for spamming your logs
 var DebugMode bool = true
 

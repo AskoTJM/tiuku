@@ -7,6 +7,7 @@ package database
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -446,18 +447,24 @@ func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
 
 	resultSchool := Tiukudb.Table(SchoolParticipationList).Where("segment_id = ?", segmentID).Find(&tempSchoolSessions)
 	result2, _ := resultSchool.Rows()
-
+	anonymStudent := 1
 	for result2.Next() {
 		var tempReport SegmentSessionReport
 		var tempSegment2 SchoolSegmentsSession
 		if err3 := resultSchool.ScanRows(result2, &tempSegment2); err3 != nil {
 			log.Println(err3)
 		}
-		log.Println(tempSegment2.AnonID)
+		//log.Println(tempSegment2.AnonID)
 
 		tempStudent := GetStudentUserWithAnonID(tempSegment2.AnonID)
+		if tempSegment2.Privacy == "NoName" {
+			tempReport.StudentID = "Anonyymi " + strconv.Itoa(anonymStudent)
+			anonymStudent++
+			// tempStudent.StudentName
+		} else {
+			tempReport.StudentID = tempStudent.StudentName
 
-		tempReport.StudentID = tempStudent.StudentName
+		}
 
 		tableToEdit := tempSegment2.StudentSegmentsSessions
 		var tempStudentSessions []StudentSegmentSession
@@ -469,7 +476,7 @@ func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
 			if err5 := studentResult.ScanRows(studentResult2, &tempSegment3); err5 != nil {
 				log.Println(err5)
 			}
-			if tempSegment3.Deleted == "NotSet" {
+			if tempSegment3.Deleted == StringForEmpy {
 
 				tempReport.ResourceID = tempSegment3.ResourceID
 				tempReport.StartTime = tempSegment3.StartTime
@@ -478,7 +485,10 @@ func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
 				tempReport.Category = tempSegment3.Category
 				tempReport.Comment = tempSegment3.Comment
 
-				log.Println(tempReport)
+				tempReport.Created = tempSegment3.Created
+				tempReport.Updated = tempSegment3.Updated
+
+				//log.Println(tempReport)
 				returnSegments = append(returnSegments, tempReport)
 			}
 		}

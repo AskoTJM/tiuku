@@ -52,7 +52,7 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	//resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
 
 	user := r.Header.Get("X-User")
-
+	var response string
 	returnNum := database.CheckIfUserExists(user)
 	if returnNum == 0 {
 		w.WriteHeader(http.StatusBadRequest)
@@ -66,38 +66,56 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 		if res == "TYPE_ERROR" {
 			log.Printf("Type Error with body.")
 		} else {
-
-			//studentNow := database.GetStudentUser(user)
 			var session database.StudentSegmentSession
 			// If body has content and is JSON then...
 			if res == "PASS" {
+				//log.Println("JSON PASS")
 				dec := json.NewDecoder(r.Body)
 				dec.DisallowUnknownFields()
 				err := dec.Decode(&session)
 				if err != nil {
 					log.Println(err)
 				}
+				vars := mux.Vars(r)
+				seg := vars["segment"]
 
-				// If there is no content we start new Session
+				// Category check here? Is it set and it's approved one?
+				if session.Category == 0 {
+					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+					w.WriteHeader(http.StatusBadRequest)
+					response = "Empty JSON Body: Category not provided or incorrect one."
+				} else {
+					if session.StartTime == "" {
+						session.StartTime = time.Now().Format(time.RFC3339)
+					}
+					if session.EndTime == "" {
+						session.EndTime = database.StringForEmpy
+					}
+					if session.Deleted == "" {
+						session.Deleted = database.StringForEmpy
+					}
+					// Set/OverWrite values by the system
+					//
+
+					session.SegmentID = scripts.StringToUint(seg)
+					session.Version = 1
+					session.Created = time.Now().Format(time.RFC3339)
+					session.Updated = time.Now().Format(time.RFC3339)
+					// Maybe check if not deleted by client app and then set it to NotSet if needed
+
+					response = database.StartSessionOnSegment(user, session)
+					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+					w.WriteHeader(http.StatusOK)
+				}
+				// If there is no content
 			} else if res == "EMPTY" {
-				session.StartTime = time.Now().Format(time.RFC3339)
-				session.EndTime = "NotSet"
+				//log.Println("Empty JSON Body: Minimum required data provided.")
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusBadRequest)
+				response = "Empty JSON Body: Minimum required data not provided."
+				//session.StartTime = time.Now().Format(time.RFC3339)
+				//session.EndTime = database.StringForEmpy
 			}
-			// Set/OverWrite values by the system
-			//
-			vars := mux.Vars(r)
-			seg := vars["segment"]
-
-			session.SegmentID = scripts.StringToUint(seg)
-			session.Version = 1
-			session.Created = time.Now().Format(time.RFC3339)
-			session.Updated = time.Now().Format(time.RFC3339)
-			// Maybe check if not deleted by client app and then set it to NotSet if needed
-			session.Deleted = "NotSet"
-
-			response := database.StartSessionOnSegment(user, session)
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "%s", response)
 		}
 	}
