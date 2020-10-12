@@ -28,8 +28,8 @@ func GetStudentUser(StudentID string) StudentUser {
 	return tempStudent
 }
 
-// Desc: Get All Students data with given id,
-// T0D0
+// Desc: Get All Students data with given id, could be two-in-one Is student on the user list AND are there duplicates.
+// T0D0 Doesn't work right
 func GetStudentUsers(StudentID string) []StudentUser {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -64,18 +64,18 @@ func GetStudentUserWithAnonID(anonID string) StudentUser {
 		ConnectToDB()
 	}
 	var returnStudent StudentUser
-	log.Println(anonID)
+	//log.Println(anonID)
 	res := Tiukudb.Table(StudentsTableToEdit).Where("anon_id = ?", anonID).Find(&returnStudent)
 	if res == nil {
 		log.Println("Error in GetStudentUserWithAnonID. Error: ")
 		log.Println(res)
 	}
-	log.Println(returnStudent.StudentName)
+	//log.Println(returnStudent.StudentName)
 	return returnStudent
 }
 
 // Get Students participating on Segment
-// T0D0
+// W0rks
 func GetStudentsJoinedOnSegment(segmentID uint) []StudentUser {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -409,7 +409,7 @@ func GetSession(studentId string, sessionID uint) StudentSegmentSession {
 
 // Get all Students Sessions for the Segment
 // Works
-func GetAllStudentSessionsForSegment(student string, segmentID uint) []StudentSegmentSession {
+func GetStudentsSessionsForSegment(student string, segmentID uint) []StudentSegmentSession {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
@@ -436,22 +436,53 @@ func GetAllStudentSessionsForSegment(student string, segmentID uint) []StudentSe
 
 // GET all Sessions for Segment
 // T0D0
-func GetAllSessionsForSegment(segmentID uint) []StudentSegmentSession {
+func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
-	var tempSessions []StudentSegmentSession
-	result := Tiukudb.Table(SegmentTableToEdit).Where("segment_id = ?", segmentID).Find(&tempSessions)
-	returnSegments := make([]StudentSegmentSession, 0)
-	result2, _ := result.Rows()
-	var tempSegment2 StudentSegmentSession
+	var tempSchoolSessions []SchoolSegmentsSession
+	returnSegments := make([]SegmentSessionReport, 0)
+
+	resultSchool := Tiukudb.Table(SchoolParticipationList).Where("segment_id = ?", segmentID).Find(&tempSchoolSessions)
+	result2, _ := resultSchool.Rows()
 
 	for result2.Next() {
-		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
+		var tempReport SegmentSessionReport
+		var tempSegment2 SchoolSegmentsSession
+		if err3 := resultSchool.ScanRows(result2, &tempSegment2); err3 != nil {
 			log.Println(err3)
 		}
-		returnSegments = append(returnSegments, tempSegment2)
+		log.Println(tempSegment2.AnonID)
+
+		tempStudent := GetStudentUserWithAnonID(tempSegment2.AnonID)
+
+		tempReport.StudentID = tempStudent.StudentName
+
+		tableToEdit := tempSegment2.StudentSegmentsSessions
+		var tempStudentSessions []StudentSegmentSession
+		//studentResult := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempStudentSessions)
+		studentResult := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempStudentSessions)
+		studentResult2, _ := studentResult.Rows()
+		var tempSegment3 StudentSegmentSession
+		for studentResult2.Next() {
+			if err5 := studentResult.ScanRows(studentResult2, &tempSegment3); err5 != nil {
+				log.Println(err5)
+			}
+			if tempSegment3.Deleted == "NotSet" {
+
+				tempReport.ResourceID = tempSegment3.ResourceID
+				tempReport.StartTime = tempSegment3.StartTime
+				tempReport.EndTime = tempSegment3.EndTime
+				tempReport.SegmentID = tempSegment3.SegmentID
+				tempReport.Category = tempSegment3.Category
+				tempReport.Comment = tempSegment3.Comment
+
+				log.Println(tempReport)
+				returnSegments = append(returnSegments, tempReport)
+			}
+		}
+
 	}
 	return returnSegments
 
@@ -567,6 +598,7 @@ func GetSchool(schoolID uint) []School {
 
 	var result *gorm.DB
 	var tempSchool []School
+
 	if schoolID == 0 {
 		result = Tiukudb.Table(SchoolsTableToEdit).Find(&tempSchool)
 	} else {

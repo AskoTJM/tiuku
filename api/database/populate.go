@@ -22,22 +22,22 @@ func PopulateSchool() {
 	}
 
 	if err := Tiukudb.Create(&School{
-		ID:        0,
+		ID:        1,
 		Shorthand: "OAMK",
 		Finnish:   "Oulun Ammattikorkeakoulu",
 		English:   "Oulu University of Applied Sciences",
 		Campuses: []Campus{{
-			ID:        0,
+			ID:        1,
 			Shorthand: "Linna",
 			Finnish:   "Linnanmaan Kampus",
 			English:   "Campus Linnanmaa",
 			Apartments: []Apartment{{
-				ID:        0,
+				ID:        1,
 				Shorthand: "ICT",
 				Finnish:   "Informaatioteknologia",
 				English:   "Information Technology",
 				Degrees: []Degree{{
-					ID:        0,
+					ID:        1,
 					Shorthand: "bEng",
 					Finnish:   "Insinööri (AMK), tieto- ja viestintätekniikka",
 					English:   "Bachelor of Engineering, Information Technology",

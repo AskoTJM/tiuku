@@ -76,6 +76,35 @@ var routes = Routes{
 	},
 
 	// GET available Courses
+
+	Route{
+		"GetSchools",
+		strings.ToUpper("Get"),
+		"/students/v1/schools",
+		students.GetSchools,
+	},
+
+	Route{
+		"GetCampuses",
+		strings.ToUpper("Get"),
+		"/students/v1/campuses",
+		students.GetCampuses,
+	},
+
+	Route{
+		"GetApartments",
+		strings.ToUpper("Get"),
+		"/students/v1/apartments",
+		students.GetApartments,
+	},
+
+	Route{
+		"GetDegrees",
+		strings.ToUpper("Get"),
+		"/students/v1/degrees",
+		students.GetDegrees,
+	},
+
 	Route{
 		"GetCourses",
 		strings.ToUpper("Get"),
@@ -215,13 +244,34 @@ var routes = Routes{
 		students.PutSegmentsSegmentSessionsSession,
 	},
 
-	// Faculty v1 RAW Routes
+	// FACULTY v1 RAW Routes
 
 	Route{
-		"GetSchool",
+		"GetSchools",
 		strings.ToUpper("Get"),
-		"/faculty/v1/school",
-		faculty.GetSchool,
+		"/faculty/v1/schools",
+		faculty.GetSchools,
+	},
+
+	Route{
+		"GetCampuses",
+		strings.ToUpper("Get"),
+		"/faculty/v1/campuses",
+		faculty.GetCampuses,
+	},
+
+	Route{
+		"GetApartments",
+		strings.ToUpper("Get"),
+		"/faculty/v1/apartments",
+		faculty.GetApartments,
+	},
+
+	Route{
+		"GetDegrees",
+		strings.ToUpper("Get"),
+		"/faculty/v1/degrees",
+		faculty.GetDegrees,
 	},
 
 	Route{
@@ -257,6 +307,13 @@ var routes = Routes{
 		strings.ToUpper("Get"),
 		"/faculty/v1/courses/{course}/segments/{segment}/students",
 		faculty.GetCoursesCourseSegmentsSegmentStudents,
+	},
+
+	Route{
+		"GetCoursesCourseSegmentsSegmentSessions",
+		strings.ToUpper("Get"),
+		"/faculty/v1/courses/{course}/segments/{segment}/sessions",
+		faculty.GetCoursesCourseSegmentsSegmentSessions,
 	},
 
 	Route{

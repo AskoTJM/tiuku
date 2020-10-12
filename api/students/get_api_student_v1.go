@@ -16,6 +16,66 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Get school, campus, apartments and degrees...
+func GetSchools(w http.ResponseWriter, r *http.Request) {
+
+	result := database.GetSchool(0)
+	//log.Println(result)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
+// Get school, campus, apartments and degrees...
+func GetCampuses(w http.ResponseWriter, r *http.Request) {
+
+	result := database.GetCampus(0)
+	//log.Println(result)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
+// Get school, campus, apartments and degrees...
+func GetApartments(w http.ResponseWriter, r *http.Request) {
+
+	result := database.GetApartment(0)
+	//log.Println(result)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
+// Get school, campus, apartments and degrees...
+func GetDegrees(w http.ResponseWriter, r *http.Request) {
+
+	result := database.GetDegree(0)
+	//log.Println(result)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
 // Get list of courses available
 // W0rks
 func GetCourses(w http.ResponseWriter, r *http.Request) {
@@ -134,7 +194,7 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%s", "Problems with user identification, please try again later.")
 	} else {
-		result := database.GetAllStudentSessionsForSegment(user, scripts.StringToUint(segId))
+		result := database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
 		anon, _ := json.Marshal(result)
 		n := len(anon)
 		s := string(anon[:n])

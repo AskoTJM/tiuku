@@ -63,13 +63,29 @@ type Segment struct {
 	Archived              bool
 }
 
-// Schools Segment table has data fo students and where to find their Session for the Segement.
+// Schools Segment table has data for students and where to find their Session for the Segement.
 type SchoolSegmentsSession struct {
 	ID                      uint   `gorm:"primary_key"`
 	SegmentID               uint   `gorm:"not null"`
 	AnonID                  string `gorm:"not null"`
 	StudentSegmentsSessions string
 	Privacy                 string //Allowed to see name of the student?
+}
+
+// Session Report Struct for Segment
+type SegmentSessionReport struct {
+	StudentID  string
+	ResourceID uint
+	SegmentID  uint //`gorm:"not null"`
+	Category   uint
+	StartTime  string //`gorm:"type:datetime" json:"start_time,omitempty"`
+	EndTime    string //`gorm:"default=FUGorm"` //`gorm:"type:datetime" json:"end_time,omitempty"`
+	Created    string //time.Time
+	Updated    string //time.Time
+	//Deleted    string //`gorm:"default=FUGorm"` //`default:"NotSet"` //*time.Time
+	Comment string
+	//Version    uint
+	//Locations  string
 }
 
 // Segment has different Categories for tracking and settings for them.
@@ -115,17 +131,18 @@ type StudentSegmentSession struct {
 	//gorm.Model
 	ID         uint `gorm:"primary_key"`
 	ResourceID uint
-	SegmentID  uint `gorm:"not null"`
-	Segment    Segment
-	Category   uint
-	StartTime  string //`gorm:"type:datetime" json:"start_time,omitempty"`
-	EndTime    string //`gorm:"default=FUGorm"` //`gorm:"type:datetime" json:"end_time,omitempty"`
-	Created    string //time.Time
-	Updated    string //time.Time
-	Deleted    string //`gorm:"default=FUGorm"` //`default:"NotSet"` //*time.Time
-	Comment    string
-	Version    uint
-	Locations  string
+	SegmentID  uint //`gorm:"not null"`
+	//Segment    Segment
+	Category  uint
+	StartTime string //`gorm:"type:datetime" json:"start_time,omitempty"`
+	EndTime   string //`gorm:"default=FUGorm"` //`gorm:"type:datetime" json:"end_time,omitempty"`
+	Created   string //time.Time
+	Updated   string //time.Time
+	Deleted   string //`gorm:"default=FUGorm"` //`default:"NotSet"` //*time.Time
+	Comment   string
+	Version   uint
+	Locations string
+	//Privacy bool
 	//SegmentCategory string `gorm:"not null"`
 }
 
@@ -136,7 +153,7 @@ type School struct {
 	Shorthand string
 	Finnish   string
 	English   string
-	Campuses  []Campus `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
+	Campuses  []Campus //`gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
 }
 
 // Campus of the School, Campus can have multiple Apartments
@@ -146,7 +163,7 @@ type Campus struct {
 	Shorthand  string
 	Finnish    string
 	English    string
-	Apartments []Apartment `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
+	Apartments []Apartment //`gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
 }
 
 /*
@@ -167,10 +184,10 @@ type Apartment struct {
 // Degree in the Apartment.
 type Degree struct {
 	ID          uint `gorm:"primary_key"`
+	ApartmentID uint
 	Shorthand   string
 	Finnish     string
 	English     string
-	ApartmentID uint
 }
 
 // Old and obselete Structs here for storage until sure they're not needed anymore
