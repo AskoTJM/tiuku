@@ -53,40 +53,38 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 				vars := mux.Vars(r)
 				seg := vars["segment"]
 				ses := vars["session"]
-				if database.DebugMode {
-					log.Printf("%s", ses)
-				}
 				// Category check here? Is it set and it's approved one?
 				if session.Category == 0 {
 					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 					w.WriteHeader(http.StatusBadRequest)
 					response = "Empty JSON Body: Category not provided or incorrect one."
 				} else {
+					/*
+						// Code for handling of the body
+						if session.StartTime == "" {
 
-					// Code for handling of the body
-					if session.StartTime == "" {
-
-						//session.StartTime = time.Now().Format(time.RFC3339)
-						// If there is no StartTime there should not be EndTime or Deleted
-						//session.EndTime = database.StringForEmpy
-						//session.Deleted = database.StringForEmpy
-					}
-					if session.EndTime == "" {
-						session.EndTime = database.StringForEmpy
-						//If there is no EndTime, should not be Deleted
-						//session.Deleted = database.StringForEmpy
-					}
+							//session.StartTime = time.Now().Format(time.RFC3339)
+							// If there is no StartTime there should not be EndTime or Deleted
+							//session.EndTime = database.StringForEmpy
+							//session.Deleted = database.StringForEmpy
+						}
+						if session.EndTime == "" {
+							session.EndTime = database.StringForEmpy
+							//If there is no EndTime, should not be Deleted
+							//session.Deleted = database.StringForEmpy
+						}
+					*/
 					if session.Deleted == "" {
 						session.Deleted = database.StringForEmpy
 					}
 					// Set/OverWrite values set by the system
 
 					session.SegmentID = scripts.StringToUint(seg)
-					session.Version = 2
 					session.Created = time.Now().Format(time.RFC3339)
 					session.Updated = time.Now().Format(time.RFC3339)
+					session.ResourceID = scripts.StringToUint(ses)
 
-					response2 := database.ReplaceSession(scripts.StringToUint(seg), session)
+					response2 := database.ReplaceSession(user, scripts.StringToUint(seg), session)
 					if response2 {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusOK)

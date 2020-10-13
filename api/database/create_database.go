@@ -183,18 +183,22 @@ func CreateSchoolSegmentSession(newSeg Segment) string {
 }
 
 // Create SegmentSessionTable for active segments for new student user
-func CreateActiveSegmentSessionsTable(user StudentUser) string {
+func CreateActiveSegmentSessionsTable(user StudentUser) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	//var newTable StudentSegmentSession
+	var response bool
 	tableToCreate := user.AnonID + "_sessions"
 
 	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{}).Error; err != nil {
 		log.Printf("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable> Error: %v \n", err)
+		response = false
+	} else {
+		response = true
 	}
 
-	return tableToCreate
+	return response
 }
 
 // Create Archive SegmentSessionTable for student user
