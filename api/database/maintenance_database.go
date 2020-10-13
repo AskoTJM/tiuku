@@ -39,7 +39,7 @@ var StringForEmpy = "N0TS3T"
 var DebugMode bool = true
 
 // Establish connection to database
-// Status: Done
+// W0rks
 func ConnectToDB() {
 	var err error
 
@@ -63,7 +63,7 @@ func ConnectToDB() {
 }
 
 // Check if Student user exists student users table, returns ID if does.
-// Status: Works, maybe with slight changes could be used for all row counting?
+// W0rks, maybe with slight changes could be used for all row counting?
 func CheckIfUserExists(StudentID string) int64 {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -97,7 +97,7 @@ func CheckIfAnonIdExists(anonid string) int {
 */
 
 // Count how many rows there are in the table. Can be used to count users, segments, course etc in table.
-// status:
+// W0rks
 func CountTableRows(tableToEdit string) int {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -151,7 +151,7 @@ func ArchiveCourse(courseToArchive Course, archive bool) {
 
 // Fix archive status of courses segments and categories
 // Should work by working through courses and checking that their segments and categories have same archive status
-//
+// T0D0
 func CheckArchiveConflicts() int {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -162,6 +162,7 @@ func CheckArchiveConflicts() int {
 }
 
 // Test if required tables exist, should include all the necessary table or fail
+// W0rks
 func CheckIfRequiredTablesExist() bool {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -185,6 +186,7 @@ func CheckIfRequiredTablesExist() bool {
 }
 
 // Check if content of request is JSON
+// W0rks
 func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
 	if r.Header.Get("Content-Type") == "" {
 		// Removed to be able to use this code with empty values

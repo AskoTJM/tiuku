@@ -98,7 +98,7 @@ type SegmentCategory struct {
 	MainCategory       uint `gorm:"not null"`
 	SubCategory        string
 	MandatoryToTrack   bool // Have to see student name, Warning if not
-	MandatoryToComment bool // Comment field can't be empty, Warning if not
+	MandatoryToComment bool // Comment field should not be empty, Warning if not
 	Tickable           bool // Faculty only wants to see if tracked or not, time spent not needed
 	LocationNeeded     bool // Not used
 	Active             bool // Visible to Student Users

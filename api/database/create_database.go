@@ -146,13 +146,19 @@ func CreateSegment(newSegment Segment, tableToEdit string) string {
 
 }
 
-func CreateCategory(newCategory SegmentCategory, tableToEdit string) string {
+// Create new Category for Segment, return True on success, else False
+func CreateCategory(newCategory SegmentCategory, tableToEdit string) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-
-	Tiukudb.Save(&newCategory)
-	response := "Created categories."
+	var response bool
+	if err := Tiukudb.Table(tableToEdit).Save(&newCategory).Error; err != nil {
+		log.Printf("Problems creating new Category for segment. <database/create_database->CreateCategory> Error: %v \n", err)
+		response = false
+	} else {
+		log.Printf("Succesfully created new Category %v for Segment %v \n", newCategory.ID, newCategory.SegmentID)
+		response = true
+	}
 	return response
 }
 
@@ -170,7 +176,7 @@ func CreateSchoolSegmentSession(newSeg Segment) string {
 		StudentSegmentsSessions: "",
 		Privacy:                 "",
 	}).Error; err != nil {
-		log.Println("Problems creating School sessions list for segment. <database/create_database->CreateSchoolSegmentsList>")
+		log.Printf("Problems creating School sessions list for segment. <database/create_database->CreateSchoolSegmentsList>Error: %v \n", err)
 	}
 
 	return returnString
@@ -185,7 +191,7 @@ func CreateActiveSegmentSessionsTable(user StudentUser) string {
 	tableToCreate := user.AnonID + "_sessions"
 
 	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{}).Error; err != nil {
-		log.Println("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable>")
+		log.Printf("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable> Error: %v \n", err)
 	}
 
 	return tableToCreate
@@ -199,28 +205,31 @@ func CreateSegmentsSessionsArchive(user StudentUser) string {
 	tableToCreate := user.AnonID + "_sessions_archived"
 
 	if err := Tiukudb.Table(tableToCreate).AutoMigrate(&StudentSegmentSession{}).Error; err != nil {
-		log.Println("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable>")
+		log.Printf("Problems creating active Session table for student user. <database/create_database->CreateActiveSegmentSessionsTable>Error: % \n", err)
 	}
 
 	return tableToCreate
 }
 
-// Add/Start Session
-func StartSessionOnSegment(student string, newSession StudentSegmentSession) string {
+// Add/Start Session, Returns True on success  / False on Error
+func StartSessionOnSegment(student string, newSession StudentSegmentSession) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	studentNow := GetStudentUser(student)
-	var response string
+	var response bool
 	tableToEdit := studentNow.AnonID + "_sessions"
 	if err := Tiukudb.Table(tableToEdit).Create(&newSession).Error; err != nil {
-		response = "Error in starting Session"
-		log.Printf("Error in adding ")
+		log.Printf("Error in starting Session %v \n", err)
+		response = false
 	} else {
 		//newSession.ResourceID = newSession.ID
-		Tiukudb.Table(tableToEdit).Where("id = ?", newSession.ID).Updates(StudentSegmentSession{ResourceID: newSession.ID})
-		response = "Started sessions"
-
+		if err2 := Tiukudb.Table(tableToEdit).Where("id = ?", newSession.ID).Updates(StudentSegmentSession{ResourceID: newSession.ID}).Error; err2 != nil {
+			log.Printf("Error setting ResourceID for starting Session %v \n", err)
+			response = false
+			return response
+		}
+		response = true
 	}
 	return response
 }

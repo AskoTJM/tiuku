@@ -68,6 +68,8 @@ func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 // W0rks
 func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Request) {
 
+	var response string
+
 	res := database.CheckJSONContent(w, r)
 	if res != "PASS" {
 		fmt.Fprintf(w, "%s", res)
@@ -83,9 +85,16 @@ func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.R
 		segmentCode := vars["segment"]
 		newCategory.SegmentID = scripts.StringToUint(segmentCode)
 		result := database.CreateCategory(newCategory, database.CategoriesTableToEdit)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, "%s", result)
+		if result {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusCreated)
+			response = "Category created for Segment"
+		} else {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusInternalServerError)
+			response = "Could not create Category for Segment"
+		}
+		fmt.Fprintf(w, "%s", response)
 	}
 
 }

@@ -16,7 +16,7 @@ import (
 )
 
 // Change settings for the {segment}
-// Not needed until we implement personal categories
+// Not needed until we implement personal categories?
 func PatchSegmentSegmentSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -45,9 +45,17 @@ func PatchSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request)
 
 		vars := mux.Vars(r)
 		seg := vars["session"]
-		response := database.StopActiveSession(user, scripts.StringToUint(seg))
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
+		var response string
+		result := database.StopActiveSession(user, scripts.StringToUint(seg))
+		if result {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusOK)
+			response = "Session stopped"
+		} else {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusInternalServerError)
+			response = "Error with stopping Session."
+		}
 		fmt.Fprintf(w, "%s", response)
 	}
 

@@ -65,6 +65,9 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 		res := database.CheckJSONContent(w, r)
 		if res == "TYPE_ERROR" {
 			log.Printf("Type Error with body.")
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusBadRequest)
+			response = "Incorrect body type."
 		} else {
 			var session database.StudentSegmentSession
 			// If body has content and is JSON then...
@@ -87,37 +90,45 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				} else {
 					if session.StartTime == "" {
 						session.StartTime = time.Now().Format(time.RFC3339)
+						// If there is no StartTime there should not be EndTime or Deleted
+						session.EndTime = database.StringForEmpy
+						session.Deleted = database.StringForEmpy
 					}
 					if session.EndTime == "" {
 						session.EndTime = database.StringForEmpy
+						//If there is no EndTime, should not be Deleted
+						session.Deleted = database.StringForEmpy
 					}
 					if session.Deleted == "" {
 						session.Deleted = database.StringForEmpy
 					}
-					// Set/OverWrite values by the system
-					//
+					// Set/OverWrite values set by the system
 
 					session.SegmentID = scripts.StringToUint(seg)
 					session.Version = 1
 					session.Created = time.Now().Format(time.RFC3339)
 					session.Updated = time.Now().Format(time.RFC3339)
-					// Maybe check if not deleted by client app and then set it to NotSet if needed
 
-					response = database.StartSessionOnSegment(user, session)
-					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-					w.WriteHeader(http.StatusOK)
+					response2 := database.StartSessionOnSegment(user, session)
+					if response2 {
+						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+						w.WriteHeader(http.StatusOK)
+					} else {
+						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+						w.WriteHeader(http.StatusInternalServerError)
+					}
 				}
 				// If there is no content
 			} else if res == "EMPTY" {
-				//log.Println("Empty JSON Body: Minimum required data provided.")
+				log.Printf("Empty JSON Body: Minimum required data not provided. %v", r)
 				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 				w.WriteHeader(http.StatusBadRequest)
 				response = "Empty JSON Body: Minimum required data not provided."
-				//session.StartTime = time.Now().Format(time.RFC3339)
-				//session.EndTime = database.StringForEmpy
+
 			}
-			fmt.Fprintf(w, "%s", response)
+
 		}
+		fmt.Fprintf(w, "%s", response)
 	}
 }
 
