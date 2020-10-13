@@ -209,9 +209,10 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 func GetSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	segId := vars["segment"]
+	//segId := vars["segment"]
+	sesId := vars["session"]
 	user := r.Header.Get("X-User")
-	result := database.GetSession(user, scripts.StringToUint(segId))
+	result := database.GetSession(user, scripts.StringToUint(sesId))
 	anon, _ := json.Marshal(result)
 	n := len(anon)
 	s := string(anon[:n])

@@ -396,11 +396,8 @@ func GetSession(studentId string, sessionID uint) StudentSegmentSession {
 	var tempSession StudentSegmentSession
 	studentData := GetStudentUser(studentId)
 	tableToEdit := studentData.AnonID + "_sessions"
-	if DebugMode {
-		log.Println(sessionID)
-		log.Println(tableToEdit)
-	}
-	Tiukudb.Table(tableToEdit).Where("id = ?", sessionID).Find(&tempSession)
+
+	Tiukudb.Table(tableToEdit).Where("resource_id = ?", sessionID).Where("Deleted = ?", "N0tS3t").Last(&tempSession)
 	//tempSession.Comment = "Testi"
 	//Tiukudb.Table(tableToEdit).Save(&tempSession)
 	//Tiukudb.Save()
@@ -420,7 +417,7 @@ func GetStudentsSessionsForSegment(student string, segmentID uint) []StudentSegm
 	studentData := GetStudentUser(student)
 	tableToEdit := studentData.AnonID + "_sessions"
 
-	result := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempSessions)
+	result := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Where("Deleted = ?", "N0tS3t").Order("resource_id asc").Find(&tempSessions)
 
 	returnSegments := make([]StudentSegmentSession, 0)
 	result2, _ := result.Rows()
@@ -469,7 +466,7 @@ func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
 		tableToEdit := tempSegment2.StudentSegmentsSessions
 		var tempStudentSessions []StudentSegmentSession
 		//studentResult := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempStudentSessions)
-		studentResult := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempStudentSessions)
+		studentResult := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Where("Deleted = ?", "N0tS3t").Order("resource_id asc").Find(&tempStudentSessions)
 		studentResult2, _ := studentResult.Rows()
 		var tempSegment3 StudentSegmentSession
 		for studentResult2.Next() {

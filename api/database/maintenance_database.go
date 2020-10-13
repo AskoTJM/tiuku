@@ -63,7 +63,7 @@ func ConnectToDB() {
 }
 
 // Check if Student user exists student users table, returns ID if does.
-// W0rks, maybe with slight changes could be used for all row counting?
+// W0rks , maybe with slight changes could be used for all row counting?
 func CheckIfUserExists(StudentID string) int64 {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -77,6 +77,8 @@ func CheckIfUserExists(StudentID string) int64 {
 	return result.RowsAffected
 }
 
+// Check if Faculty User is in DB
+// ??
 func CheckIfFacultyUserExists(FacultyID string) int64 {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -108,7 +110,7 @@ func CountTableRows(tableToEdit string) int {
 }
 
 // Toggle Archive status of course, it's segments and categories, true to archive, false to un-archive
-// status:
+// ??
 func ArchiveCourse(courseToArchive Course, archive bool) {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -207,4 +209,67 @@ func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
 
 	}
 	return "PASS"
+}
+
+// Check if Category matches Segment, returns True if match False if not
+// W0rks
+func CheckIfCategoryMatchSegment(testCategory uint, testSegment uint) (bool, string) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var responseBool bool
+	var responseString string
+	var tempCategory SegmentCategory
+	if testCategory == 0 {
+		responseBool = false
+		responseString = "Category not provided or incorrect one."
+	} else if testCategory > 3 {
+		res := Tiukudb.Table(CategoriesTableToEdit).Where("id = ?", testCategory).Where("segment_id = ?", testSegment).Find(&tempCategory).RowsAffected
+		if res == 0 {
+			responseBool = false
+			responseString = "Error. Incorrect Category for Segment."
+		}
+		if res == 1 {
+			responseBool = true
+			responseString = "Category matches the Segment."
+		}
+	} else {
+		responseBool = true
+		responseString = "Category is default one."
+	}
+	return responseBool, responseString
+}
+
+// Check if Session matches Category, returns True if match False if not
+// T0D0
+func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, string) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var responseBool bool
+	var responseString string
+	var tempCategory SegmentCategory
+	if tempSession.Category == 0 {
+		responseBool = false
+		responseString = "Category not provided or incorrect one."
+	} else if tempSession.Category > 3 {
+		result := Tiukudb.Table(CategoriesTableToEdit).Where("id = ?", tempSession.Category).Where("segment_id = ?", tempSession.SegmentID).Find(&tempCategory)
+		res := result.RowsAffected
+		if res == 0 {
+			responseBool = false
+			responseString = "Error. Incorrect Category for Segment."
+		}
+		if res == 1 {
+			// If the Category matches
+			//tempCategory.
+			responseBool = true
+			responseString = "Category matches the Segment."
+		}
+	} else {
+		responseBool = true
+		responseString = "Category is default one."
+	}
+	return responseBool, responseString
 }

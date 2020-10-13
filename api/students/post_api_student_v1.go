@@ -47,12 +47,9 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 // W0rks
 func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
-	// := mux.Vars(r)
-	//segCode := vars["segment"]
-	//resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
-
 	user := r.Header.Get("X-User")
 	var response string
+
 	returnNum := database.CheckIfUserExists(user)
 	if returnNum == 0 {
 		w.WriteHeader(http.StatusBadRequest)
@@ -72,7 +69,6 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 			var session database.StudentSegmentSession
 			// If body has content and is JSON then...
 			if res == "PASS" {
-				//log.Println("JSON PASS")
 				dec := json.NewDecoder(r.Body)
 				dec.DisallowUnknownFields()
 				err := dec.Decode(&session)
@@ -82,12 +78,13 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				vars := mux.Vars(r)
 				seg := vars["segment"]
 
-				// Category check here? Is it set and it's approved one?
-				if session.Category == 0 {
-					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-					w.WriteHeader(http.StatusBadRequest)
-					response = "Empty JSON Body: Category not provided or incorrect one."
-				} else {
+				// Category check
+
+				//test, result := database.CheckIfCategoryMatchSegment(session.Category, scripts.StringToUint(seg))
+				test, result := database.CheckIfSessionMatchesCategory(session)
+
+				if test {
+
 					if session.StartTime == "" {
 						session.StartTime = time.Now().Format(time.RFC3339)
 						// If there is no StartTime there should not be EndTime or Deleted
@@ -113,10 +110,16 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 					if response2 {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusOK)
+						response = result
 					} else {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusInternalServerError)
 					}
+				} else {
+					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+					w.WriteHeader(http.StatusBadRequest)
+					response = result
+
 				}
 				// If there is no content
 			} else if res == "EMPTY" {
