@@ -241,7 +241,7 @@ func CheckIfCategoryMatchSegment(testCategory uint, testSegment uint) (bool, str
 	return responseBool, responseString
 }
 
-// Check if Session matches Category, returns True if match False if not
+// Check if Session matches Category and it matches the Segment, returns True if match False if not
 // T0D0
 func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, string) {
 	if Tiukudb == nil {
@@ -251,6 +251,7 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 	var responseBool bool
 	var responseString string
 	var tempCategory SegmentCategory
+	log.Printf("Category is %v and Segment is %v", tempSession.Category, tempSession.SegmentID)
 	if tempSession.Category == 0 {
 		responseBool = false
 		responseString = "Category not provided or incorrect one."
@@ -265,7 +266,7 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 			// If the Category matches
 			//tempCategory.
 			responseBool = true
-			responseString = "Category matches the Segment."
+			responseString = "Category matches the Segment and Session matches the criterias."
 		}
 	} else {
 		responseBool = true

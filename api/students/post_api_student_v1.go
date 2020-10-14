@@ -77,7 +77,7 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				}
 				vars := mux.Vars(r)
 				seg := vars["segment"]
-
+				session.SegmentID = scripts.StringToUint(seg)
 				// Category check
 
 				//test, result := database.CheckIfCategoryMatchSegment(session.Category, scripts.StringToUint(seg))
@@ -110,18 +110,20 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 					if response2 {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusOK)
-						response = result
+						response = "Session added to database."
 					} else {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusInternalServerError)
+						response = "Server error."
 					}
 				} else {
+					log.Printf("Incorrect category. %v", r)
 					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 					w.WriteHeader(http.StatusBadRequest)
-					response = result
-
+					//response = "Incorrect category for Segment."
 				}
-				// If there is no content
+				response = result + "  " + response
+
 			} else if res == "EMPTY" {
 				log.Printf("Empty JSON Body: Minimum required data not provided. %v", r)
 				w.Header().Set("Content-Type", "application/json; charset=UTF-8")

@@ -32,32 +32,39 @@ func StopActiveSession(student string, editSession uint) bool {
 
 // Replace Session data
 // W1P
-func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSession) bool {
+func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSession) (bool, string) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	var response bool
+	var responseBool bool
+	var responseString string
 	studentData := GetStudentUser(user)
 	tableToEdit := studentData.AnonID + "_sessions"
 	var oldStudentSession StudentSegmentSession
+	log.Printf("Session to replace is %v", oldSession)
 	// Should give the last version because GORM sorts with primary key, ie highest primary key = latest addition
 	if err := Tiukudb.Table(tableToEdit).Where("resource_id = ?", oldSession).Last(&oldStudentSession).Error; err != nil {
 		log.Printf("Error in retrieving table %v in <database/update_database->ReplaceSession. %v \n", oldSession, err)
-		response = false
+		responseString = "Error in retrieving table. Incorrect resource ID"
+		responseBool = false
 	} else {
 		// Mark old one as Deleted
+		log.Printf("oldStudentSession Version is now %v", oldStudentSession)
 		oldStudentSession.Deleted = time.Now().Format(time.RFC3339)
 		oldStudentSession.Updated = time.Now().Format(time.RFC3339)
 		newSession.Version = oldStudentSession.Version + 1
 		Tiukudb.Table(tableToEdit).Save(&oldStudentSession)
+
 		if err := Tiukudb.Table(tableToEdit).Create(&newSession).Error; err != nil {
 			log.Printf("Error in starting Session %v \n", err)
-			response = false
+			responseString = "Error in creating replacing Session"
+			responseBool = false
 		} else {
-			response = true
+			responseString = "Session data replaced."
+			responseBool = true
 		}
 	}
-	return response
+	return responseBool, responseString
 }
 
 // Update or replace existing course data
