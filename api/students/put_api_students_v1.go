@@ -18,7 +18,7 @@ import (
 )
 
 // Replace {session} of the {segment} with new data
-// T0D0
+// W1P need to copy from new Session code revised code
 func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
@@ -53,7 +53,7 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 				seg := vars["segment"]
 				ses := vars["session"]
 
-				test, result := database.CheckIfSessionMatchesCategory(session)
+				test, result, _ := database.CheckIfSessionMatchesCategory(session)
 
 				if test {
 

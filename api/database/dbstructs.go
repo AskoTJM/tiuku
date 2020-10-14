@@ -142,7 +142,7 @@ type StudentSegmentSession struct {
 	Comment   string
 	Version   uint
 	Locations string
-	//Privacy   bool
+	Privacy   bool
 	//SegmentCategory string `gorm:"not null"`
 }
 

@@ -80,11 +80,12 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				session.SegmentID = scripts.StringToUint(seg)
 				// Category check
 
-				//test, result := database.CheckIfCategoryMatchSegment(session.Category, scripts.StringToUint(seg))
-				test, result := database.CheckIfSessionMatchesCategory(session)
+				resBool, resString := database.ValidateNewSessionStructIn(session)
 
-				if test {
-
+				if !resBool {
+					log.Printf("Result from Validity test %v", resString)
+					response = response + " " + resString
+				} else {
 					if session.StartTime == "" {
 						session.StartTime = time.Now().Format(time.RFC3339)
 						// If there is no StartTime there should not be EndTime or Deleted
@@ -101,7 +102,7 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 					}
 					// Set/OverWrite values set by the system
 
-					session.SegmentID = scripts.StringToUint(seg)
+					//session.SegmentID = scripts.StringToUint(seg)
 					session.Version = 1
 					session.Created = time.Now().Format(time.RFC3339)
 					session.Updated = time.Now().Format(time.RFC3339)
@@ -110,20 +111,15 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 					if response2 {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusOK)
-						response = "Session added to database."
+						response = resString
 					} else {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusInternalServerError)
-						response = "Server error."
+						response = resString
 					}
-				} else {
-					log.Printf("Incorrect category. %v", r)
-					w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-					w.WriteHeader(http.StatusBadRequest)
-					//response = "Incorrect category for Segment."
+					response = response + " " + resString
 				}
-				response = result + "  " + response
-
+				response = response + " " + resString
 			} else if res == "EMPTY" {
 				log.Printf("Empty JSON Body: Minimum required data not provided. %v", r)
 				w.Header().Set("Content-Type", "application/json; charset=UTF-8")

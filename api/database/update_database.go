@@ -31,7 +31,7 @@ func StopActiveSession(student string, editSession uint) bool {
 }
 
 // Replace Session data
-// W1P
+// W0rks
 func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSession) (bool, string) {
 	if Tiukudb == nil {
 		ConnectToDB()

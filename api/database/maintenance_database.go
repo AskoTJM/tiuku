@@ -192,7 +192,7 @@ func CheckIfRequiredTablesExist() bool {
 func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
 	if r.Header.Get("Content-Type") == "" {
 		// Removed to be able to use this code with empty values
-		//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 		//w.WriteHeader(http.StatusNoContent)
 		response := "EMPTY"
 		return response
@@ -243,7 +243,7 @@ func CheckIfCategoryMatchSegment(testCategory uint, testSegment uint) (bool, str
 
 // Check if Session matches Category and it matches the Segment, returns True if match False if not
 // T0D0
-func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, string) {
+func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, string, SegmentCategory) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
@@ -251,26 +251,77 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 	var responseBool bool
 	var responseString string
 	var tempCategory SegmentCategory
-	log.Printf("Category is %v and Segment is %v", tempSession.Category, tempSession.SegmentID)
+	//log.Printf("Category is %v and Segment is %v", tempSession.Category, tempSession.SegmentID)
 	if tempSession.Category == 0 {
 		responseBool = false
 		responseString = "Category not provided or incorrect one."
 	} else if tempSession.Category > 3 {
-		result := Tiukudb.Table(CategoriesTableToEdit).Where("id = ?", tempSession.Category).Where("segment_id = ?", tempSession.SegmentID).Find(&tempCategory)
+		result := Tiukudb.Table(CategoriesTableToEdit).Where("id = ?", tempSession.Category).Where("segment_id = ?", tempSession.SegmentID).Where("active = ?", true).Find(&tempCategory)
 		res := result.RowsAffected
 		if res == 0 {
 			responseBool = false
 			responseString = "Error. Incorrect Category for Segment."
 		}
 		if res == 1 {
-			// If the Category matches
-			//tempCategory.
+
 			responseBool = true
-			responseString = "Category matches the Segment and Session matches the criterias."
+			responseString = "Category matches the Segment."
 		}
 	} else {
 		responseBool = true
 		responseString = "Category is default one."
 	}
+	return responseBool, responseString, tempCategory
+}
+
+// Validate that incoming Session has required data
+// W1P
+func ValidateNewSessionStructIn(newSession StudentSegmentSession) (bool, string) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseBool bool = true
+	var responseString string
+	var tempCategory SegmentCategory
+
+	// Minimum needed to pass
+	// Check for SegmentID
+	if newSession.SegmentID == (StudentSegmentSession{}.SegmentID) {
+		log.Printf("Segment check.")
+		responseBool = false
+		responseString = "Error: SegmentID required. "
+	}
+	// Check for Category
+	var test bool
+	var tempString string
+	// First check if the Category and Segment match
+	test, tempString, tempCategory = CheckIfSessionMatchesCategory(newSession)
+	if !test {
+		responseBool = false
+		responseString = responseString + tempString
+	} else {
+		// If Category is mandatory to comment
+		if tempCategory.MandatoryToComment {
+
+			if newSession.Comment == (StudentSegmentSession{}.Comment) {
+				if responseBool {
+					responseBool = false
+				}
+				responseString = responseString + "Error: Comment required. "
+			}
+		}
+		// Student name has to be visible.
+		if tempCategory.MandatoryToTrack {
+			if newSession.Privacy {
+				if responseBool {
+					responseBool = false
+				}
+				responseString = responseString + "Error: This category requires name to be visible. "
+			}
+		}
+
+	}
+
 	return responseBool, responseString
+
 }
