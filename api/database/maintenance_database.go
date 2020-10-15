@@ -321,6 +321,7 @@ func ValidateNewStudentUser(newStudent StudentUser) (int, string) {
 			responseString = responseString + "Error: Missing Student name. \n"
 		}
 		if responseString == "" {
+			responseCode = http.StatusOK
 			responseString = "Segment Valid."
 		}
 	}

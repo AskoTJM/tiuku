@@ -69,9 +69,17 @@ func PostStudents(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(resCode)
 			response = resString
 		} else {
-			//response = database.(newStudent, database.StudentsTableToEdit)
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusCreated)
+			resCode2, resString2 := database.CreateNewStudentUser(newStudent)
+			if resCode2 != http.StatusOK {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(resCode)
+				//response = resString2
+			} else {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusCreated)
+				//response
+			}
+			response = resString2
 		}
 		fmt.Fprintf(w, "%s", response)
 	}

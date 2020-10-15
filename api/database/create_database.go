@@ -6,6 +6,7 @@ package database
 */
 import (
 	"log"
+	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/scripts"
 )
@@ -20,9 +21,6 @@ func CreateStudentSegmentTable(student StudentUser) string {
 	tempStudent := student //.StudentID)
 	// Get AnonID for data
 	myAnonID := tempStudent.AnonID
-	if DebugMode {
-		log.Printf("Anon Id is: %s", student.StudentID)
-	}
 	tableToEdit := myAnonID + "_segments"
 	result := Tiukudb.HasTable(tableToEdit)
 	if result {
@@ -88,35 +86,6 @@ func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
 	}
 }
 
-// Create Segment table for new Faculty users
-// Status: No clue, just copy+pasted and edited from CreateStudentSegmentTable
-// Not in use. Decided to go with one table for all faculty users
-/*
-func CreateFacultySegmentTable(newFaculty FacultyUser) string {
-	if Tiukudb == nil {
-		ConnectToDB()
-	}
-	tableToEdit := newFaculty.FacultyID + "_segments"
-	result := Tiukudb.HasTable(tableToEdit)
-	if result {
-		log.Println("Error: Table already exists. <database/create_database.go->CreateFacultySegmentTable>")
-		return "Error: Table already exists."
-	} else {
-		if err := Tiukudb.Table(tableToEdit).AutoMigrate(&FacultySegment{
-			ID:                    0,
-			Course:                Course{},
-			SegmentNumber:         0,
-			SchoolSegmentsSession: SchoolSegmentsSession{},
-			SegmentCategories:     SegmentCategory{},
-			Archived:              false,
-		}).Error; err != nil {
-			log.Println("Problems creating Segment table of FacultyUsers. <database/create_database->CreateFacultySegmentTable>")
-		}
-		return tableToEdit
-	}
-}
-*/
-
 // Create new course in Courses table.
 // Status: Working, but not finished. Needs checking.
 func CreateCourse(newCourse Course, tableToEdit string) string {
@@ -137,13 +106,11 @@ func CreateSegment(newSegment Segment, tableToEdit string) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-
 	getCourseData := GetCourseTableById(newSegment.CourseID)
 	Tiukudb.Model(&getCourseData).Association("Segment").Append(newSegment)
 	Tiukudb.Save(&getCourseData)
 	response := "Segment created " + newSegment.SegmentName
 	return response //getCourseData
-
 }
 
 // Create new Category for Segment, return True on success, else False
@@ -236,4 +203,22 @@ func CreateNewSessionOnSegment(student string, newSession StudentSegmentSession)
 		response = true
 	}
 	return response
+}
+
+// Create new Student User
+// W1P
+func CreateNewStudentUser(newStudent StudentUser) (int, string) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseCode int
+	var responseString string
+	if err := Tiukudb.Table(StudentsTableToEdit).Create(&newStudent).Error; err != nil {
+		responseCode = http.StatusInternalServerError
+		responseString = "Error creating new student user. "
+	} else {
+		responseCode = http.StatusOK
+		responseString = "Created new student user."
+	}
+	return responseCode, responseString
 }
