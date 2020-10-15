@@ -78,7 +78,23 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				vars := mux.Vars(r)
 				seg := vars["segment"]
 				session.SegmentID = scripts.StringToUint(seg)
-				// Category check
+				session.Version = 1
+				session.Created = time.Now().Format(time.RFC3339)
+				session.Updated = time.Now().Format(time.RFC3339)
+				if session.StartTime == "" {
+					session.StartTime = time.Now().Format(time.RFC3339)
+					// If there is no StartTime there should not be EndTime or Deleted
+					session.EndTime = database.StringForEmpy
+					session.Deleted = database.StringForEmpy
+				}
+				if session.EndTime == "" {
+					session.EndTime = database.StringForEmpy
+					//If there is no EndTime, should not be Deleted
+					session.Deleted = database.StringForEmpy
+				}
+				if session.Deleted == "" {
+					session.Deleted = database.StringForEmpy
+				}
 
 				resBool, resString := database.ValidateNewSessionStructIn(session)
 
@@ -86,26 +102,10 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 					log.Printf("Result from Validity test %v", resString)
 					response = response + " " + resString
 				} else {
-					if session.StartTime == "" {
-						session.StartTime = time.Now().Format(time.RFC3339)
-						// If there is no StartTime there should not be EndTime or Deleted
-						session.EndTime = database.StringForEmpy
-						session.Deleted = database.StringForEmpy
-					}
-					if session.EndTime == "" {
-						session.EndTime = database.StringForEmpy
-						//If there is no EndTime, should not be Deleted
-						session.Deleted = database.StringForEmpy
-					}
-					if session.Deleted == "" {
-						session.Deleted = database.StringForEmpy
-					}
+
 					// Set/OverWrite values set by the system
 
 					//session.SegmentID = scripts.StringToUint(seg)
-					session.Version = 1
-					session.Created = time.Now().Format(time.RFC3339)
-					session.Updated = time.Now().Format(time.RFC3339)
 
 					response2 := database.StartSessionOnSegment(user, session)
 					if response2 {

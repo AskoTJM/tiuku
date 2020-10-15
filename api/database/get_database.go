@@ -29,8 +29,8 @@ func GetStudentUser(StudentID string) StudentUser {
 	return tempStudent
 }
 
-// Desc: Get All Students data with given id, could be two-in-one Is student on the user list AND are there duplicates.
-// T0D0 Doesn't work right
+// Desc: Get All Students data with given id, could be two-in-one = Is student on the user list AND are there duplicates.
+// T0D0 Doesn't work right, just use GetStudentUser()
 func GetStudentUsers(StudentID string) []StudentUser {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -433,7 +433,7 @@ func GetStudentsSessionsForSegment(student string, segmentID uint) []StudentSegm
 }
 
 // GET all Sessions for Segment
-// T0D0
+// W0rks
 func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
 	if Tiukudb == nil {
 		ConnectToDB()

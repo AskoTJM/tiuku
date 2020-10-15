@@ -41,7 +41,7 @@ func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSessi
 	studentData := GetStudentUser(user)
 	tableToEdit := studentData.AnonID + "_sessions"
 	var oldStudentSession StudentSegmentSession
-	log.Printf("Session to replace is %v", oldSession)
+	//log.Printf("Session to replace is %v", oldSession)
 	// Should give the last version because GORM sorts with primary key, ie highest primary key = latest addition
 	if err := Tiukudb.Table(tableToEdit).Where("resource_id = ?", oldSession).Last(&oldStudentSession).Error; err != nil {
 		log.Printf("Error in retrieving table %v in <database/update_database->ReplaceSession. %v \n", oldSession, err)
@@ -49,7 +49,7 @@ func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSessi
 		responseBool = false
 	} else {
 		// Mark old one as Deleted
-		log.Printf("oldStudentSession Version is now %v", oldStudentSession)
+		//log.Printf("oldStudentSession Version is now %v", oldStudentSession)
 		oldStudentSession.Deleted = time.Now().Format(time.RFC3339)
 		oldStudentSession.Updated = time.Now().Format(time.RFC3339)
 		newSession.Version = oldStudentSession.Version + 1

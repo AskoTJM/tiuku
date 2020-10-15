@@ -136,8 +136,8 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", s)
 }
 
-// Get your data for specific Segment
-// T0D0
+// Get  data for specific Segment
+// W0rks
 // comment: Maybe add information if enrolled to it already?
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

@@ -18,11 +18,12 @@ import (
 )
 
 // Replace {session} of the {segment} with new data
-// W1P need to copy from new Session code revised code
+// W0rks
 func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
 	var response string
+
 	returnNum := database.CheckIfUserExists(user)
 	if returnNum == 0 {
 		w.WriteHeader(http.StatusBadRequest)
@@ -52,19 +53,24 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 				vars := mux.Vars(r)
 				seg := vars["segment"]
 				ses := vars["session"]
+				session.SegmentID = scripts.StringToUint(seg)
+				session.Created = time.Now().Format(time.RFC3339)
+				session.Updated = time.Now().Format(time.RFC3339)
+				session.ResourceID = scripts.StringToUint(ses)
+				if session.Deleted == "" {
+					session.Deleted = database.StringForEmpy
+				}
 
-				test, result, _ := database.CheckIfSessionMatchesCategory(session)
+				resBool, resString := database.ValidateNewSessionStructIn(session)
 
-				if test {
-
-					if session.Deleted == "" {
-						session.Deleted = database.StringForEmpy
-					}
-
-					session.SegmentID = scripts.StringToUint(seg)
-					session.Created = time.Now().Format(time.RFC3339)
-					session.Updated = time.Now().Format(time.RFC3339)
-					session.ResourceID = scripts.StringToUint(ses)
+				if !resBool {
+					log.Printf("Result from Validity test %v", resString)
+					response = response + " " + resString
+				} else {
+					/*
+						test, result, _ := database.CheckIfSessionMatchesCategory(session)
+						if test {
+					*/
 
 					responseBool, resString := database.ReplaceSession(user, scripts.StringToUint(ses), session)
 					if responseBool {
@@ -74,7 +80,7 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusInternalServerError)
 					}
-					response = result + " & " + resString
+					response = res + " & " + resString
 
 				}
 

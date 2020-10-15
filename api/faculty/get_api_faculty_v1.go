@@ -85,13 +85,8 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 // W0rks
 func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	//courseCode := vars["course"]
 	segCode := vars["segment"]
-	// Get course information
-	//courseRes := database.FindCourseTableById(courseCode)
-	// Get segment data
 	segRes := database.GetSegmentDataById(scripts.StringToUint(segCode))
-	//Transform results to json
 	anon, _ := json.Marshal(segRes)
 	n := len(anon)
 	s := string(anon[:n])
@@ -119,7 +114,7 @@ func GetCoursesCourseSegmentsSegmentStudents(w http.ResponseWriter, r *http.Requ
 }
 
 // Get Sessions for the {segment}
-// T0D0
+// W0rks
 func GetCoursesCourseSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	segCode := vars["segment"]
@@ -134,9 +129,6 @@ func GetCoursesCourseSegmentsSegmentSessions(w http.ResponseWriter, r *http.Requ
 	fmt.Fprintf(w, "%s", s)
 
 }
-
-// Get Sessions for the {segment}
-// T0D0
 
 // Get {category} for the {Segment}
 // W0rks
