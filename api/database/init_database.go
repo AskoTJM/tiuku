@@ -20,7 +20,7 @@ func InitDB() {
 	if err := Tiukudb.AutoMigrate(&Course{
 		ID: 0,
 		//ResourceID:      0,
-		Degree:          Degree{},
+		Degree:          0,
 		CourseCode:      "",
 		CourseName:      "",
 		CourseStartDate: "",

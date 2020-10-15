@@ -247,6 +247,20 @@ var routes = Routes{
 	// FACULTY v1 RAW Routes
 
 	Route{
+		"GetStudents",
+		strings.ToUpper("Get"),
+		"/faculty/v1/students",
+		faculty.GetStudents,
+	},
+
+	Route{
+		"GetFaculty",
+		strings.ToUpper("Get"),
+		"/faculty/v1/faculty",
+		faculty.GetFaculty,
+	},
+
+	Route{
 		"GetSchools",
 		strings.ToUpper("Get"),
 		"/faculty/v1/schools",
@@ -342,6 +356,13 @@ var routes = Routes{
 		strings.ToUpper("Get"),
 		"/faculty/v1/courses/{course}/segments/{segment}/categories",
 		faculty.GetCoursesCourseSegmentsSegmentSettings,
+	},
+
+	Route{
+		"PostStudents",
+		strings.ToUpper("Post"),
+		"/faculty/v1/students",
+		faculty.PostStudents,
 	},
 
 	Route{

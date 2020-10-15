@@ -39,13 +39,14 @@ type StudentClass struct {
 // Table for course
 type Course struct {
 	ID              uint `gorm:"primary_key"`
-	Degree          Degree
+	Degree          uint
 	CourseCode      string `gorm:"not null"`
 	CourseName      string
 	CourseStartDate string
 	CourseEndDate   string
 	Archived        bool
 	Segment         []Segment
+	//Degree          Degree
 }
 
 // Course can have on or more Segments

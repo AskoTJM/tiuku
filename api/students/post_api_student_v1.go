@@ -43,7 +43,7 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Add or start NEW session to {segment} table with empty body the start time is inserted automatically
+// Add or start NEW session to {segment} table
 // W0rks
 func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
@@ -77,6 +77,7 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				}
 				vars := mux.Vars(r)
 				seg := vars["segment"]
+				// Default settings for new Session
 				session.SegmentID = scripts.StringToUint(seg)
 				session.Version = 1
 				session.Created = time.Now().Format(time.RFC3339)
@@ -95,8 +96,11 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				if session.Deleted == "" {
 					session.Deleted = database.StringForEmpy
 				}
+				if session.Privacy == (database.StudentSegmentSession{}.Privacy) {
+					session.Privacy = true
+				}
 
-				resBool, resString := database.ValidateNewSessionStructIn(session)
+				resBool, resString := database.ValidateNewSessionStruct(session)
 
 				if !resBool {
 					log.Printf("Result from Validity test %v", resString)
@@ -107,7 +111,7 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 					//session.SegmentID = scripts.StringToUint(seg)
 
-					response2 := database.StartSessionOnSegment(user, session)
+					response2 := database.CreateNewSessionOnSegment(user, session)
 					if response2 {
 						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusOK)

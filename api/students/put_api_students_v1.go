@@ -61,7 +61,7 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 					session.Deleted = database.StringForEmpy
 				}
 
-				resBool, resString := database.ValidateNewSessionStructIn(session)
+				resBool, resString := database.ValidateNewSessionStruct(session)
 
 				if !resBool {
 					log.Printf("Result from Validity test %v", resString)

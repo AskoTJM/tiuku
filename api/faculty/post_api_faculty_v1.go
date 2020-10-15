@@ -19,6 +19,7 @@ import (
 // W0rks
 func PostCourses(w http.ResponseWriter, r *http.Request) {
 
+	var response string
 	res := database.CheckJSONContent(w, r)
 	if res != "PASS" {
 		fmt.Fprintf(w, "%s", res)
@@ -30,18 +31,57 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println(err)
 		}
-		result := database.CreateCourse(newCourse, database.CourseTableToEdit)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, "%s", result)
+		resCode, resString := database.ValidateNewCourse(newCourse)
+		if resCode != http.StatusOK {
+			log.Printf("Response from Validitation test %v", resString)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(resCode)
+			response = resString
+		} else {
+			response = database.CreateCourse(newCourse, database.CourseTableToEdit)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusCreated)
+		}
+		fmt.Fprintf(w, "%s", response)
 	}
 
+}
+
+// New Student User
+// W1P
+func PostStudents(w http.ResponseWriter, r *http.Request) {
+	var response string
+	res := database.CheckJSONContent(w, r)
+	if res != "PASS" {
+		fmt.Fprintf(w, "%s", res)
+	} else {
+		dec := json.NewDecoder(r.Body)
+		dec.DisallowUnknownFields()
+		var newStudent database.StudentUser
+		err := dec.Decode(&newStudent)
+		if err != nil {
+			log.Println(err)
+		}
+		resCode, resString := database.ValidateNewStudentUser(newStudent)
+		if resCode != http.StatusOK {
+			log.Printf("Response from Validitation test %v", resString)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(resCode)
+			response = resString
+		} else {
+			//response = database.(newStudent, database.StudentsTableToEdit)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusCreated)
+		}
+		fmt.Fprintf(w, "%s", response)
+	}
 }
 
 // New segment for the course
 // W0rks
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
+	var response string
 	res := database.CheckJSONContent(w, r)
 	if res != "PASS" {
 		fmt.Fprintf(w, "%s", res)
@@ -56,10 +96,18 @@ func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		courseCode := vars["course"]
 		newSegment.CourseID = scripts.StringToUint(courseCode)
-		result := database.CreateSegment(newSegment, database.SegmentTableToEdit)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w, "%s", result)
+		resCode, resString := database.ValidateNewSegment(newSegment)
+		if resCode != http.StatusOK {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(resCode)
+			response = resString
+		} else {
+			response = database.CreateSegment(newSegment, database.SegmentTableToEdit)
+
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusCreated)
+		}
+		fmt.Fprintf(w, "%s", response)
 	}
 
 }
@@ -84,15 +132,21 @@ func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.R
 		vars := mux.Vars(r)
 		segmentCode := vars["segment"]
 		newCategory.SegmentID = scripts.StringToUint(segmentCode)
-		result := database.CreateCategory(newCategory, database.CategoriesTableToEdit)
-		if result {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusCreated)
-			response = "Category created for Segment"
+		resCode, resString := database.ValidateNewCategory(newCategory)
+		if resCode != http.StatusOK {
+			w.WriteHeader(resCode)
+			response = resString
 		} else {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusInternalServerError)
-			response = "Could not create Category for Segment"
+			result := database.CreateCategory(newCategory, database.CategoriesTableToEdit)
+			if result {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusCreated)
+				response = response + " Category created for Segment"
+			} else {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusInternalServerError)
+				response = response + " Could not create Category for Segment"
+			}
 		}
 		fmt.Fprintf(w, "%s", response)
 	}

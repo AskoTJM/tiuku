@@ -127,7 +127,7 @@ func CreateCourse(newCourse Course, tableToEdit string) string {
 
 	Tiukudb.Table(tableToEdit).Create(&newCourse)
 
-	response := "Course created" + newCourse.CourseCode
+	response := "Course created " + newCourse.CourseCode
 	return response
 }
 
@@ -216,7 +216,7 @@ func CreateSegmentsSessionsArchive(user StudentUser) string {
 }
 
 // Add/Start Session, Returns True on success  / False on Error
-func StartSessionOnSegment(student string, newSession StudentSegmentSession) bool {
+func CreateNewSessionOnSegment(student string, newSession StudentSegmentSession) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}

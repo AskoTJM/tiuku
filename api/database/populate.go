@@ -145,13 +145,7 @@ func PopulateCourses(p int) {
 		if err := Tiukudb.Create(&Course{
 			ID: 0,
 			//ResourceID:      0,
-			Degree: Degree{
-				ID:          1, // Change to zero if problems
-				ApartmentID: 0,
-				Shorthand:   "",
-				Finnish:     "",
-				English:     "",
-			},
+			Degree:          1,
 			CourseCode:      "GTC" + strconv.Itoa(i),
 			CourseName:      "Generated Test Course " + strconv.Itoa(i),
 			CourseStartDate: strconv.Itoa(i) + "." + strconv.Itoa(i) + ".2020",

@@ -226,6 +226,38 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Get Students.
+// W0rks
+func GetStudents(w http.ResponseWriter, r *http.Request) {
+
+	result := database.GetStudents(0)
+	//log.Println(result)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
+// Get Students.
+// W1P
+func GetFaculty(w http.ResponseWriter, r *http.Request) {
+
+	result := database.GetFaculty(0)
+	//log.Println(result)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
 // Get school, campus, apartments and degrees...
 func GetSchools(w http.ResponseWriter, r *http.Request) {
 
