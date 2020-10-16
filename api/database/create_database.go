@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/scripts"
+	"github.com/dchest/uniuri"
 )
 
 // For creating Segments table for new Student users and adding it to student_user list
@@ -183,6 +184,7 @@ func CreateSegmentsSessionsArchive(user StudentUser) string {
 }
 
 // Add/Start Session, Returns True on success  / False on Error
+// W0rks
 func CreateNewSessionOnSegment(student string, newSession StudentSegmentSession) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -213,12 +215,53 @@ func CreateNewStudentUser(newStudent StudentUser) (int, string) {
 	}
 	var responseCode int
 	var responseString string
-	if err := Tiukudb.Table(StudentsTableToEdit).Create(&newStudent).Error; err != nil {
+	err2, resString := CreateNewAnonID()
+
+	if err2 != http.StatusCreated {
 		responseCode = http.StatusInternalServerError
-		responseString = "Error creating new student user. "
+		responseString = resString
 	} else {
-		responseCode = http.StatusOK
-		responseString = "Created new student user."
+		newStudent.AnonID = resString
+		newStudent.StudentSegments = newStudent.AnonID + "_segments"
+		if err := Tiukudb.Table(StudentsTableToEdit).Create(&newStudent).Error; err != nil {
+			responseCode = http.StatusInternalServerError
+			responseString = "Error creating new student user. "
+		} else {
+
+			responseCode = http.StatusOK
+			responseString = "Created new student user."
+		}
 	}
+	return responseCode, responseString
+}
+
+// Create new AnonID, generates, check if AnonID is already in use, tries 5 times to generate unique
+// W0rks
+func CreateNewAnonID() (int, string) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseCode int = 0
+	var responseString string
+	c := 0
+	for c < 5 {
+		newAnon := uniuri.NewLen(20)
+		//newAnon := "IOEi17L6abYv4SaT84l2"
+		// Check if AnonID already exists
+		err := GetStudentUserWithAnonID(newAnon)
+		if err == (StudentUser{}) {
+			//log.Println("Generating AnonID")
+			responseCode = http.StatusCreated
+			responseString = "AID:" + newAnon
+			c = 6
+		} else {
+			log.Printf("Error with generating Anon ID. ID already exists <database/create_database.go->CreateNewAnonID")
+			//log.Printf("C is now %v", c)
+			responseCode = http.StatusInternalServerError
+			responseString = "Problems witht the Server"
+			c = c + 1
+		}
+	}
+
 	return responseCode, responseString
 }

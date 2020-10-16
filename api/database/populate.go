@@ -89,11 +89,12 @@ func PopulateStudents(p int) {
 		} else {
 			classToAdd = "tit1"
 		}
+		_, tempAnon := CreateNewAnonID()
 		//if err := db.Table(schoolShortName + "_StudentUsers").Create(&StudentUser{
 		if err := Tiukudb.Create(&StudentUser{
 			ID:          0,
 			StudentID:   "oppi" + strconv.Itoa(i),
-			AnonID:      "Anon" + strconv.Itoa(i),
+			AnonID:      tempAnon,
 			StudentName: "Oppilas " + strconv.Itoa(i),
 			//StudentSegments: StudentSegment{},
 			StudentSegments: "",
@@ -115,10 +116,6 @@ func AutoCreateStudentUserTables() {
 	i := 1
 	for i < (numberOfStudentUsers + 1) {
 		newStudent := GetStudentUser("oppi" + strconv.Itoa(i))
-		if DebugMode {
-			log.Printf("newStudent has value of: %d", i)
-			log.Printf("newStudent AnonID is : %s", newStudent.AnonID)
-		}
 		CreateStudentSegmentTable(newStudent)
 		CreateActiveSegmentSessionsTable(newStudent)
 		CreateSegmentsSessionsArchive(newStudent)
