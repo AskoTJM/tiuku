@@ -68,7 +68,7 @@ type Segment struct {
 type SchoolSegmentsSession struct {
 	ID                      uint   `gorm:"primary_key"`
 	SegmentID               uint   `gorm:"not null"`
-	AnonID                  string `gorm:"not null"`
+	AnonID                  string `json:"-"`
 	StudentSegmentsSessions string
 	Privacy                 string //Allowed to see name of the student?
 }
@@ -130,7 +130,7 @@ type StudentSegment struct {
 type StudentSegmentSession struct {
 	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
 	//gorm.Model
-	ID         uint `gorm:"primary_key"`
+	ID         uint `gorm:"primary_key" json:"-"`
 	ResourceID uint
 	SegmentID  uint //`gorm:"not null"`
 	//Segment    Segment

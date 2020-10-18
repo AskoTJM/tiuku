@@ -129,7 +129,7 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 	return responseBool, responseString, tempCategory
 }
 
-// Check if ResourceID exists in users table, user and resource_id to check
+// Check if ResourceID exists in users table.Input: user and resource_id to check
 // T35T
 func CheckIfResourceIDExistsInSessionTable(user string, ruid uint) (uint, string) {
 	if Tiukudb == nil {

@@ -78,6 +78,20 @@ var routes = Routes{
 	// GETs
 
 	Route{
+		"GetSessions",
+		strings.ToUpper("Get"),
+		"/students/v1/sessions",
+		students.GetSessions,
+	},
+
+	Route{
+		"GetSessionsLast",
+		strings.ToUpper("Get"),
+		"/students/v1/sessions/last",
+		students.GetSessionsLast,
+	},
+
+	Route{
 		"GetSchools",
 		strings.ToUpper("Get"),
 		"/students/v1/schools",

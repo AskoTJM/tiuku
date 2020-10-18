@@ -39,8 +39,7 @@ func GetStudentUserWithAnonID(anonID string) StudentUser {
 	//log.Println(anonID)
 	res := Tiukudb.Table(StudentsTableToEdit).Where("anon_id = ?", anonID).Find(&returnStudent)
 	if res == nil {
-		log.Println("Error in GetStudentUserWithAnonID. Error: ")
-		log.Println(res)
+		log.Printf("Error in GetStudentUserWithAnonID. Error: %v \n", res)
 	}
 	//log.Println(returnStudent.StudentName)
 	return returnStudent
@@ -68,7 +67,7 @@ func GetStudentsJoinedOnSegment(segmentID uint) []StudentUser {
 		if err3 := result.ScanRows(result2, &tempSegments2); err3 != nil {
 			log.Println(err3)
 		}
-		log.Println(tempSegments2.AnonID)
+		//log.Println(tempSegments2.AnonID)
 		tempStudentData := GetStudentUserWithAnonID(tempSegments2.AnonID)
 		//var tempStudent StudentUser
 		//result3 := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", tempSegments2.ID).Find(&tempStudent)
@@ -374,20 +373,76 @@ func GetSession(studentId string, sessionID uint) StudentSegmentSession {
 
 }
 
-// Get all Students Sessions for the Segment
+// Get Last Student Session
+// W1P
+func GetLastSession(studentId string) StudentSegmentSession {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var tempSession StudentSegmentSession
+	studentData := GetStudentUser(studentId)
+	tableToEdit := studentData.AnonID + "_sessions"
+
+	Tiukudb.Table(tableToEdit).Last(&tempSession)
+	//tempSession.Comment = "Testi"
+	//Tiukudb.Table(tableToEdit).Save(&tempSession)
+	//Tiukudb.Save()
+	return tempSession
+
+}
+
+// Get all Students Sessions for active Segments, with SegmentID 0 returns all Sessions
 // Works
 func GetStudentsSessionsForSegment(student string, segmentID uint) []StudentSegmentSession {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	var tempSessions []StudentSegmentSession
-	//var result *gorm.DB
-
+	var result *gorm.DB
+	var tableToEdit string
 	studentData := GetStudentUser(student)
-	tableToEdit := studentData.AnonID + "_sessions"
 
-	result := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Where("Deleted = ?", "N0tS3t").Order("resource_id asc").Find(&tempSessions)
+	tableToEdit = studentData.AnonID + "_sessions"
+	if segmentID == 0 {
+		//if choice == "Active"{
+		result = Tiukudb.Table(tableToEdit).Where("Deleted = ?", "N0tS3t").Order("resource_id asc").Find(&tempSessions)
+		//}
+	} else {
+		result = Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Where("Deleted = ?", "N0tS3t").Order("resource_id asc").Find(&tempSessions)
+	}
+	returnSegments := make([]StudentSegmentSession, 0)
+	result2, _ := result.Rows()
+	var tempSegment2 StudentSegmentSession
 
+	for result2.Next() {
+		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
+			log.Println(err3)
+		}
+		returnSegments = append(returnSegments, tempSegment2)
+	}
+	return returnSegments
+}
+
+// Get all Students Archived Sessions, with SegmentID 0 returns all Sessions
+// Works
+func GetStudentsArchivedSessions(student string, segmentID uint) []StudentSegmentSession {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var tempSessions []StudentSegmentSession
+	var result *gorm.DB
+	var tableToEdit string
+	studentData := GetStudentUser(student)
+
+	tableToEdit = studentData.AnonID + "_sessions_archived"
+	if segmentID == 0 {
+		//if choice == "Active"{
+		result = Tiukudb.Table(tableToEdit).Where("Deleted = ?", "N0tS3t").Order("resource_id asc").Find(&tempSessions)
+		//}
+	} else {
+		result = Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Where("Deleted = ?", "N0tS3t").Order("resource_id asc").Find(&tempSessions)
+	}
 	returnSegments := make([]StudentSegmentSession, 0)
 	result2, _ := result.Rows()
 	var tempSegment2 StudentSegmentSession
@@ -402,7 +457,7 @@ func GetStudentsSessionsForSegment(student string, segmentID uint) []StudentSegm
 }
 
 // GET all Sessions for Segment
-// W0rks
+// W1P, W0rks but remodel privacy handling? Move it to Session by Session setting.
 func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -471,15 +526,17 @@ func GetOpenSession(student StudentUser) StudentSegmentSession {
 	}
 	//var response string
 	tableToEdit := student.AnonID + "_sessions"
-	var editSession StudentSegmentSession
+	var tempStudentSession StudentSegmentSession
+	// Need to check there isn't multiple open Sessions
 
-	err := Tiukudb.Table(tableToEdit).Where("end_date = ?", nil).Find(&editSession)
+	// Should give only the last empty one.
+	err := Tiukudb.Table(tableToEdit).Where("end_date = ?", StringForEmpy).Last(&tempStudentSession)
 	if err != nil {
 		log.Printf("Error with finding possible ongoing session.")
 	}
 	//editSession.EndTime = time.Now()
 	//editSession.EndTime.Time = time.Now()
-	return editSession
+	return tempStudentSession
 }
 
 // Get Students User,  0 returns all, with ID returns that User

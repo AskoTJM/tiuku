@@ -16,7 +16,100 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Get school, campus, apartments and degrees...
+// Get Sessions for Student User
+// W0rks
+func GetSessions(w http.ResponseWriter, r *http.Request) {
+
+	user := r.Header.Get("X-User")
+	var result []database.StudentSegmentSession
+	var response string
+	// Migrate UserChecking to next func ?
+	// would be more consistent with dividing of work
+	returnNum := database.CheckIfUserExists(user)
+	if returnNum == 0 {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusBadRequest)
+		response = "Incorrect request"
+	} else if returnNum > 1 {
+		log.Printf("Error: Found %d with userId %s", returnNum, user)
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusInternalServerError)
+		response = "Problems with user identification, please try again later."
+	} else {
+
+		paramTest := r.URL.Query()
+		filter, params := paramTest["archived"]
+
+		if !params || len(filter) == 0 {
+			result = database.GetStudentsSessionsForSegment(user, 0)
+
+		} else if paramTest.Get("archived") == "yes" {
+			result = database.GetStudentsSessionsForSegment(user, 0)
+			result2 := database.GetStudentsArchivedSessions(user, 0)
+			result = append(result, result2...)
+
+		} else if paramTest.Get("archived") == "only" {
+			result = database.GetStudentsArchivedSessions(user, 0)
+
+		} else {
+			log.Println("Error: Invalid parameters.")
+		}
+
+		//result = database.GetStudentsSessionsForSegment(user, 0) //, choice)
+		anon, _ := json.Marshal(result)
+		n := len(anon)
+		s := string(anon[:n])
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		response = s
+	}
+
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", response)
+
+}
+
+// Get Last Sessions for Student User
+// W0rks
+func GetSessionsLast(w http.ResponseWriter, r *http.Request) {
+
+	user := r.Header.Get("X-User")
+	var result database.StudentSegmentSession
+	var response string
+	// Migrate UserChecking to next func ?
+	// would be more consistent with dividing of work
+	returnNum := database.CheckIfUserExists(user)
+	if returnNum == 0 {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusBadRequest)
+		response = "Incorrect request"
+	} else if returnNum > 1 {
+		log.Printf("Error: Found %d with userId %s", returnNum, user)
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusInternalServerError)
+		response = "Problems with user identification, please try again later."
+	} else {
+
+		result = database.GetLastSession(user)
+		anon, _ := json.Marshal(result)
+		n := len(anon)
+		s := string(anon[:n])
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		response = s
+	}
+
+	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", response)
+
+}
+
+// Get school...
+// W0rks
 func GetSchools(w http.ResponseWriter, r *http.Request) {
 
 	result := database.GetSchool(0)
@@ -31,7 +124,8 @@ func GetSchools(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Get school, campus, apartments and degrees...
+// Get campus...
+// W0rks
 func GetCampuses(w http.ResponseWriter, r *http.Request) {
 
 	result := database.GetCampus(0)
@@ -46,7 +140,8 @@ func GetCampuses(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Get school, campus, apartments and degrees...
+// Get apartments...
+// W0rks
 func GetApartments(w http.ResponseWriter, r *http.Request) {
 
 	result := database.GetApartment(0)
@@ -61,7 +156,7 @@ func GetApartments(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Get school, campus, apartments and degrees...
+// Get degrees...
 func GetDegrees(w http.ResponseWriter, r *http.Request) {
 
 	result := database.GetDegree(0)
@@ -225,6 +320,7 @@ func GetSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 // Get value of {setting} for {segment}
 // 'GET particular Setting of the Segment'
 // Can't remember what this was about, or is it actually needed
+// T0D0
 func GetSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -232,6 +328,7 @@ func GetSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get settings for segment, ? Wut?
+// T0D0
 func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -278,6 +375,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 // Get Session data for {segment}, filtered with Resource ID to filter out deleted data.
 // Not sure if this is needed, probably already have different endpoint to handle this
+// T0D0
 func GetUserSegmentsResourceID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

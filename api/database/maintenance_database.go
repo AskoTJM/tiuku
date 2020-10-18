@@ -73,12 +73,13 @@ func CountTableRows(tableToEdit string) int {
 }
 
 // Toggle Archive status of course, it's segments and categories, true to archive, false to un-archive
-// W1P
+// W1P , Archiving Course and it's Segments + Categories works already.
 func ArchiveCourse(courseToArchive Course, archive bool) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
+	// Archiving the Course
 	courseToArchive.Archived = archive
 	Tiukudb.Save(&courseToArchive)
 	// Set Courses Segment to Archived
@@ -93,6 +94,7 @@ func ArchiveCourse(courseToArchive Course, archive bool) {
 		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
 			log.Println(err3)
 		}
+		// Archiving Segment
 		tempSegment2.Archived = archive
 		Tiukudb.Save(&tempSegment2)
 		// Change Categories for Segment to Archived
@@ -108,8 +110,10 @@ func ArchiveCourse(courseToArchive Course, archive bool) {
 			if err4 := result.ScanRows(resultSeg2, &tempCat2); err4 != nil {
 				log.Println(err4)
 			}
+			// Archiving Segments Categories
 			tempCat2.Archived = archive
 			Tiukudb.Save(&tempCat2)
 		}
 	}
+
 }

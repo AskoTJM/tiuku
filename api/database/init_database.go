@@ -48,7 +48,7 @@ func InitDB() {
 		log.Println("Problems creating table for Segment. <database/maintenance_database.go->initDB>")
 	}
 
-	// Creating MainCategory Table
+	// Creating MainCategory Table, Mandatory options in all Segments
 	if err := Tiukudb.AutoMigrate(&MainCategory{
 		ID:        0,
 		Shorthand: "",
@@ -71,7 +71,7 @@ func InitDB() {
 	}).Error; err != nil {
 		log.Println("Problems creating table for Categories. <database/maintenance_database.go->initDB>")
 	}
-
+	// Create table for used for tracking participation to Segments
 	if err := Tiukudb.AutoMigrate(&SchoolSegmentsSession{
 		ID:                      0,
 		SegmentID:               0,
@@ -80,6 +80,39 @@ func InitDB() {
 		Privacy:                 "",
 	}).Error; err != nil {
 		log.Println("Problems creating table for Participant Session table. <database/maintenance_database.go->initDB>")
+	}
+	// Create table for Archiving Sessions
+	if err := Tiukudb.AutoMigrate(&ArchivedSessionsTable{
+		ID:                 0,
+		SchoolID:           0,
+		CampusID:           0,
+		ApartmentID:        0,
+		DegreeID:           0,
+		CourseCode:         "",
+		CourseName:         "",
+		CourseStartDate:    "",
+		CourseEndDate:      "",
+		SegmentName:        "",
+		TeacherID:          0,
+		Scope:              0,
+		ExpectedAttendance: 0,
+		MainCategory:       0,
+		SubCategory:        "",
+		MandatoryToTrack:   false,
+		MandatoryToComment: false,
+		Tickable:           false,
+		AnonID:             0,
+		StartTime:          "",
+		EndTime:            "",
+		Created:            "",
+		Updated:            "",
+		Deleted:            "",
+		Comment:            "",
+		Version:            0,
+		Locations:          "",
+		Privacy:            false,
+	}).Error; err != nil {
+		log.Println("Problems creating table for Degrees. <database/maintenance_database.go->initDB>")
 	}
 	// This should be created and named when creating new Faculty User
 	/*
