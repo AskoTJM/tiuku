@@ -48,7 +48,7 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 // New Student User
-// W1P
+// W0rks
 func PostStudents(w http.ResponseWriter, r *http.Request) {
 	var response string
 	res := database.CheckJSONContent(w, r)
@@ -78,6 +78,42 @@ func PostStudents(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 				w.WriteHeader(http.StatusCreated)
 				//response
+			}
+			response = resString2
+		}
+		fmt.Fprintf(w, "%s", response)
+	}
+}
+
+// New Faculty User
+// W0rks
+func PostFaculty(w http.ResponseWriter, r *http.Request) {
+	var response string
+	res := database.CheckJSONContent(w, r)
+	if res != "PASS" {
+		fmt.Fprintf(w, "%s", res)
+	} else {
+		dec := json.NewDecoder(r.Body)
+		dec.DisallowUnknownFields()
+		var newFaculty database.FacultyUser
+		err := dec.Decode(&newFaculty)
+		if err != nil {
+			log.Println(err)
+		}
+		resCode, resString := database.ValidateNewFacultyUser(newFaculty)
+		if resCode != http.StatusOK {
+			log.Printf("Response from Validitation test %v", resString)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(resCode)
+			response = resString
+		} else {
+			resCode2, resString2 := database.CreateNewFacultyUser(newFaculty)
+			if resCode2 != http.StatusOK {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(resCode)
+			} else {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusCreated)
 			}
 			response = resString2
 		}

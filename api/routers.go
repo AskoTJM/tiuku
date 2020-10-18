@@ -75,7 +75,7 @@ var routes = Routes{
 		students.DeleteSegmentsSegmentSessionsSession,
 	},
 
-	// GET available Courses
+	// GETs
 
 	Route{
 		"GetSchools",
@@ -246,11 +246,19 @@ var routes = Routes{
 
 	// FACULTY v1 RAW Routes
 
+	// FACULTY GETs
 	Route{
 		"GetStudents",
 		strings.ToUpper("Get"),
 		"/faculty/v1/students",
 		faculty.GetStudents,
+	},
+
+	Route{
+		"GetStudentsStudent",
+		strings.ToUpper("Get"),
+		"/faculty/v1/students/{student}",
+		faculty.GetStudentsStudent,
 	},
 
 	Route{
@@ -286,6 +294,13 @@ var routes = Routes{
 		strings.ToUpper("Get"),
 		"/faculty/v1/degrees",
 		faculty.GetDegrees,
+	},
+
+	Route{
+		"GetUserSegments",
+		strings.ToUpper("Get"),
+		"/faculty/v1/segments",
+		faculty.GetUserSegments,
 	},
 
 	Route{
@@ -358,11 +373,19 @@ var routes = Routes{
 		faculty.GetCoursesCourseSegmentsSegmentSettings,
 	},
 
+	// FACULTY POSTs
 	Route{
 		"PostStudents",
 		strings.ToUpper("Post"),
 		"/faculty/v1/students",
 		faculty.PostStudents,
+	},
+
+	Route{
+		"PostFaculty",
+		strings.ToUpper("Post"),
+		"/faculty/v1/faculty",
+		faculty.PostFaculty,
 	},
 
 	Route{
@@ -384,12 +407,5 @@ var routes = Routes{
 		strings.ToUpper("Post"),
 		"/faculty/v1/courses/{course}/segments/{segment}/categories",
 		faculty.PostCoursesCourseSegmentsSegmentCategories,
-	},
-
-	Route{
-		"GetUserSegments",
-		strings.ToUpper("Get"),
-		"/faculty/v1/segments",
-		faculty.GetUserSegments,
 	},
 }

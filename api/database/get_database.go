@@ -198,9 +198,7 @@ func GetFacultyUserSegments(user string, params string) []Segment {
 		ConnectToDB()
 	}
 	var tempSegment []Segment
-	var result *gorm.DB //db.Table(segmentTableToEdit)
-	//user := r.Header.Get("X-User")
-	// Get teachers ID number
+	var result *gorm.DB
 	teacher := GetFacultyUser(user)
 
 	if params == "no" {
@@ -485,7 +483,7 @@ func GetOpenSession(student StudentUser) StudentSegmentSession {
 }
 
 // Get Students User,  0 returns all, with ID returns that User
-// W1P
+// W0rks
 func GetStudents(studentID uint) []StudentUser {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -495,9 +493,9 @@ func GetStudents(studentID uint) []StudentUser {
 	var tempStudent []StudentUser
 
 	if studentID == 0 {
-		result = Tiukudb.Table(StudentsTableToEdit).Find(&tempStudent)
+		result = Tiukudb.Table(StudentsTableToEdit).Where("student_id != ?", "").Find(&tempStudent)
 	} else {
-		result = Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", studentID).Find(&tempStudent)
+		result = Tiukudb.Table(StudentsTableToEdit).Where("id = ?", studentID).Find(&tempStudent)
 	}
 	returnStudent := make([]StudentUser, 0)
 	result2, _ := result.Rows()
@@ -515,7 +513,7 @@ func GetStudents(studentID uint) []StudentUser {
 }
 
 // Get Faculty Users, 0 returns all, with ID returns that User
-// W1P
+// W0rks
 func GetFaculty(facultyID uint) []FacultyUser {
 	if Tiukudb == nil {
 		ConnectToDB()

@@ -208,7 +208,7 @@ func CreateNewSessionOnSegment(student string, newSession StudentSegmentSession)
 }
 
 // Create new Student User
-// W1P
+// W0rks
 func CreateNewStudentUser(newStudent StudentUser) (int, string) {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -227,10 +227,33 @@ func CreateNewStudentUser(newStudent StudentUser) (int, string) {
 			responseCode = http.StatusInternalServerError
 			responseString = "Error creating new student user. "
 		} else {
-
+			CreateStudentSegmentTable(newStudent)
+			CreateActiveSegmentSessionsTable(newStudent)
+			CreateSegmentsSessionsArchive(newStudent)
 			responseCode = http.StatusOK
 			responseString = "Created new student user."
+
 		}
+
+	}
+	return responseCode, responseString
+}
+
+// Create new Faculty User
+// W0rks?
+func CreateNewFacultyUser(newFaculty FacultyUser) (int, string) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseCode int
+	var responseString string
+
+	if err := Tiukudb.Table(FacultyTableToEdit).Create(&newFaculty).Error; err != nil {
+		responseCode = http.StatusInternalServerError
+		responseString = "Error creating new Faculty user. "
+	} else {
+		responseCode = http.StatusOK
+		responseString = "Created new Faculty user."
 	}
 	return responseCode, responseString
 }
@@ -245,14 +268,14 @@ func CreateNewAnonID() (int, string) {
 	var responseString string
 	c := 0
 	for c < 5 {
-		newAnon := uniuri.NewLen(20)
+		newAnon := "AID:" + uniuri.NewLen(20)
 		//newAnon := "IOEi17L6abYv4SaT84l2"
 		// Check if AnonID already exists
 		err := GetStudentUserWithAnonID(newAnon)
 		if err == (StudentUser{}) {
 			//log.Println("Generating AnonID")
 			responseCode = http.StatusCreated
-			responseString = "AID:" + newAnon
+			responseString = newAnon
 			c = 6
 		} else {
 			log.Printf("Error with generating Anon ID. ID already exists <database/create_database.go->CreateNewAnonID")

@@ -100,18 +100,6 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		//log.Println(tempCourse)
 		database.ArchiveCourse(tempCourse, true)
 	}
-	if h == "getdegree" {
-		//log.Printf("Get list/table of degrees")
-		result := database.GetDegree(0)
-		anon, _ := json.Marshal(result)
-		n := len(anon)
-		s := string(anon[:n])
-
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		return s
-
-	}
 
 	return "nothing"
 }

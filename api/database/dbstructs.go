@@ -191,6 +191,39 @@ type Degree struct {
 	English     string
 }
 
+// Struct to Save Archived Sessions
+// W1P
+type ArchivedSessionsTable struct {
+	ID                 uint `gorm:"primary_key"`
+	SchoolID           uint
+	CampusID           uint
+	ApartmentID        uint
+	DegreeID           uint
+	CourseCode         string `gorm:"not null"`
+	CourseName         string
+	CourseStartDate    string
+	CourseEndDate      string
+	SegmentName        string
+	TeacherID          uint
+	Scope              uint
+	ExpectedAttendance uint
+	MainCategory       uint `gorm:"not null"`
+	SubCategory        string
+	MandatoryToTrack   bool
+	MandatoryToComment bool
+	Tickable           bool
+	AnonID             uint
+	StartTime          string
+	EndTime            string
+	Created            string
+	Updated            string
+	Deleted            string
+	Comment            string // Set only if MandatoryToComment = true
+	Version            uint
+	Locations          string // Not in use.
+	Privacy            bool
+}
+
 // Old and obselete Structs here for storage until sure they're not needed anymore
 
 // Old StudentUser struct

@@ -129,7 +129,7 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 	return responseBool, responseString, tempCategory
 }
 
-// Check if ResourceID exists in users table user and resource_id to check
+// Check if ResourceID exists in users table, user and resource_id to check
 // T35T
 func CheckIfResourceIDExistsInSessionTable(user string, ruid uint) (uint, string) {
 	if Tiukudb == nil {
@@ -143,7 +143,7 @@ func CheckIfResourceIDExistsInSessionTable(user string, ruid uint) (uint, string
 	if err := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", user).Find(&tempStudent).Error; err != nil {
 		log.Printf("Error retrieving user data. %v ", err)
 		//responseBool = false
-		responseStatusCode = http.StatusInternalServerError //  500
+		responseStatusCode = http.StatusInternalServerError
 		responseString = "Error retrieving user data."
 	} else {
 		matches := Tiukudb.Table(tempStudent.AnonID+"_sessions").Where("resource_id = ?", ruid).Find(&tempSession).RowsAffected
@@ -178,7 +178,7 @@ func CheckIfUserExists(StudentID string) int64 {
 }
 
 // Check if Faculty User is in DB
-// ??
+// W0rks
 func CheckIfFacultyUserExists(FacultyID string) int64 {
 	if Tiukudb == nil {
 		ConnectToDB()

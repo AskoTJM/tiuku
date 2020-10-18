@@ -164,8 +164,8 @@ func GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting(w http.Res
 }
 
 // Get Categories for {segment} of the {course}
-// status: works
-// T0D0 : Think about this.
+// W0rks
+// But, Think about this.
 func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -242,8 +242,25 @@ func GetStudents(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Get Students.
-// W1P
+// Get Student.
+// W0rks
+func GetStudentsStudent(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	stuId := vars["student"]
+
+	result := database.GetStudents(scripts.StringToUint(stuId))
+	//log.Println(result)
+	anon, _ := json.Marshal(result)
+	n := len(anon)
+	s := string(anon[:n])
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", s)
+
+}
+
+// Get Faculty users.
 func GetFaculty(w http.ResponseWriter, r *http.Request) {
 
 	result := database.GetFaculty(0)
