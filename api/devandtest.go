@@ -54,13 +54,6 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		user := r.Header.Get("X-User")
 		return database.GetStudentUser(user).AnonID
 	}
-	if h == "countusers" {
-		user := r.Header.Get("X-User")
-		returnNum := database.CheckIfUserExists(user)
-		s := strconv.Itoa(int(returnNum))
-		return s
-		//log.Println(returnNum)
-	}
 
 	if h == "studentsegment" {
 		user := r.Header.Get("X-User")

@@ -16,50 +16,51 @@ import (
 )
 
 // Leave {segment} of the {course}
-// W0rks
+// W0rks need to add check if actually enrolled for that.
 func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	segCode := vars["segment"]
+	var resCode int
+	var resString string
+	var response string
 	//resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
 
 	user := r.Header.Get("X-User")
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
 		//studentToJoin := database.GetStudentUser(user)
 		res := database.DeleteStudentFromSegment(user, scripts.StringToUint(segCode))
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s", res)
+		response = res
+
 	}
+	fmt.Fprintf(w, "%s", response)
 }
 
 // Remove {session} from {segment}, SoftDelete
 // W0rks
 func DeleteSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 	user := r.Header.Get("X-User")
+	var resCode int
+	var resString string
+	var response string
 
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
-
 		vars := mux.Vars(r)
 		resSes := vars["session"]
 		res := database.DeleteSessionFromStudent(user, scripts.StringToUint(resSes))
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		//res := "NotReadyYet"
-		fmt.Fprintf(w, "%s", res)
+		response = res
 	}
+	fmt.Fprintf(w, "%s", response)
 }

@@ -185,24 +185,26 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 }
 
 // Get segments table for Faculty User
-// W0rks , I think
+// W1P
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
-	user := r.Header.Get("X-User")
-	returnNum := database.CheckIfFacultyUserExists(user)
+	var resString string
+	var resCode int
+	var response string
 	var choice string
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+
+	user := r.Header.Get("X-User")
+
+	resString, resCode = database.CheckIfFacultyUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
 		paramTest := r.URL.Query()
 		filter, params := paramTest["archived"]
 		if !params || len(filter) == 0 {
 			choice = "no"
-
 		} else if paramTest.Get("archived") == "yes" {
 			choice = "yes"
 
@@ -210,19 +212,20 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 			choice = "only"
 
 		} else {
-			fmt.Println("Error: Invalid parameters.")
+			choice = "error"
+			w.WriteHeader(http.StatusBadRequest)
 		}
-		result := database.GetFacultyUserSegments(user, choice)
 
-		anon, _ := json.Marshal(result)
-
-		n := len(anon)
-		s := string(anon[:n])
-		log.Println(s)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s", s)
+		if choice != "error" {
+			result := database.GetFacultyUserSegments(user, choice)
+			anon, _ := json.Marshal(result)
+			n := len(anon)
+			s := string(anon[:n])
+			response = s
+			w.WriteHeader(http.StatusOK)
+		}
 	}
+	fmt.Fprintf(w, "%s", response)
 
 }
 

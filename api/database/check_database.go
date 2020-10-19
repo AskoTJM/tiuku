@@ -105,21 +105,22 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 	var responseBool bool
 	var responseString string
 	var tempCategory SegmentCategory
-	log.Printf("Category is %v and Segment is %v", tempSession.Category, tempSession.SegmentID)
+	//log.Printf("Category is %v and Segment is %v", tempSession.Category, tempSession.SegmentID)
 	if tempSession.Category == 0 {
 		responseBool = false
 		responseString = "Category not provided or incorrect one."
 	} else if tempSession.Category > 3 {
-		log.Printf("Category over 4")
+		//log.Printf("Category over 4")
 		result := Tiukudb.Table(CategoriesTableToEdit).Where("id = ?", tempSession.Category).Where("segment_id = ?", tempSession.SegmentID).Where("active = ?", true).Find(&tempCategory)
 
 		res := result.RowsAffected
-		log.Printf("Category over 4 and %v rows matching found", res)
+		//log.Printf("Category over 4 and %v rows matching found", res)
 		if res == 0 {
 			responseBool = false
 			responseString = "Error. Incorrect Category for Segment."
 		}
 		if res == 1 {
+			responseBool = true
 			responseString = "Category matches the Segment."
 		}
 	} else {
@@ -162,32 +163,109 @@ func CheckIfResourceIDExistsInSessionTable(user string, ruid uint) (uint, string
 	return responseStatusCode, responseString
 }
 
-// Check if Student user exists student users table, returns ID if does.
-// W0rks , maybe with slight changes could be used for all row counting?
-func CheckIfUserExists(StudentID string) int64 {
+// Check if Student user exists student users table, returns StatusOk if
+// W0rks
+func CheckIfUserExists(StudentID string) (string, int) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-
+	var responseCode int
+	var responseString string
 	//tableToEdit := schoolShortName + "_StudentUsers"
 	var tempStudent StudentUser
 
 	result := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", StudentID).Find(&tempStudent)
+	if result.RowsAffected == 0 {
+		responseCode = http.StatusBadRequest
+		responseString = "Incorrect StudentID"
+	} else if result.RowsAffected < 1 {
+		log.Printf("Error, multiple users with same StudentID found in <database/check_database.go->CheckIfUserExists>")
+		responseCode = http.StatusInternalServerError
+		responseString = "Problems with the server."
+	} else {
+		responseCode = http.StatusOK
+		responseString = "Student ID found"
+	}
 
-	return result.RowsAffected
+	return responseString, responseCode
+}
+
+// Check if Student user doesn't exists in student users table, returns StatusOk if
+// W0rks
+func CheckIfUserIdAvailable(StudentID string) (string, int) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseCode int
+	var responseString string
+	//tableToEdit := schoolShortName + "_StudentUsers"
+	var tempStudent StudentUser
+
+	result := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", StudentID).Find(&tempStudent)
+	if result.RowsAffected == 0 {
+		responseCode = http.StatusOK
+		responseString = "StudentID available."
+	} else if result.RowsAffected < 1 {
+		log.Printf("Error, multiple users with same StudentID found in <database/check_database.go->CheckIfUserExists>")
+		responseCode = http.StatusInternalServerError
+		responseString = "Problems with the server."
+	} else {
+		responseCode = http.StatusBadRequest
+		responseString = "Student ID already exists."
+	}
+
+	return responseString, responseCode
 }
 
 // Check if Faculty User is in DB
 // W0rks
-func CheckIfFacultyUserExists(FacultyID string) int64 {
+func CheckIfFacultyUserExists(FacultyID string) (string, int) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-
+	var responseCode int
+	var responseString string
 	//tableToEdit := schoolShortName + "_StudentUsers"
 	var tempFaculty FacultyUser
 
 	result := Tiukudb.Table(FacultyTableToEdit).Where("faculty_id = ?", FacultyID).Find(&tempFaculty)
+	if result.RowsAffected == 0 {
+		responseCode = http.StatusBadRequest
+		responseString = "Incorrect FacultyID"
+	} else if result.RowsAffected < 1 {
+		log.Printf("Error, multiple users with same FacultyID found in <database/check_database.go->CheckIfFacultyUserExists>")
+		responseCode = http.StatusInternalServerError
+		responseString = "Problems with the server."
+	} else {
+		responseCode = http.StatusOK
+		responseString = "FacultyID found"
+	}
 
-	return result.RowsAffected
+	return responseString, responseCode
+}
+
+// Check if Faculty ID is available
+// W0rks
+func CheckIfFacultyIdAvailable(FacultyID string) (string, int) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseCode int
+	var responseString string
+	var tempFaculty FacultyUser
+
+	result := Tiukudb.Table(FacultyTableToEdit).Where("faculty_id = ?", FacultyID).Find(&tempFaculty)
+	if result.RowsAffected == 0 {
+		responseCode = http.StatusOK
+		responseString = "FacultyID available."
+	} else if result.RowsAffected < 1 {
+		log.Printf("Error, multiple users with same FacultyID found in <database/check_database.go->CheckIfFacultyIdAvailable>")
+		responseCode = http.StatusInternalServerError
+		responseString = "Problems with the server."
+	} else {
+		responseCode = http.StatusBadRequest
+		responseString = "Faculty ID already exists."
+	}
+
+	return responseString, responseCode
 }

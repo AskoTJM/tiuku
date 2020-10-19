@@ -42,9 +42,6 @@ func CreateStudentSegmentTable(student StudentUser) string {
 		}
 		// Update the Student data with the name of the segment table
 		Tiukudb.Model(&tempStudent).Where("student_id = ? ", tempStudent.StudentID).Update("student_segments", tableToEdit)
-		if DebugMode {
-			log.Println(tempStudent)
-		}
 		return tableToEdit
 
 	}

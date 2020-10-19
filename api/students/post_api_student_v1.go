@@ -24,23 +24,22 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	segCode := vars["segment"]
-
 	user := r.Header.Get("X-User")
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	var res string
+
+	resString, resCode := database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		res = resString
 	} else {
-
-		res := database.AddStudentToSegment(user, scripts.StringToUint(segCode))
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		response := database.AddStudentToSegment(user, scripts.StringToUint(segCode))
+		//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s", res)
-	}
+		res = response
 
+	}
+	fmt.Fprintf(w, "%s", res)
 }
 
 // Add or start NEW session to {segment} table
@@ -48,15 +47,16 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
+
+	var resCode int
+	var resString string
 	var response string
 
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
 
 		res := database.CheckJSONContent(w, r)
@@ -113,11 +113,9 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 					response2 := database.CreateNewSessionOnSegment(user, session)
 					if response2 {
-						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusOK)
 						response = resString
 					} else {
-						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusInternalServerError)
 						response = resString
 					}
@@ -126,15 +124,13 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 				response = response + " " + resString
 			} else if res == "EMPTY" {
 				log.Printf("Empty JSON Body: Minimum required data not provided. %v", r)
-				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 				w.WriteHeader(http.StatusBadRequest)
 				response = "Empty JSON Body: Minimum required data not provided."
-
 			}
 
 		}
-		fmt.Fprintf(w, "%s", response)
 	}
+	fmt.Fprintf(w, "%s", response)
 }
 
 // Add Segment to Students CourseList

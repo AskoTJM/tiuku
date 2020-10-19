@@ -22,19 +22,15 @@ func GetSessions(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
 	var result []database.StudentSegmentSession
+	var resCode int
+	var resString string
 	var response string
-	// Migrate UserChecking to next func ?
-	// would be more consistent with dividing of work
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusBadRequest)
-		response = "Incorrect request"
-	} else if returnNum > 1 {
-		log.Printf("Error: Found %d with userId %s", returnNum, user)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusInternalServerError)
-		response = "Problems with user identification, please try again later."
+
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
 
 		paramTest := r.URL.Query()
@@ -60,7 +56,6 @@ func GetSessions(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		response = s
 	}
@@ -77,19 +72,15 @@ func GetSessionsLast(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
 	var result database.StudentSegmentSession
+	var resCode int
+	var resString string
 	var response string
-	// Migrate UserChecking to next func ?
-	// would be more consistent with dividing of work
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusBadRequest)
-		response = "Incorrect request"
-	} else if returnNum > 1 {
-		log.Printf("Error: Found %d with userId %s", returnNum, user)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusInternalServerError)
-		response = "Problems with user identification, please try again later."
+
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
 
 		result = database.GetLastSession(user)
@@ -97,13 +88,10 @@ func GetSessionsLast(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		response = s
 	}
 
-	//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	//w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "%s", response)
 
 }
@@ -278,25 +266,25 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 	segId := vars["segment"]
 	user := r.Header.Get("X-User")
 
-	// Migrate UserChecking to next func ?
-	// would be more consistent with dividing of work
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		log.Printf("Error: Found %d with userId %s", returnNum, user)
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with user identification, please try again later.")
+	var resCode int
+	var resString string
+	var response string
+
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
 		result := database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
 		anon, _ := json.Marshal(result)
 		n := len(anon)
 		s := string(anon[:n])
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s", s)
+		response = s
 	}
+	fmt.Fprintf(w, "%s", response)
+
 }
 
 // desc: Get particular {session} for {segment}
@@ -339,14 +327,15 @@ func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		log.Printf("Error: Found %d with userId %s", returnNum, user)
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	var resCode int
+	var resString string
+	var response string
+
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
 		var choice string
 		paramTest := r.URL.Query()
@@ -365,12 +354,11 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 		anon, _ := json.Marshal(result)
 		n := len(anon)
 		s := string(anon[:n])
-
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		response = s
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s", s)
-
 	}
+	fmt.Fprintf(w, "%s", response)
+
 }
 
 // Get Session data for {segment}, filtered with Resource ID to filter out deleted data.

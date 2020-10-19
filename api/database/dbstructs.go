@@ -117,7 +117,7 @@ type MainCategory struct {
 type StudentSegment struct {
 	ID                     uint `gorm:"primary_key"`
 	SegmentID              uint
-	StudentSegmentSessions string
+	StudentSegmentSessions string `json:"-"`
 	Archived               bool
 	// Not needed as categories are searched with segment id
 	//SegmentCategory        string

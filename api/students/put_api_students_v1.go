@@ -18,25 +18,23 @@ import (
 )
 
 // Replace {session} of the {segment} with new data
-// W0rks
+// W1P
 func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
+	var resCode int
+	var resString string
 	var response string
 
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
 	} else {
-
 		res := database.CheckJSONContent(w, r)
 		if res == "TYPE_ERROR" {
 			log.Printf("Type Error with body.")
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusBadRequest)
 			response = "Incorrect body type."
 		} else {
@@ -62,8 +60,9 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 				}
 
 				resBool, resString := database.ValidateNewSessionStruct(session)
-
+				log.Println(resBool)
 				if !resBool {
+
 					log.Printf("Result from Validity test %v", resString)
 					response = response + " " + resString
 				} else {
@@ -74,10 +73,8 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 					responseBool, resString := database.ReplaceSession(user, scripts.StringToUint(ses), session)
 					if responseBool {
-						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusOK)
 					} else {
-						w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 						w.WriteHeader(http.StatusInternalServerError)
 					}
 					response = res + " & " + resString
@@ -86,12 +83,10 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 			} else if res == "EMPTY" {
 				log.Printf("Empty JSON Body: Minimum of required data not provided. %v", r)
-				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 				w.WriteHeader(http.StatusBadRequest)
 				response = "Empty JSON Body: Minimum of required data not provided."
 			}
-
 		}
-		fmt.Fprintf(w, "%s", response)
 	}
+	fmt.Fprintf(w, "%s", response)
 }

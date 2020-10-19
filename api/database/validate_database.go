@@ -1,17 +1,18 @@
 package database
 
 import (
+	"log"
 	"net/http"
 )
 
 // Validate that incoming Session has required data
-// W0rks might need fine tuning.
+// W0rks
 func ValidateNewSessionStruct(newSession StudentSegmentSession) (bool, string) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	var responseBool bool = true
-	var responseString string
+	var responseString string = "New Session Valid."
 	var tempCategory SegmentCategory
 
 	// Minimum needed to pass
@@ -19,39 +20,38 @@ func ValidateNewSessionStruct(newSession StudentSegmentSession) (bool, string) {
 	if newSession.SegmentID == (StudentSegmentSession{}.SegmentID) {
 		responseBool = false
 		responseString = "Error: SegmentID required. \n"
-	}
-	// Check for Category
-	var test bool
-	var tempString string
-	// First check if the Category and Segment match
-	test, tempString, tempCategory = CheckIfSessionMatchesCategory(newSession)
-	if !test {
-		responseBool = false
-		responseString = responseString + tempString
 	} else {
-		// If Category is mandatory to comment
-		if tempCategory.MandatoryToComment {
+		// Check for Category
+		var test bool
+		var tempString string
+		// First check if the Category and Segment match
+		test, tempString, tempCategory = CheckIfSessionMatchesCategory(newSession)
+		if !test {
+			responseBool = false
+			responseString = responseString + tempString
+		} else {
+			// If Category is mandatory to comment
+			if tempCategory.MandatoryToComment {
+				if newSession.Comment == (StudentSegmentSession{}.Comment) {
+					if responseBool {
+						responseBool = false
+					}
+					responseString = responseString + "Error: Comment required. \n"
+				}
+			}
+			// Student name has to be visible.
+			if tempCategory.MandatoryToTrack {
+				if newSession.Privacy {
+					if responseBool {
+						responseBool = false
+					}
+					responseString = responseString + "Error: This category requires name to be visible. \n"
+				}
+			}
 
-			if newSession.Comment == (StudentSegmentSession{}.Comment) {
-				if responseBool {
-					responseBool = false
-				}
-				responseString = responseString + "Error: Comment required. \n"
-			}
-		}
-		// Student name has to be visible.
-		if tempCategory.MandatoryToTrack {
-			if newSession.Privacy {
-				if responseBool {
-					responseBool = false
-				}
-				responseString = responseString + "Error: This category requires name to be visible. \n"
-			}
 		}
 	}
-	if responseString == "" {
-		responseString = "Course Valid. \n"
-	}
+
 	return responseBool, responseString
 }
 
@@ -174,50 +174,49 @@ func ValidateNewSegment(newSegment Segment) (int, string) {
 }
 
 // Check if New {StudentUser} has valid data
-// T35T
+// W0rks
 func ValidateNewStudentUser(newStudent StudentUser) (int, string) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	var responseCode int
-	var responseString string
+	var resCode int
+	var resString string
 	// Check if already exists
-	res := CheckIfUserExists(newStudent.StudentID)
-	if res != 0 {
-		if responseCode != http.StatusBadRequest {
-			responseCode = http.StatusBadRequest
-		}
-		responseString = "Error: StudentID already exists. \n"
+	resString, resCode = CheckIfUserIdAvailable(newStudent.StudentID)
+	// Requires weird use of statuses as we need opposite effect than normally.
+	if resCode != http.StatusOK {
+		log.Printf("Error in <database/validate_database.go->ValidateNewStudentUser> \n")
+		log.Println(resString)
 	} else {
 		if newStudent.StudentID == (StudentUser{}.StudentID) {
-			if responseCode != http.StatusBadRequest {
-				responseCode = http.StatusBadRequest
+			if resCode != http.StatusBadRequest {
+				resCode = http.StatusBadRequest
 			}
-			responseString = "Error: Missing StudentID. \n"
+			resString = "Error: Missing StudentID. \n"
 		}
 		if newStudent.StudentEmail == "" {
-			if responseCode != http.StatusBadRequest {
-				responseCode = http.StatusBadRequest
+			if resCode != http.StatusBadRequest {
+				resCode = http.StatusBadRequest
 			}
-			responseString = responseString + "Error: Missing StudentEmail. \n"
+			resString = resString + "Error: Missing StudentEmail. \n"
 		}
 
 		if newStudent.StudentName == "" {
-			if responseCode != http.StatusBadRequest {
-				responseCode = http.StatusBadRequest
+			if resCode != http.StatusBadRequest {
+				resCode = http.StatusBadRequest
 			}
-			responseString = responseString + "Error: Missing Student name. \n"
+			resString = resString + "Error: Missing Student name. \n"
 		}
-		if responseString == "" {
-			responseCode = http.StatusOK
-			responseString = "Segment Valid."
+		if resString == "" {
+			resCode = http.StatusOK
+			resString = "Segment Valid."
 		}
 	}
-	return responseCode, responseString
+	return resCode, resString
 }
 
 // Check if New {FacultyUser} has valid data
-// T35T
+// W0rks
 func ValidateNewFacultyUser(newFaculty FacultyUser) (int, string) {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -225,12 +224,10 @@ func ValidateNewFacultyUser(newFaculty FacultyUser) (int, string) {
 	var responseCode int
 	var responseString string
 	// Check if already exists
-	res := CheckIfFacultyUserExists(newFaculty.FacultyID)
-	if res != 0 {
-		if responseCode != http.StatusBadRequest {
-			responseCode = http.StatusBadRequest
-		}
-		responseString = "Error: Faculty user already exists. \n"
+	responseString, responseCode = CheckIfFacultyIdAvailable(newFaculty.FacultyID)
+	if responseCode != http.StatusOK {
+		log.Printf("Error in <database/validate_database.go->ValidateNewFacultyUser")
+		log.Println(responseString)
 	} else {
 		if newFaculty.FacultyID == (FacultyUser{}.FacultyID) {
 			if responseCode != http.StatusBadRequest {

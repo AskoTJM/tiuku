@@ -34,18 +34,19 @@ func PatchSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request)
 func PatchSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 	user := r.Header.Get("X-User")
 
-	returnNum := database.CheckIfUserExists(user)
-	if returnNum == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "%s", "Incorrect request")
-	} else if returnNum > 1 {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "%s", "Problems with the server, please try again later.")
-	} else {
+	var resCode int
+	var resString string
+	var response string
 
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
+	} else {
 		vars := mux.Vars(r)
 		seg := vars["session"]
-		var response string
+		//var response string
 		result := database.StopActiveSession(user, scripts.StringToUint(seg))
 		if result {
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -56,7 +57,8 @@ func PatchSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request)
 			w.WriteHeader(http.StatusInternalServerError)
 			response = "Error with stopping Session."
 		}
-		fmt.Fprintf(w, "%s", response)
+
 	}
+	fmt.Fprintf(w, "%s", response)
 
 }
