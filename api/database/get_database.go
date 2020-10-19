@@ -373,8 +373,8 @@ func GetSession(studentId string, sessionID uint) StudentSegmentSession {
 
 }
 
-// Get Last Student Session
-// W1P
+// Get Last Student Session, returns Session with highest resource_id
+// W0rks
 func GetLastSession(studentId string) StudentSegmentSession {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -383,11 +383,11 @@ func GetLastSession(studentId string) StudentSegmentSession {
 	var tempSession StudentSegmentSession
 	studentData := GetStudentUser(studentId)
 	tableToEdit := studentData.AnonID + "_sessions"
+	// With hightest Resource_id, should be last new Session and not a one replacing older one.
+	Tiukudb.Table(tableToEdit).Order("resource_id asc").Find(&tempSession)
+	//With highest ID
+	//Tiukudb.Table(tableToEdit).Last(&tempSession)
 
-	Tiukudb.Table(tableToEdit).Last(&tempSession)
-	//tempSession.Comment = "Testi"
-	//Tiukudb.Table(tableToEdit).Save(&tempSession)
-	//Tiukudb.Save()
 	return tempSession
 
 }

@@ -18,7 +18,7 @@ import (
 )
 
 // Replace {session} of the {segment} with new data
-// W1P
+// W0rks
 func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")

@@ -185,7 +185,7 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 }
 
 // Get segments table for Faculty User
-// W1P
+// W0rks
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 
 	var resString string

@@ -23,7 +23,10 @@ type FacultyUser struct {
 	FacultyID    string `gorm:"not null"`
 	FacultyName  string
 	FacultyEmail string
-	Apartment    Apartment
+	Apartment    uint
+	Active       bool
+	Teacher      bool
+	Admin        bool
 	//School       School
 	//FacultySegment FacultySegment
 	//FacultySegment string
@@ -192,7 +195,7 @@ type Degree struct {
 }
 
 // Struct to Save Archived Sessions
-// W1P
+// T35T
 type ArchivedSessionsTable struct {
 	ID                 uint `gorm:"primary_key"`
 	SchoolID           uint

@@ -292,7 +292,7 @@ func PopulateFaculty(p int) {
 			FacultyName:  "opettaja" + strconv.Itoa(i),
 			FacultyEmail: "opettaja" + strconv.Itoa(i) + "@oppilaitos.fi",
 			//School:         School{},
-			Apartment: Apartment{},
+			Apartment: 1,
 			//FacultySegment: "", //CreateFacultySegmentTable("ope" + strconv.Itoa(i))"",
 			//FacultySegment: FacultySegment{},
 		}).Error; err != nil {
