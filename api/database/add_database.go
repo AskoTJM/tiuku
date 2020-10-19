@@ -13,7 +13,7 @@ func AddStudentToSegment(user string, segmentId uint) string {
 	}
 
 	segmentToJoin := GetSegmentDataById(segmentId)
-	joiningStudent := GetStudentUser(user)
+	joiningStudent := GetStudentUserWithStudentID(user)
 
 	if err := Tiukudb.Table(SchoolParticipationList).Create(&SchoolSegmentsSession{
 		ID:                      0,

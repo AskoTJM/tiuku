@@ -186,7 +186,7 @@ func CreateNewSessionOnSegment(student string, newSession StudentSegmentSession)
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	studentNow := GetStudentUser(student)
+	studentNow := GetStudentUserWithStudentID(student)
 	var response bool
 	tableToEdit := studentNow.AnonID + "_sessions"
 	if err := Tiukudb.Table(tableToEdit).Create(&newSession).Error; err != nil {

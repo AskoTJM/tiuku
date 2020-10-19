@@ -18,7 +18,7 @@ func StopActiveSession(student string, editSession uint) bool {
 	}
 	var response bool
 	//var tempSession StudentSegmentSession
-	studentNow := GetStudentUser(student)
+	studentNow := GetStudentUserWithStudentID(student)
 	tableToEdit := studentNow.AnonID + "_sessions"
 	//Tiukudb.Table(tableToEdit).Where("end_time != ?", "").Last(&tempSession)
 	//log.Println(num)
@@ -38,7 +38,7 @@ func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSessi
 	}
 	var responseBool bool
 	var responseString string
-	studentData := GetStudentUser(user)
+	studentData := GetStudentUserWithStudentID(user)
 	tableToEdit := studentData.AnonID + "_sessions"
 	var oldStudentSession StudentSegmentSession
 	//log.Printf("Session to replace is %v", oldSession)

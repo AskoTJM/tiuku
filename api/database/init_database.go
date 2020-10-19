@@ -101,7 +101,7 @@ func InitDB() {
 		MandatoryToTrack:   false,
 		MandatoryToComment: false,
 		Tickable:           false,
-		AnonID:             0,
+		AnonID:             "",
 		StartTime:          "",
 		EndTime:            "",
 		Created:            "",

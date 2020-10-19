@@ -52,19 +52,19 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	}
 	if h == "anonId" {
 		user := r.Header.Get("X-User")
-		return database.GetStudentUser(user).AnonID
+		return database.GetStudentUserWithStudentID(user).AnonID
 	}
 
 	if h == "studentsegment" {
 		user := r.Header.Get("X-User")
-		studentTemp := database.GetStudentUser(user)
+		studentTemp := database.GetStudentUserWithStudentID(user)
 		return database.CreateStudentSegmentTable(studentTemp)
 
 	}
 
 	if h == "getstudentdata" {
 		user := r.Header.Get("X-User")
-		result := database.GetStudentUser(user)
+		result := database.GetStudentUserWithStudentID(user)
 		anon, _ := json.Marshal(result)
 		n := len(anon)
 		s := string(anon[:n])

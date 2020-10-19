@@ -25,6 +25,7 @@ var StudentsTableToEdit = "student_users"
 var FacultyTableToEdit = "faculty_users"
 var CategoriesTableToEdit = "segment_categories"
 var SchoolParticipationList = "school_segments_sessions"
+var ArchiveTableToEdit = "archived_sessions_table"
 
 var DegreeTableToEdit = "degrees"
 var ApartmentTableToEdit = "apartments"
@@ -115,5 +116,106 @@ func ArchiveCourse(courseToArchive Course, archive bool) {
 			Tiukudb.Save(&tempCat2)
 		}
 	}
+}
 
+// Get ArchivedSessions template for the segment
+// W1P
+func CreateArchivedSessionTemplate(segmentId uint) ArchivedSessionsTable {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var returnArchive ArchivedSessionsTable
+
+	// Get and set Segments data
+	var tempSegment Segment
+	Tiukudb.Table(SegmentTableToEdit).Where("segment_id = ?", segmentId).Find(&tempSegment)
+	returnArchive.SegmentName = tempSegment.SegmentName
+	returnArchive.TeacherID = tempSegment.TeacherID
+	returnArchive.Scope = tempSegment.Scope
+	returnArchive.ExpectedAttendance = tempSegment.ExpectedAttendance
+	// Get and set Courses data
+	var tempCourse Course
+	Tiukudb.Table(CourseTableToEdit).Where("course_id = ? ", tempSegment.CourseID).Find(&tempCourse)
+	returnArchive.CourseCode = tempCourse.CourseCode
+	returnArchive.CourseName = tempCourse.CourseName
+	returnArchive.CourseStartDate = tempCourse.CourseStartDate
+	returnArchive.CourseEndDate = tempCourse.CourseEndDate
+	returnArchive.DegreeID = tempCourse.Degree
+	// Get and set Degree data
+	var tempDegree Degree
+	Tiukudb.Table(DegreeTableToEdit).Where("id = ?", tempCourse.Degree).Find(&tempDegree)
+	returnArchive.ApartmentID = tempDegree.ApartmentID
+	// Get and set Apartment data
+	var tempApartment Apartment
+	Tiukudb.Table(ApartmentTableToEdit).Where("id = ?", tempDegree.ApartmentID).Find(&tempApartment)
+	returnArchive.CampusID = tempApartment.CampusID
+	// Get and set Campus data
+	var tempCampus Campus
+	Tiukudb.Table(SchoolsTableToEdit).Where("id = ?", tempApartment.CampusID).Find(&tempCampus)
+	returnArchive.SchoolID = tempCampus.SchoolID
+
+	return returnArchive
+}
+
+// Archive Sessions to school Archive_Table
+// W1P
+func ArchiveToSchoolTable(user string, segmentId uint) bool {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseBool bool = true
+	var tempStudent StudentUser
+	tempArchive := CreateArchivedSessionTemplate(segmentId)
+	var tempStudentSessions []StudentSegmentSession
+
+	tempStudent = GetStudentUserWithStudentID(user)
+	tempArchive.AnonID = tempStudent.AnonID
+	tableToCopyFrom := tempStudent.AnonID + "_sessions"
+	tableToCopyTo := tempStudent.AnonID + "_sessions_archived"
+	resFrom := Tiukudb.Table(tableToCopyFrom).Where("segment_id = ?", segmentId).Find(&tempStudentSessions)
+	if resFrom.Error != nil {
+		responseBool = false
+		log.Printf("Error reading user table in <database/maintenance_database.go->ArchiveToSchoolTable> %v", resFrom.Error)
+	} else {
+		var tempCategories []SegmentCategory
+		Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", segmentId).Find(&tempCategories)
+
+		resTo, _ := resFrom.Rows()
+		var tempRes StudentSegmentSession
+		for resTo.Next() {
+			if err2 := resFrom.ScanRows(resTo, &tempRes); err2 != nil {
+				log.Printf("Error in <database/maintenance_database.go->ArchiveToSchoolTable> %v", err2)
+				responseBool = false
+			}
+
+			// Copy to Student Users Archive Table
+			Tiukudb.Table(tableToCopyTo).Create(tempRes)
+			// Copy to Schools ArchiveTable
+			tempArchive.StartTime = tempRes.StartTime
+			tempArchive.EndTime = tempRes.EndTime
+			tempArchive.Created = tempRes.Created
+			tempArchive.Updated = tempRes.Updated
+			for i := range tempCategories {
+				if tempCategories[i].ID == tempRes.Category {
+					tempArchive.MainCategory = tempCategories[i].MainCategory
+					tempArchive.SubCategory = tempCategories[i].SubCategory
+					tempArchive.MandatoryToComment = tempCategories[i].MandatoryToComment
+					tempArchive.MandatoryToTrack = tempCategories[i].MandatoryToTrack
+					tempArchive.Tickable = tempCategories[i].Tickable
+					break
+				}
+			}
+			// Check if requirement for category
+			if tempArchive.MandatoryToComment {
+				tempArchive.Comment = tempRes.Comment
+			} else {
+				if tempRes.Comment == "" {
+					tempArchive.Comment = "NotCommented"
+				} else {
+					tempArchive.Comment = "Commented"
+				}
+			}
+		}
+	}
+	return responseBool
 }

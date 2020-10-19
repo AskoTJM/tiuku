@@ -115,7 +115,7 @@ func AutoCreateStudentUserTables() {
 	numberOfStudentUsers := CountTableRows(StudentsTableToEdit)
 	i := 1
 	for i < (numberOfStudentUsers + 1) {
-		newStudent := GetStudentUser("oppi" + strconv.Itoa(i))
+		newStudent := GetStudentUserWithStudentID("oppi" + strconv.Itoa(i))
 		CreateStudentSegmentTable(newStudent)
 		CreateActiveSegmentSessionsTable(newStudent)
 		CreateSegmentsSessionsArchive(newStudent)
@@ -291,10 +291,10 @@ func PopulateFaculty(p int) {
 			FacultyID:    "ope" + strconv.Itoa(i),
 			FacultyName:  "opettaja" + strconv.Itoa(i),
 			FacultyEmail: "opettaja" + strconv.Itoa(i) + "@oppilaitos.fi",
-			//School:         School{},
-			Apartment: 1,
-			//FacultySegment: "", //CreateFacultySegmentTable("ope" + strconv.Itoa(i))"",
-			//FacultySegment: FacultySegment{},
+			Apartment:    1,
+			Active:       true,
+			Teacher:      true,
+			Admin:        true,
 		}).Error; err != nil {
 			log.Println("Problems populating table of StudentUsers. <database/populate.go->populateStudents>")
 		}

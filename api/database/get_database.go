@@ -15,7 +15,7 @@ import (
 
 // Desc: Get Students data by username
 // W0rks , but needs more. Return value and obfuscing of AnonID if used outside
-func GetStudentUser(StudentID string) StudentUser {
+func GetStudentUserWithStudentID(StudentID string) StudentUser {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
@@ -24,7 +24,7 @@ func GetStudentUser(StudentID string) StudentUser {
 
 	result := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", StudentID).First(&tempStudent)
 	if result == nil {
-		log.Println(result)
+		log.Printf("Error in <database/get_database.go->GetStudentUser> %v", result)
 	}
 	return tempStudent
 }
@@ -40,6 +40,22 @@ func GetStudentUserWithAnonID(anonID string) StudentUser {
 	res := Tiukudb.Table(StudentsTableToEdit).Where("anon_id = ?", anonID).Find(&returnStudent)
 	if res == nil {
 		log.Printf("Error in GetStudentUserWithAnonID. Error: %v \n", res)
+	}
+	//log.Println(returnStudent.StudentName)
+	return returnStudent
+}
+
+// Get Student user with ID number
+// W0rks
+func GetStudentUserWithID(idNumber uint) StudentUser {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var returnStudent StudentUser
+	//log.Println(anonID)
+	res := Tiukudb.Table(StudentsTableToEdit).Where("id = ?", idNumber).Find(&returnStudent)
+	if res == nil {
+		log.Printf("Error in GetStudentUserWithID. Error: %v \n", res)
 	}
 	//log.Println(returnStudent.StudentName)
 	return returnStudent
@@ -362,7 +378,7 @@ func GetSession(studentId string, sessionID uint) StudentSegmentSession {
 	}
 
 	var tempSession StudentSegmentSession
-	studentData := GetStudentUser(studentId)
+	studentData := GetStudentUserWithStudentID(studentId)
 	tableToEdit := studentData.AnonID + "_sessions"
 
 	Tiukudb.Table(tableToEdit).Where("resource_id = ?", sessionID).Where("Deleted = ?", "N0tS3t").Last(&tempSession)
@@ -381,7 +397,7 @@ func GetLastSession(studentId string) StudentSegmentSession {
 	}
 
 	var tempSession StudentSegmentSession
-	studentData := GetStudentUser(studentId)
+	studentData := GetStudentUserWithStudentID(studentId)
 	tableToEdit := studentData.AnonID + "_sessions"
 	// With hightest Resource_id, should be last new Session and not a one replacing older one.
 	Tiukudb.Table(tableToEdit).Order("resource_id asc").Find(&tempSession)
@@ -401,7 +417,7 @@ func GetStudentsSessionsForSegment(student string, segmentID uint) []StudentSegm
 	var tempSessions []StudentSegmentSession
 	var result *gorm.DB
 	var tableToEdit string
-	studentData := GetStudentUser(student)
+	studentData := GetStudentUserWithStudentID(student)
 
 	tableToEdit = studentData.AnonID + "_sessions"
 	if segmentID == 0 {
@@ -433,7 +449,7 @@ func GetStudentsArchivedSessions(student string, segmentID uint) []StudentSegmen
 	var tempSessions []StudentSegmentSession
 	var result *gorm.DB
 	var tableToEdit string
-	studentData := GetStudentUser(student)
+	studentData := GetStudentUserWithStudentID(student)
 
 	tableToEdit = studentData.AnonID + "_sessions_archived"
 	if segmentID == 0 {

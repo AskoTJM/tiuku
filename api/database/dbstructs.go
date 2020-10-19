@@ -215,16 +215,16 @@ type ArchivedSessionsTable struct {
 	MandatoryToTrack   bool
 	MandatoryToComment bool
 	Tickable           bool
-	AnonID             uint
+	AnonID             string
 	StartTime          string
 	EndTime            string
 	Created            string
 	Updated            string
-	Deleted            string
-	Comment            string // Set only if MandatoryToComment = true
+	Deleted            string // Necessary ? Should these even get here?
+	Comment            string // Set only if MandatoryToComment = true, otherwise only "Commented"/"NotCommented"
 	Version            uint
 	Locations          string // Not in use.
-	Privacy            bool
+	Privacy            bool   // Necessary?
 }
 
 // Old and obselete Structs here for storage until sure they're not needed anymore

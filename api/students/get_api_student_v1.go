@@ -349,7 +349,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 		} else {
 			fmt.Println("Error: Invalid parameters.")
 		}
-		usedStudent := database.GetStudentUser(user)
+		usedStudent := database.GetStudentUserWithStudentID(user)
 		result := database.GetUserSegments(usedStudent, choice)
 		anon, _ := json.Marshal(result)
 		n := len(anon)

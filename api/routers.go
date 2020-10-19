@@ -58,7 +58,7 @@ var routes = Routes{
 	},
 
 	// Student v1 RAW Routes
-	// DELETE yoursef from Segment participation
+	// DELETE yourself from Segment participation
 	Route{
 		"DeleteCoursesCourseSegmentsSegment",
 		strings.ToUpper("Delete"),
@@ -125,7 +125,7 @@ var routes = Routes{
 		"/students/v1/courses",
 		students.GetCourses,
 	},
-
+	// GET {course}
 	Route{
 		"GetCoursesCourse",
 		strings.ToUpper("Get"),
@@ -259,7 +259,12 @@ var routes = Routes{
 	},
 
 	// FACULTY v1 RAW Routes
-
+	Route{
+		"DeleteStudentsStudent",
+		strings.ToUpper("Delete"),
+		"/faculty/v1/students/{student}",
+		faculty.DeleteStudentsStudent,
+	},
 	// FACULTY GETs
 	Route{
 		"GetStudents",

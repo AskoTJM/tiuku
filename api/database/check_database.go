@@ -164,29 +164,36 @@ func CheckIfResourceIDExistsInSessionTable(user string, ruid uint) (uint, string
 }
 
 // Check if Student user exists student users table, returns StatusOk if
-// W0rks
+// W1P
 func CheckIfUserExists(StudentID string) (string, int) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
+
 	var responseCode int
 	var responseString string
-	//tableToEdit := schoolShortName + "_StudentUsers"
-	var tempStudent StudentUser
-
-	result := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", StudentID).Find(&tempStudent)
-	if result.RowsAffected == 0 {
+	if StudentID == "" {
 		responseCode = http.StatusBadRequest
-		responseString = "Incorrect StudentID"
-	} else if result.RowsAffected < 1 {
-		log.Printf("Error, multiple users with same StudentID found in <database/check_database.go->CheckIfUserExists>")
-		responseCode = http.StatusInternalServerError
-		responseString = "Problems with the server."
+		responseString = "Error: Student User doesn't exist."
 	} else {
-		responseCode = http.StatusOK
-		responseString = "Student ID found"
+		//tableToEdit := schoolShortName + "_StudentUsers"
+		var tempStudent StudentUser
+		//log.Printf("StudentId is %v", StudentID)
+		result := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", StudentID).Find(&tempStudent)
+		if result.RowsAffected == 0 {
+			responseCode = http.StatusBadRequest
+			responseString = "Incorrect StudentID"
+		} else if result.RowsAffected > 1 {
+			log.Printf("Error, multiple users with same StudentID found in <database/check_database.go->CheckIfUserExists>")
+			responseCode = http.StatusInternalServerError
+			responseString = "Problems with the server."
+		} else if result.RowsAffected == 1 {
+			responseCode = http.StatusOK
+			responseString = "Student ID found"
+		} else {
+			log.Printf("Error: In <database/check_database.go->CheckIfUserExists>")
+		}
 	}
-
 	return responseString, responseCode
 }
 
