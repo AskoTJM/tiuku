@@ -43,26 +43,27 @@ func CheckIfRequiredTablesExist() bool {
 
 // Check if content of request is JSON
 // W0rks
-func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
-	if r.Header.Get("Content-Type") == "" {
-		// Removed to be able to use this code with empty values
+func CheckJSONContent(w http.ResponseWriter, r *http.Request) (string, int) {
 
-		//w.WriteHeader(http.StatusNoContent)
-		response := "EMPTY"
-		return response
+	var responseCode int
+	var responseString string
+
+	if r.Header.Get("Content-Type") == "" {
+		responseCode = http.StatusNoContent
+		responseString = "EMPTY"
 	} else {
-		//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
 		rbody := r.Header.Get("Content-Type")
-		// Check if content type is correct one.
 		if rbody != "application/json" {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusNotAcceptable)
-			response := "TYPE_ERROR"
-			return response
+
+			responseCode = http.StatusNotAcceptable
+			responseString = "TYPE_ERROR"
+		} else {
+			responseCode = http.StatusOK
+			responseString = "PASS"
 		}
 
 	}
-	return "PASS"
+	return responseString, responseCode
 }
 
 // Check if Category matches Segment, returns True if match False if not
@@ -160,7 +161,7 @@ func CheckIfResourceIDExistsInSessionTable(user string, ruid uint) (uint, string
 }
 
 // Check if Student user exists student users table, returns StatusOk if
-// W1P
+// W0rks
 func CheckIfUserExists(StudentID string) (string, int) {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -274,7 +275,7 @@ func CheckIfFacultyIdAvailable(FacultyID string) (string, int) {
 }
 
 // Check participation to Segment, returns how many found. 0 not found, 1 found, more found... problems.
-// W1P
+// W0rks
 func CheckSegmentParticipation(user string, segId uint) int64 {
 	if Tiukudb == nil {
 		ConnectToDB()

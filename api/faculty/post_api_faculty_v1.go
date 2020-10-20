@@ -20,9 +20,11 @@ import (
 func PostCourses(w http.ResponseWriter, r *http.Request) {
 
 	var response string
-	res := database.CheckJSONContent(w, r)
-	if res != "PASS" {
-		fmt.Fprintf(w, "%s", res)
+	resJsonString, resJsonCode := database.CheckJSONContent(w, r)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resJsonCode != http.StatusOK {
+		w.WriteHeader(resJsonCode)
+		response = resJsonString
 	} else {
 		dec := json.NewDecoder(r.Body)
 		dec.DisallowUnknownFields()
@@ -34,7 +36,6 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 		resCode, resString := database.ValidateNewCourse(newCourse)
 		if resCode != http.StatusOK {
 			log.Printf("Response from Validitation test %v", resString)
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(resCode)
 			response = resString
 		} else {
@@ -42,18 +43,18 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusCreated)
 		}
-		fmt.Fprintf(w, "%s", response)
 	}
-
+	fmt.Fprintf(w, "%s", response)
 }
 
 // New Student User
 // W0rks
 func PostStudents(w http.ResponseWriter, r *http.Request) {
 	var response string
-	res := database.CheckJSONContent(w, r)
-	if res != "PASS" {
-		fmt.Fprintf(w, "%s", res)
+	resJsonString, resJsonCode := database.CheckJSONContent(w, r)
+	if resJsonCode != http.StatusOK {
+		w.WriteHeader(resJsonCode)
+		response = resJsonString
 	} else {
 		dec := json.NewDecoder(r.Body)
 		dec.DisallowUnknownFields()
@@ -81,17 +82,19 @@ func PostStudents(w http.ResponseWriter, r *http.Request) {
 			}
 			response = resString2
 		}
-		fmt.Fprintf(w, "%s", response)
+
 	}
+	fmt.Fprintf(w, "%s", response)
 }
 
 // New Faculty User
 // W0rks
 func PostFaculty(w http.ResponseWriter, r *http.Request) {
 	var response string
-	res := database.CheckJSONContent(w, r)
-	if res != "PASS" {
-		fmt.Fprintf(w, "%s", res)
+	resJsonString, resJsonCode := database.CheckJSONContent(w, r)
+	if resJsonCode != http.StatusOK {
+		w.WriteHeader(resJsonCode)
+		response = resJsonString
 	} else {
 		dec := json.NewDecoder(r.Body)
 		dec.DisallowUnknownFields()
@@ -117,8 +120,9 @@ func PostFaculty(w http.ResponseWriter, r *http.Request) {
 			}
 			response = resString2
 		}
-		fmt.Fprintf(w, "%s", response)
+
 	}
+	fmt.Fprintf(w, "%s", response)
 }
 
 // New segment for the course
@@ -126,9 +130,10 @@ func PostFaculty(w http.ResponseWriter, r *http.Request) {
 func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 
 	var response string
-	res := database.CheckJSONContent(w, r)
-	if res != "PASS" {
-		fmt.Fprintf(w, "%s", res)
+	resJsonString, resJsonCode := database.CheckJSONContent(w, r)
+	if resJsonCode != http.StatusOK {
+		w.WriteHeader(resJsonCode)
+		response = resJsonString
 	} else {
 		dec := json.NewDecoder(r.Body)
 		dec.DisallowUnknownFields()
@@ -151,9 +156,9 @@ func PostCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusCreated)
 		}
-		fmt.Fprintf(w, "%s", response)
-	}
 
+	}
+	fmt.Fprintf(w, "%s", response)
 }
 
 // Add New category for segment
@@ -162,9 +167,10 @@ func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.R
 
 	var response string
 
-	res := database.CheckJSONContent(w, r)
-	if res != "PASS" {
-		fmt.Fprintf(w, "%s", res)
+	resJsonString, resJsonCode := database.CheckJSONContent(w, r)
+	if resJsonCode != http.StatusOK {
+		w.WriteHeader(resJsonCode)
+		response = resJsonString
 	} else {
 		dec := json.NewDecoder(r.Body)
 		dec.DisallowUnknownFields()
@@ -192,9 +198,8 @@ func PostCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.R
 				response = response + " Could not create Category for Segment"
 			}
 		}
-		fmt.Fprintf(w, "%s", response)
 	}
-
+	fmt.Fprintf(w, "%s", response)
 }
 
 // Add New School

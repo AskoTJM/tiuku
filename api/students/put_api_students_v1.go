@@ -32,60 +32,52 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(resCode)
 		response = resString
 	} else {
-		res := database.CheckJSONContent(w, r)
-		if res == "TYPE_ERROR" {
-			log.Printf("Type Error with body.")
-			w.WriteHeader(http.StatusBadRequest)
-			response = "Incorrect body type."
+		resJsonString, resJsonCode := database.CheckJSONContent(w, r)
+		if resJsonCode != http.StatusOK {
+			w.WriteHeader(resCode)
+			response = resJsonString
 		} else {
 			var session database.StudentSegmentSession
 			// If body has content and is JSON then...
-			if res == "PASS" {
-
-				dec := json.NewDecoder(r.Body)
-				dec.DisallowUnknownFields()
-				err := dec.Decode(&session)
-				if err != nil {
-					log.Println(err)
-				}
-
-				vars := mux.Vars(r)
-				seg := vars["segment"]
-				ses := vars["session"]
-				session.SegmentID = scripts.StringToUint(seg)
-				session.Created = time.Now().Format(time.RFC3339)
-				session.Updated = time.Now().Format(time.RFC3339)
-				session.ResourceID = scripts.StringToUint(ses)
-				if session.Deleted == "" {
-					session.Deleted = database.StringForEmpy
-				}
-
-				resString, resBool := database.ValidateNewSessionStruct(session)
-				log.Println(resBool)
-				if resBool {
-					log.Printf("Result from Validity test %v", resString)
-					response = response + " " + resString
-				} else {
-					/*
-						test, result, _ := database.CheckIfSessionMatchesCategory(session)
-						if test {
-					*/
-
-					resString, errorFlag := database.ReplaceSession(user, scripts.StringToUint(ses), session)
-					if errorFlag {
-						w.WriteHeader(http.StatusInternalServerError)
-					} else {
-						w.WriteHeader(http.StatusOK)
-					}
-					response = res + " & " + resString
-
-				}
-
-			} else if res == "EMPTY" {
-				log.Printf("Empty JSON Body: Minimum of required data not provided. %v", r)
-				w.WriteHeader(http.StatusNoContent)
-				response = "Empty JSON Body: Minimum of required data not provided."
+			dec := json.NewDecoder(r.Body)
+			dec.DisallowUnknownFields()
+			err := dec.Decode(&session)
+			if err != nil {
+				log.Println(err)
 			}
+
+			vars := mux.Vars(r)
+			seg := vars["segment"]
+			ses := vars["session"]
+			session.SegmentID = scripts.StringToUint(seg)
+			session.Created = time.Now().Format(time.RFC3339)
+			session.Updated = time.Now().Format(time.RFC3339)
+			session.ResourceID = scripts.StringToUint(ses)
+			if session.Deleted == "" {
+				session.Deleted = database.StringForEmpy
+			}
+
+			resString, resBool := database.ValidateNewSessionStruct(session)
+			//log.Println(resBool)
+			if resBool {
+				log.Printf("Result from Validity test %v", resString)
+				response = response + " " + resString
+			} else {
+				/*
+					test, result, _ := database.CheckIfSessionMatchesCategory(session)
+					if test {
+				*/
+
+				resString, errorFlag := database.ReplaceSession(user, scripts.StringToUint(ses), session)
+				if errorFlag {
+					w.WriteHeader(http.StatusInternalServerError)
+				} else {
+					w.WriteHeader(http.StatusOK)
+				}
+				response = response + " & " + resString
+
+			}
+
 		}
 	}
 	fmt.Fprintf(w, "%s", response)

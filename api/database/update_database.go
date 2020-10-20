@@ -73,3 +73,27 @@ func UpdateCourse(updateCourse Course) {
 		ConnectToDB()
 	}
 }
+
+// Update Student User data
+// W0rks
+func UpdateStudentUser(newStudent StudentUser) bool {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	//var responseString string
+	//var responseCode uint
+	var errorFlag bool = false
+	var tempStudent StudentUser
+
+	if err := Tiukudb.Table(StudentsTableToEdit).Model(&tempStudent).Where("id = ?", newStudent.ID).Updates(StudentUser{
+		StudentID:       newStudent.StudentID,
+		StudentName:     newStudent.StudentName,
+		StudentSegments: "",
+		StudentEmail:    newStudent.StudentEmail,
+		StudentClass:    newStudent.StudentClass,
+	}).Error; err != nil {
+		log.Printf("Error: Problem updating student user data. <database/update_database.go->UpdateStudentUser> %v \n", err)
+		errorFlag = true
+	}
+	return errorFlag //responseString, responseCode
+}

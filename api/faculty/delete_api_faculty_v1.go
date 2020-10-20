@@ -30,18 +30,26 @@ func DeleteStudentsStudent(w http.ResponseWriter, r *http.Request) {
 	resString, resCode = database.CheckIfUserExists(user.StudentID)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if resCode != http.StatusOK {
-		log.Printf("!http.StatusOk resCode is %v", resCode)
 		response = resString
 	} else {
-		log.Printf("http.StatusOk resCode is %v", resCode)
-		result := database.DeleteStudentUser(user.StudentID)
-		if !result {
+		//log.Printf("http.StatusOk resCode is %v", resCode)
+		//result := database.DeleteStudentUser(user.StudentID)
+		result := database.DeleteStudentFromAllSegments(user.StudentID)
+		if result {
 			log.Printf("Error in <database/delete_api_v1.go->DeleteStudentsStudent>")
 			resCode = http.StatusInternalServerError
 			response = "Error in removing user."
 		} else {
-			resCode = http.StatusOK
-			response = "Student User removed."
+			result2 := database.DeleteStudentUser(user.StudentID)
+			//result2 := database.DeleteStudentFromAllSegments(user.StudentID)
+			if result2 {
+				log.Printf("Error in <database/delete_api_v1.go->DeleteStudentsStudent>")
+				resCode = http.StatusInternalServerError
+				response = "Error in removing user."
+			} else {
+				resCode = http.StatusOK
+				response = "Student User succesfully removed."
+			}
 		}
 	}
 	w.WriteHeader(resCode)

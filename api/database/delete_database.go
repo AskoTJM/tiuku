@@ -34,8 +34,10 @@ func DeleteStudentFromAllSegments(user string) bool {
 		ConnectToDB()
 	}
 	var errorFlag bool = false
+	var tempSchoolSegment SchoolSegmentsSession
 	joiningStudent := GetStudentUserWithStudentID(user)
-	if err := Tiukudb.Table(SchoolParticipationList).Where("anon_id = ?", joiningStudent.AnonID).Delete(&SchoolSegmentsSession{}).Error; err != nil {
+	log.Println(joiningStudent)
+	if err := Tiukudb.Table(SchoolParticipationList).Where("anon_id = ?", joiningStudent.AnonID).Delete(&tempSchoolSegment).Error; err != nil {
 		log.Printf("Error. Removing student user from all segments in <database/delete_database->DeleteStudentFromAllSegments> %v \n", err)
 		errorFlag = true
 	}

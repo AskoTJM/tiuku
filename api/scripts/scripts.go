@@ -6,7 +6,6 @@ package scripts
 */
 import (
 	"fmt"
-	"net/http"
 	"strconv"
 )
 
@@ -67,29 +66,6 @@ func IntToUint(newInt int) uint {
 // W0rks
 func UintToInt(newUint uint) int {
 	return int(newUint)
-}
-
-// Check if content of request is JSON
-// W0rks
-func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
-	if r.Header.Get("Content-Type") == "" {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusNoContent)
-		response := "Problems creating new Course, no body in request information. <database/create_database->CreateCourse> Error: No body information available."
-		return response
-	} else {
-		//rbody, _ := header.ParseValueAndParams(r.Header, "Content-Type")
-		rbody := r.Header.Get("Content-Type")
-		// Check if content type is correct one.
-		if rbody != "application/json" {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusNotAcceptable)
-			response := "Error: Content-Type is not application/json."
-			return response
-		}
-
-	}
-	return "PASS"
 }
 
 // T0D0 not sure if needed, filtering on struct seems easier.

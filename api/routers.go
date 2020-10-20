@@ -58,7 +58,7 @@ var routes = Routes{
 	},
 
 	// Student v1 RAW Routes
-	// DELETE yourself from Segment participation
+	// STUDENT DELETEs
 	Route{
 		"DeleteCoursesCourseSegmentsSegment",
 		strings.ToUpper("Delete"),
@@ -75,7 +75,7 @@ var routes = Routes{
 		students.DeleteSegmentsSegmentSessionsSession,
 	},
 
-	// GETs
+	// STUDENT GETs
 
 	Route{
 		"GetSessions",
@@ -125,7 +125,7 @@ var routes = Routes{
 		"/students/v1/courses",
 		students.GetCourses,
 	},
-	// GET {course}
+
 	Route{
 		"GetCoursesCourse",
 		strings.ToUpper("Get"),
@@ -133,7 +133,6 @@ var routes = Routes{
 		students.GetCoursesCourse,
 	},
 
-	// GET Segments for the Course
 	Route{
 		"GetCoursesCourseSegments",
 		strings.ToUpper("Get"),
@@ -141,7 +140,6 @@ var routes = Routes{
 		students.GetCoursesCourseSegments,
 	},
 
-	// GET data for Segment
 	Route{
 		"GetCoursesCourseSegmentsSegment",
 		strings.ToUpper("Get"),
@@ -149,7 +147,6 @@ var routes = Routes{
 		students.GetCoursesCourseSegmentsSegment,
 	},
 
-	// GET Categories for the Segment
 	Route{
 		"GetCoursesCourseSegmentsSegmentCategories",
 		strings.ToUpper("Get"),
@@ -157,7 +154,6 @@ var routes = Routes{
 		students.GetCoursesCourseSegmentsSegmentCategories,
 	},
 
-	// GET sessions for  {segment}
 	Route{
 		"GetSegmentsSegmentSession",
 		strings.ToUpper("Get"),
@@ -165,7 +161,6 @@ var routes = Routes{
 		students.GetSegmentsSegmentSessions,
 	},
 
-	// GET particular {session} data from {segment}
 	Route{
 		"GetSegmentsSegmentSession",
 		strings.ToUpper("Get"),
@@ -173,7 +168,6 @@ var routes = Routes{
 		students.GetSegmentsSegmentSessionsSession,
 	},
 
-	// GET particular Setting of the Segment
 	Route{
 		"GetSegmentsSegmentSettingsSetting",
 		strings.ToUpper("Get"),
@@ -181,30 +175,29 @@ var routes = Routes{
 		students.GetSegmentsSegmentSettingsSetting,
 	},
 
-	// Get settings for {segment}
-	// Same as /course/{course}/segment/{segment}/categories ?
-	// Maybe add settings for automatic notifications etc?
 	Route{
 		"GetUserSegmentSettings",
 		strings.ToUpper("Get"),
 		"/students/v1/segment/{segment}/settings",
 		students.GetUserSegmentsSettings,
 	},
-	// Get Student users segments list
+
 	Route{
 		"GetUserSegments",
 		strings.ToUpper("Get"),
 		"/students/v1/segments",
 		students.GetUserSegments,
 	},
-	// Get all data student user has on session
+
 	Route{
 		"GetUserSegmentsResourceID",
 		strings.ToUpper("Get"),
 		"/students/v1/segments/{segment}",
 		students.GetUserSegmentsResourceID,
 	},
-	// Patch, i.e. change setting for segment
+
+	// PATCHs STUDENT
+
 	Route{
 		"PatchSegmentSegmentSettings",
 		strings.ToUpper("Patch"),
@@ -212,14 +205,13 @@ var routes = Routes{
 		students.PatchSegmentSegmentSettings,
 	},
 
-	// Patch, stop {session} data
 	Route{
 		"PatchSegmentsSegmentSessionsSession",
 		strings.ToUpper("Patch"),
 		"/students/v1/segments/{segment}/sessions/{session}",
 		students.PatchSegmentsSegmentSessionsSession,
 	},
-	// Patch, change setting of {segment}
+
 	Route{
 		"PatchSegmentsSegmentSettingsSetting",
 		strings.ToUpper("Patch"),
@@ -227,30 +219,28 @@ var routes = Routes{
 		students.PatchSegmentsSegmentSettingsSetting,
 	},
 
-	// Adding student to {segment}
+	// STUDENT POSTs
 	Route{
 		"PostCoursesCourseSegmentsSegment",
 		strings.ToUpper("Post"),
 		"/students/v1/courses/{course}/segments/{segment}",
 		students.PostCoursesCourseSegmentsSegment,
 	},
-	// Start session on {segment}, or transfer local data to tiuku
+
 	Route{
 		"PostSegmentsSegmentSessions",
 		strings.ToUpper("Post"),
 		"/students/v1/segments/{segment}/sessions",
 		students.PostSegmentsSegmentSessions,
 	},
-	// Add segment to Student users segment list,
-	// unnecessary until it's possible for user to create own categories.
+
 	Route{
 		"PostUserSegments",
 		strings.ToUpper("Post"),
 		"/students/v1/segments",
 		students.PostUserSegments,
 	},
-	// Replace {session} from {segment}
-	// If needed to edit or
+	// STUDENTS PUTs
 	Route{
 		"PutSegmentsSegmentSession",
 		strings.ToUpper("Put"),
@@ -259,6 +249,8 @@ var routes = Routes{
 	},
 
 	// FACULTY v1 RAW Routes
+
+	// FACULTY DELETEs
 	Route{
 		"DeleteStudentsStudent",
 		strings.ToUpper("Delete"),
@@ -390,6 +382,21 @@ var routes = Routes{
 		strings.ToUpper("Get"),
 		"/faculty/v1/courses/{course}/segments/{segment}/categories",
 		faculty.GetCoursesCourseSegmentsSegmentSettings,
+	},
+	// FACULTY PATCHs
+
+	Route{
+		"PatchStudentsStudent",
+		strings.ToUpper("Patch"),
+		"/faculty/v1/students/{student}",
+		faculty.PatchStudentsStudent,
+	},
+
+	Route{
+		"PatchCoursesCourse",
+		strings.ToUpper("Patch"),
+		"/faculty/v1/courses/{course}",
+		faculty.PatchCoursesCourse,
 	},
 
 	// FACULTY POSTs
