@@ -32,11 +32,11 @@ func StopActiveSession(student string, editSession uint) bool {
 
 // Replace Session data
 // W0rks
-func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSession) (bool, string) {
+func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSession) (string, bool) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	var responseBool bool
+	var errorFlag bool
 	var responseString string
 	studentData := GetStudentUserWithStudentID(user)
 	tableToEdit := studentData.AnonID + "_sessions"
@@ -46,7 +46,7 @@ func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSessi
 	if err := Tiukudb.Table(tableToEdit).Where("resource_id = ?", oldSession).Last(&oldStudentSession).Error; err != nil {
 		log.Printf("Error in retrieving table %v in <database/update_database->ReplaceSession. %v \n", oldSession, err)
 		responseString = "Error in retrieving table. Incorrect resource ID"
-		responseBool = false
+		errorFlag = false
 	} else {
 		// Mark old one as Deleted
 		//log.Printf("oldStudentSession Version is now %v", oldStudentSession)
@@ -58,13 +58,13 @@ func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSessi
 		if err := Tiukudb.Table(tableToEdit).Create(&newSession).Error; err != nil {
 			log.Printf("Error in starting Session %v \n", err)
 			responseString = "Error in creating replacing Session"
-			responseBool = false
+			errorFlag = false
 		} else {
 			responseString = "Session data replaced."
-			responseBool = true
+			errorFlag = true
 		}
 	}
-	return responseBool, responseString
+	return responseString, errorFlag
 }
 
 // Update or replace existing course data

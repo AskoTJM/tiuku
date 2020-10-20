@@ -206,6 +206,7 @@ type ArchivedSessionsTable struct {
 	CourseName         string
 	CourseStartDate    string
 	CourseEndDate      string
+	segmentID          uint
 	SegmentName        string
 	TeacherID          uint
 	Scope              uint
@@ -226,70 +227,3 @@ type ArchivedSessionsTable struct {
 	Locations          string // Not in use.
 	Privacy            bool   // Necessary?
 }
-
-// Old and obselete Structs here for storage until sure they're not needed anymore
-
-// Old StudentUser struct
-/*
-type StudentUser struct {
-	ID              uint `gorm:"primary_key"`
-	StudentID       string
-	AnonID          string
-	StudentName     string
-	StudentSegments StudentSegment
-	StudentEmail    string
-	StudentClass    string
-}
-*/
-// Students Sessions for Segment
-/*
-type StudentSegmentSession struct {
-	// Maybe use gorm.Model that automatically give ID, CreatedAt,UpdatedAt and DeletedAt fields. ?
-	//gorm.Model
-	ID              uint `gorm:"primary_key"`
-	StartTime       string
-	EndTime         string
-	CreatedAt       string
-	UpdateAt        string
-	DeletedAt       string
-	SegmentCategory SegmentCategory
-	Comment         string
-	Version         uint
-	Locations       string
-}
-*/
-
-// Table of Faculty(in this case Teachers), to save their Segments
-// Not used as decided to use single table for faculty and their segments
-/*
-type FacultySegment struct {
-	ID                    uint `gorm:"primary_key"`
-	Course                Course
-	SegmentNumber         uint
-	SchoolSegmentsSession SchoolSegmentsSession
-	SegmentCategories     SegmentCategory
-	Archived              bool
-}
-*/
-
-// What Segments of Courses student is tracking.
-/*
-type StudentSegment struct {
-	ID                     uint `gorm:"primary_key"`
-	Course                 Course
-	SegmentNumber          uint
-	StudentSegmentSessions StudentSegmentSession
-	SegmentCategory        SegmentCategory
-	Archived               bool
-}
-*/
-
-/*
-func (Degree) TableName() string {
-	return "OAMK_Degrees"
-}
-
-func (Apartment) TableName() string {
-	return "OAMK_Apartments"
-}
-*/

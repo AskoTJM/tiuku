@@ -71,8 +71,8 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 						if test {
 					*/
 
-					responseBool, resString := database.ReplaceSession(user, scripts.StringToUint(ses), session)
-					if responseBool {
+					resString, errorFlag := database.ReplaceSession(user, scripts.StringToUint(ses), session)
+					if errorFlag {
 						w.WriteHeader(http.StatusOK)
 					} else {
 						w.WriteHeader(http.StatusInternalServerError)

@@ -72,27 +72,27 @@ func CheckIfCategoryMatchSegment(testCategory uint, testSegment uint) (bool, str
 		ConnectToDB()
 	}
 
-	var responseBool bool
+	var errorFlag bool
 	var responseString string
 	var tempCategory SegmentCategory
 	if testCategory == 0 {
-		responseBool = false
+		errorFlag = false
 		responseString = "Category not provided or incorrect one."
 	} else if testCategory > 3 {
 		res := Tiukudb.Table(CategoriesTableToEdit).Where("id = ?", testCategory).Where("segment_id = ?", testSegment).Find(&tempCategory).RowsAffected
 		if res == 0 {
-			responseBool = false
+			errorFlag = false
 			responseString = "Error. Incorrect Category for Segment."
 		}
 		if res == 1 {
-			responseBool = true
+			errorFlag = true
 			responseString = "Category matches the Segment."
 		}
 	} else {
-		responseBool = true
+		errorFlag = true
 		responseString = "Category is default one."
 	}
-	return responseBool, responseString
+	return errorFlag, responseString
 }
 
 // Check if Sessions Category matches the Segment, returns True if match False if not
@@ -102,12 +102,12 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 		ConnectToDB()
 	}
 
-	var responseBool bool
+	var errorFlag bool
 	var responseString string
 	var tempCategory SegmentCategory
 	//log.Printf("Category is %v and Segment is %v", tempSession.Category, tempSession.SegmentID)
 	if tempSession.Category == 0 {
-		responseBool = false
+		errorFlag = false
 		responseString = "Category not provided or incorrect one."
 	} else if tempSession.Category > 3 {
 		//log.Printf("Category over 4")
@@ -116,18 +116,18 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 		res := result.RowsAffected
 		//log.Printf("Category over 4 and %v rows matching found", res)
 		if res == 0 {
-			responseBool = false
+			errorFlag = false
 			responseString = "Error. Incorrect Category for Segment."
 		}
 		if res == 1 {
-			responseBool = true
+			errorFlag = true
 			responseString = "Category matches the Segment."
 		}
 	} else {
-		responseBool = true
+		errorFlag = true
 		responseString = "Category is default one."
 	}
-	return responseBool, responseString, tempCategory
+	return errorFlag, responseString, tempCategory
 }
 
 // Check if ResourceID exists in users table.Input: user and resource_id to check
@@ -136,25 +136,25 @@ func CheckIfResourceIDExistsInSessionTable(user string, ruid uint) (uint, string
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	//var responseBool bool
+	//var errorFlag bool
 	var responseStatusCode uint
 	var responseString string
 	var tempStudent StudentUser
 	var tempSession StudentSegmentSession
 	if err := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", user).Find(&tempStudent).Error; err != nil {
 		log.Printf("Error retrieving user data. %v ", err)
-		//responseBool = false
+		//errorFlag = false
 		responseStatusCode = http.StatusInternalServerError
 		responseString = "Error retrieving user data."
 	} else {
 		matches := Tiukudb.Table(tempStudent.AnonID+"_sessions").Where("resource_id = ?", ruid).Find(&tempSession).RowsAffected
 		if matches == 0 {
 			log.Printf("Error retrieving session data. Incorrect resource_id. ")
-			//responseBool = false
+			//errorFlag = false
 			responseStatusCode = http.StatusBadRequest
 			responseString = "Error retrieving session data. Incorrect resource_id."
 		} else {
-			//responseBool = true
+			//errorFlag = true
 			responseStatusCode = http.StatusAccepted
 			responseString = "ResourceID exists."
 		}

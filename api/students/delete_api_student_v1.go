@@ -35,9 +35,13 @@ func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) 
 	} else {
 		//studentToJoin := database.GetStudentUser(user)
 		res := database.DeleteStudentFromSegment(user, scripts.StringToUint(segCode))
-		w.WriteHeader(http.StatusOK)
-		response = res
-
+		if !res {
+			w.WriteHeader(http.StatusInternalServerError)
+			response = "Error with Removing student from Segment. "
+		} else {
+			w.WriteHeader(http.StatusOK)
+			response = "Succesfully removed student user from Segment"
+		}
 	}
 	fmt.Fprintf(w, "%s", response)
 }
