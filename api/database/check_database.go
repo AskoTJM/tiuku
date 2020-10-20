@@ -66,48 +66,48 @@ func CheckJSONContent(w http.ResponseWriter, r *http.Request) string {
 }
 
 // Check if Category matches Segment, returns True if match False if not
-// W0rks
+// W0rks errorFlag fixed
 func CheckIfCategoryMatchSegment(testCategory uint, testSegment uint) (bool, string) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
-	var errorFlag bool
+	var errorFlag bool = false
 	var responseString string
 	var tempCategory SegmentCategory
 	if testCategory == 0 {
-		errorFlag = false
+		errorFlag = true
 		responseString = "Category not provided or incorrect one."
 	} else if testCategory > 3 {
 		res := Tiukudb.Table(CategoriesTableToEdit).Where("id = ?", testCategory).Where("segment_id = ?", testSegment).Find(&tempCategory).RowsAffected
 		if res == 0 {
-			errorFlag = false
+			errorFlag = true
 			responseString = "Error. Incorrect Category for Segment."
 		}
 		if res == 1 {
-			errorFlag = true
+			errorFlag = false
 			responseString = "Category matches the Segment."
 		}
 	} else {
-		errorFlag = true
+		errorFlag = false
 		responseString = "Category is default one."
 	}
 	return errorFlag, responseString
 }
 
 // Check if Sessions Category matches the Segment, returns True if match False if not
-// W0rks ,might need additional work
+// W0rks , errorFlag fixed might need additional work
 func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, string, SegmentCategory) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 
-	var errorFlag bool
+	var errorFlag bool = false
 	var responseString string
 	var tempCategory SegmentCategory
 	//log.Printf("Category is %v and Segment is %v", tempSession.Category, tempSession.SegmentID)
 	if tempSession.Category == 0 {
-		errorFlag = false
+		errorFlag = true
 		responseString = "Category not provided or incorrect one."
 	} else if tempSession.Category > 3 {
 		//log.Printf("Category over 4")
@@ -116,15 +116,15 @@ func CheckIfSessionMatchesCategory(tempSession StudentSegmentSession) (bool, str
 		res := result.RowsAffected
 		//log.Printf("Category over 4 and %v rows matching found", res)
 		if res == 0 {
-			errorFlag = false
+			errorFlag = true
 			responseString = "Error. Incorrect Category for Segment."
 		}
 		if res == 1 {
-			errorFlag = true
+			errorFlag = false
 			responseString = "Category matches the Segment."
 		}
 	} else {
-		errorFlag = true
+		errorFlag = false
 		responseString = "Category is default one."
 	}
 	return errorFlag, responseString, tempCategory
@@ -136,25 +136,21 @@ func CheckIfResourceIDExistsInSessionTable(user string, ruid uint) (uint, string
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	//var errorFlag bool
 	var responseStatusCode uint
 	var responseString string
 	var tempStudent StudentUser
 	var tempSession StudentSegmentSession
 	if err := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", user).Find(&tempStudent).Error; err != nil {
 		log.Printf("Error retrieving user data. %v ", err)
-		//errorFlag = false
 		responseStatusCode = http.StatusInternalServerError
 		responseString = "Error retrieving user data."
 	} else {
 		matches := Tiukudb.Table(tempStudent.AnonID+"_sessions").Where("resource_id = ?", ruid).Find(&tempSession).RowsAffected
 		if matches == 0 {
 			log.Printf("Error retrieving session data. Incorrect resource_id. ")
-			//errorFlag = false
 			responseStatusCode = http.StatusBadRequest
 			responseString = "Error retrieving session data. Incorrect resource_id."
 		} else {
-			//errorFlag = true
 			responseStatusCode = http.StatusAccepted
 			responseString = "ResourceID exists."
 		}
@@ -275,4 +271,17 @@ func CheckIfFacultyIdAvailable(FacultyID string) (string, int) {
 	}
 
 	return responseString, responseCode
+}
+
+// Check participation to Segment, returns how many found. 0 not found, 1 found, more found... problems.
+// W1P
+func CheckSegmentParticipation(user string, segId uint) int64 {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var tempSchoolSegment SchoolSegmentsSession
+	tempStudent := GetStudentUserWithStudentID(user)
+	result := Tiukudb.Table(SchoolParticipationList).Where("anon_id = ? AND segment_id = ?", tempStudent.AnonID, segId).Find(&tempSchoolSegment).RowsAffected
+
+	return result
 }

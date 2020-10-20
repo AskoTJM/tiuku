@@ -6,19 +6,19 @@ import (
 )
 
 // Validate that incoming Session has required data
-// W0rks
-func ValidateNewSessionStruct(newSession StudentSegmentSession) (bool, string) {
+// W0rks errorFlag fixed
+func ValidateNewSessionStruct(newSession StudentSegmentSession) (string, bool) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	var errorFlag bool = true
-	var responseString string = "New Session Valid."
+	var errorFlag bool = false
+	var responseString string
 	var tempCategory SegmentCategory
 
 	// Minimum needed to pass
 	// Check for SegmentID
 	if newSession.SegmentID == (StudentSegmentSession{}.SegmentID) {
-		errorFlag = false
+		errorFlag = true
 		responseString = "Error: SegmentID required. \n"
 	} else {
 		// Check for Category
@@ -26,25 +26,21 @@ func ValidateNewSessionStruct(newSession StudentSegmentSession) (bool, string) {
 		var tempString string
 		// First check if the Category and Segment match
 		test, tempString, tempCategory = CheckIfSessionMatchesCategory(newSession)
-		if !test {
-			errorFlag = false
-			responseString = responseString + tempString
+		if test {
+			errorFlag = true
+			responseString = tempString
 		} else {
 			// If Category is mandatory to comment
 			if tempCategory.MandatoryToComment {
 				if newSession.Comment == (StudentSegmentSession{}.Comment) {
-					if errorFlag {
-						errorFlag = false
-					}
+					errorFlag = true
 					responseString = responseString + "Error: Comment required. \n"
 				}
 			}
 			// Student name has to be visible.
 			if tempCategory.MandatoryToTrack {
 				if newSession.Privacy {
-					if errorFlag {
-						errorFlag = false
-					}
+					errorFlag = true
 					responseString = responseString + "Error: This category requires name to be visible. \n"
 				}
 			}
@@ -52,7 +48,7 @@ func ValidateNewSessionStruct(newSession StudentSegmentSession) (bool, string) {
 		}
 	}
 
-	return errorFlag, responseString
+	return responseString, errorFlag
 }
 
 // Check if New Category has required minimum of data

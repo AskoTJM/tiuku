@@ -91,7 +91,7 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 		//log.Println(courseNum)
 		tempCourse := database.GetCourseTableById(scripts.StringToUint(courseNum))
 		//log.Println(tempCourse)
-		database.ArchiveCourse(tempCourse, true)
+		database.ArchiveCourse(tempCourse)
 	}
 
 	return "nothing"

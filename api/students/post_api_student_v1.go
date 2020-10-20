@@ -26,6 +26,7 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 	segCode := vars["segment"]
 	user := r.Header.Get("X-User")
 	var res string
+	var response string
 
 	resString, resCode := database.CheckIfUserExists(user)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -33,9 +34,19 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(resCode)
 		res = resString
 	} else {
-		response := database.AddStudentToSegment(user, scripts.StringToUint(segCode))
+		resCheck := database.CheckSegmentParticipation(user, scripts.StringToUint(segCode))
+		if resCheck == 0 {
+			response = database.AddStudentToSegment(user, scripts.StringToUint(segCode))
+			w.WriteHeader(http.StatusOK)
+		} else if resCheck == 1 {
+			response = "Error. Already participating to this Segment. \n"
+			w.WriteHeader(http.StatusBadRequest)
+		} else {
+			log.Printf("Error. Incorrect value in <database/post_api_student_v1.go->PostCoursesCourseSegmentsSegment>.\n")
+			response = "Error. Server data incoherent."
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
 		res = response
 
 	}
@@ -58,7 +69,6 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(resCode)
 		response = resString
 	} else {
-
 		res := database.CheckJSONContent(w, r)
 		if res == "TYPE_ERROR" {
 			log.Printf("Type Error with body.")
@@ -69,6 +79,12 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 			var session database.StudentSegmentSession
 			// If body has content and is JSON then...
 			if res == "PASS" {
+				//var tempOldSession database.StudentSegmentSession
+				// Need to check if there is open Session
+				tempOldSession := database.GetLastSession(user)
+				if tempOldSession.EndTime == database.StringForEmpy {
+					database.StopActiveSession(user, tempOldSession.ID)
+				}
 				dec := json.NewDecoder(r.Body)
 				dec.DisallowUnknownFields()
 				err := dec.Decode(&session)
@@ -100,24 +116,19 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 					session.Privacy = true
 				}
 
-				resBool, resString := database.ValidateNewSessionStruct(session)
+				resString, resBool := database.ValidateNewSessionStruct(session)
 
-				if !resBool {
+				if resBool {
 					log.Printf("Result from Validity test %v", resString)
 					response = response + " " + resString
 				} else {
-
-					// Set/OverWrite values set by the system
-
-					//session.SegmentID = scripts.StringToUint(seg)
-
 					response2 := database.CreateNewSessionOnSegment(user, session)
 					if response2 {
-						w.WriteHeader(http.StatusOK)
-						response = resString
-					} else {
 						w.WriteHeader(http.StatusInternalServerError)
-						response = resString
+						response = resString + " Server error."
+					} else {
+						w.WriteHeader(http.StatusCreated)
+						response = resString + " New Session Started"
 					}
 					response = response + " " + resString
 				}

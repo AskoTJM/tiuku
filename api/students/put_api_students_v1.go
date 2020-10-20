@@ -41,6 +41,7 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 			var session database.StudentSegmentSession
 			// If body has content and is JSON then...
 			if res == "PASS" {
+
 				dec := json.NewDecoder(r.Body)
 				dec.DisallowUnknownFields()
 				err := dec.Decode(&session)
@@ -59,10 +60,9 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 					session.Deleted = database.StringForEmpy
 				}
 
-				resBool, resString := database.ValidateNewSessionStruct(session)
+				resString, resBool := database.ValidateNewSessionStruct(session)
 				log.Println(resBool)
-				if !resBool {
-
+				if resBool {
 					log.Printf("Result from Validity test %v", resString)
 					response = response + " " + resString
 				} else {
@@ -73,9 +73,9 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 					resString, errorFlag := database.ReplaceSession(user, scripts.StringToUint(ses), session)
 					if errorFlag {
-						w.WriteHeader(http.StatusOK)
-					} else {
 						w.WriteHeader(http.StatusInternalServerError)
+					} else {
+						w.WriteHeader(http.StatusOK)
 					}
 					response = res + " & " + resString
 
@@ -83,7 +83,7 @@ func PutSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 
 			} else if res == "EMPTY" {
 				log.Printf("Empty JSON Body: Minimum of required data not provided. %v", r)
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusNoContent)
 				response = "Empty JSON Body: Minimum of required data not provided."
 			}
 		}

@@ -8,6 +8,7 @@ package students
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/AskoTJM/tiuku/api/database"
@@ -34,14 +35,24 @@ func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) 
 		response = resString
 	} else {
 		//studentToJoin := database.GetStudentUser(user)
-		res := database.DeleteStudentFromSegment(user, scripts.StringToUint(segCode))
-		if !res {
-			w.WriteHeader(http.StatusInternalServerError)
-			response = "Error with Removing student from Segment. "
+		resCheck := database.CheckSegmentParticipation(user, scripts.StringToUint(segCode))
+		if resCheck == 0 {
+			response = "Not participating to this Segment"
+		} else if resCheck == 1 {
+			res := database.DeleteStudentFromSegment(user, scripts.StringToUint(segCode))
+			if res {
+				w.WriteHeader(http.StatusInternalServerError)
+				response = "Error with removing student user from Segment. "
+			} else {
+				w.WriteHeader(http.StatusOK)
+				response = "Succesfully removed student user from Segment"
+			}
 		} else {
-			w.WriteHeader(http.StatusOK)
-			response = "Succesfully removed student user from Segment"
+			log.Printf("Error: In <delete_api_student_v1.go->DeleteCoursesCourseSegmentsSegment>")
+			w.WriteHeader(http.StatusInternalServerError)
+			response = "Error. Incoherent data on server."
 		}
+
 	}
 	fmt.Fprintf(w, "%s", response)
 }

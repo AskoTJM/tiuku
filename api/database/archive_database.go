@@ -4,57 +4,67 @@ import "log"
 
 // Toggle Archive status of course, it's segments and categories, true to archive, false to un-archive
 // W1P , Archiving Course and it's Segments + Categories works already.
-func ArchiveCourse(courseToArchive Course, archive bool) {
+func ArchiveCourse(courseToArchive Course) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-
+	var errorFlag bool = false
 	// Archiving the Course
+	// archive as input removed as implementing un-Archiving all the stuff sounds like hell.
+	var archive bool = true
 	courseToArchive.Archived = archive
 	Tiukudb.Save(&courseToArchive)
 	// Set Courses Segment to Archived
 	var tempSegment []Segment
 	result := Tiukudb.Table(SegmentTableToEdit).Where("course_id = ?", courseToArchive.ID).Find(&tempSegment)
-	if result != nil {
+	if result == nil {
 		log.Println(result)
-	}
-	result2, _ := result.Rows()
-	var tempSegment2 Segment
-	for result2.Next() {
-		if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
-			log.Println(err3)
-		}
-		// Archiving Segment
-		tempSegment2.Archived = archive
-		Tiukudb.Save(&tempSegment2)
-		// Change Categories for Segment to Archived
-		var tempCat []SegmentCategory
-		resultSeg := Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", tempSegment2.ID).Find(&tempCat)
-		if resultSeg != nil {
-			log.Println(resultSeg)
-		}
+		errorFlag = true
+	} else {
+		result2, _ := result.Rows()
+		var tempSegment2 Segment
+		for result2.Next() {
+			if err3 := result.ScanRows(result2, &tempSegment2); err3 != nil {
+				log.Printf("Error: Problem with Segment data <database/archive_database.go->ArchiveCourse> %v \n", err3)
+				errorFlag = true
+			} else {
+				// Archiving Segment
+				tempSegment2.Archived = archive
+				Tiukudb.Save(&tempSegment2)
+				// Change Categories for Segment to Archived
+				var tempCat []SegmentCategory
+				resultSeg := Tiukudb.Table(CategoriesTableToEdit).Where("segment_id = ?", tempSegment2.ID).Find(&tempCat)
+				if resultSeg == nil {
+					log.Printf("Error: Problem with retrieving Categories for segments. <database/archive_database.go->ArchiveCourse> %v \n", resultSeg)
+					errorFlag = true
+				}
 
-		resultSeg2, _ := resultSeg.Rows()
-		var tempCat2 SegmentCategory
-		for resultSeg2.Next() {
-			if err4 := result.ScanRows(resultSeg2, &tempCat2); err4 != nil {
-				log.Println(err4)
+				resultSeg2, _ := resultSeg.Rows()
+				var tempCat2 SegmentCategory
+				for resultSeg2.Next() {
+					if err4 := result.ScanRows(resultSeg2, &tempCat2); err4 != nil {
+						log.Printf("Error: Problem with Categories transfering. <database/archive_databse.go->ArchiveCourse> %v \n", err4)
+						errorFlag = true
+					}
+					// Archiving Segments Categories
+					tempCat2.Archived = archive
+					Tiukudb.Save(&tempCat2)
+				}
+
 			}
-			// Archiving Segments Categories
-			tempCat2.Archived = archive
-			Tiukudb.Save(&tempCat2)
 		}
 	}
+	return errorFlag
 }
 
 // Get ArchivedSessions shared data. Returns ArchivedSessionTable and bool true if everything ok
-// T35T
+// T35T errorFlag fixed
 func ArchivedSessionsTemplate(segmentId uint) (ArchivedSessionsTable, bool) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
 	// Set variables needed
-	var errorFlag bool
+	var errorFlag bool = false
 	var returnArchive ArchivedSessionsTable
 	var tempSegment Segment
 	var tempCourse Course
@@ -65,27 +75,27 @@ func ArchivedSessionsTemplate(segmentId uint) (ArchivedSessionsTable, bool) {
 	// Get Segments data
 	if segErr := Tiukudb.Table(SegmentTableToEdit).Where("segment_id = ?", segmentId).Find(&tempSegment).Error; segErr != nil {
 		log.Printf("Error: Can not retrieve segment data at <database/archive_database.go->ArchivedSessionsTemplate> %v \n", segErr)
-		errorFlag = false
+		errorFlag = true
 	} else {
 		// Get Course data
 		if courseErr := Tiukudb.Table(CourseTableToEdit).Where("course_id = ? ", tempSegment.CourseID).Find(&tempCourse).Error; courseErr != nil {
 			log.Printf("Error: Can not retrieve course data at <database/archive_database.go->ArchivedSessionsTemplate> %v \n", segErr)
-			errorFlag = false
+			errorFlag = true
 		} else {
 			// Get Degree data
 			if degErr := Tiukudb.Table(DegreeTableToEdit).Where("id = ?", tempCourse.Degree).Find(&tempDegree).Error; degErr != nil {
 				log.Printf("Error: Can not retrieve Degree data at <database/archive_database.go->ArchivedSessionsTemplate> %v \n", segErr)
-				errorFlag = false
+				errorFlag = true
 			} else {
 				// Get and set Apartment data
 				if apartErr := Tiukudb.Table(ApartmentTableToEdit).Where("id = ?", tempDegree.ApartmentID).Find(&tempApartment).Error; apartErr != nil {
 					log.Printf("Error: Can not retrieve Apartment data at <database/archive_database.go->ArchivedSessionsTemplate> %v \n", segErr)
-					errorFlag = false
+					errorFlag = true
 				} else {
 					// Get and set Campus data
 					if campusErr := Tiukudb.Table(SchoolsTableToEdit).Where("id = ?", tempApartment.CampusID).Find(&tempCampus).Error; campusErr != nil {
 						log.Printf("Error: Can not retrieve campus data at <database/archive_database.go->ArchivedSessionsTemplate> %v \n", segErr)
-						errorFlag = false
+						errorFlag = true
 					} else {
 						// Set Data
 						// Set Segment Data
@@ -107,7 +117,6 @@ func ArchivedSessionsTemplate(segmentId uint) (ArchivedSessionsTable, bool) {
 						returnArchive.CampusID = tempApartment.CampusID
 						// Set School
 						returnArchive.SchoolID = tempCampus.SchoolID
-						errorFlag = true
 					}
 				}
 			}
@@ -117,12 +126,12 @@ func ArchivedSessionsTemplate(segmentId uint) (ArchivedSessionsTable, bool) {
 }
 
 // Archive Sessions to Archive_Tables and input user, segmentsId, populated ArchiveSessions
-// T35T
+// T35T errorFlag fixed
 func ArchiveToSchoolTable(user string, segmentId uint, tempArchive ArchivedSessionsTable) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	var errorFlag bool
+	var errorFlag bool = false
 	var tempStudent StudentUser
 	// Move tempArchive creation to other level?
 	//tempArchive := ArchivedSessionsTemplate(segmentId)
@@ -134,7 +143,7 @@ func ArchiveToSchoolTable(user string, segmentId uint, tempArchive ArchivedSessi
 	tableToCopyTo := tempStudent.AnonID + "_sessions_archived"
 	resFrom := Tiukudb.Table(tableToCopyFrom).Where("segment_id = ?", segmentId).Find(&tempStudentSessions)
 	if resFrom.Error != nil {
-		errorFlag = false
+		errorFlag = true
 		log.Printf("Error reading user table in <database/maintenance_database.go->ArchiveToSchoolTable> %v", resFrom.Error)
 	} else {
 		var tempCategories []SegmentCategory
@@ -145,7 +154,7 @@ func ArchiveToSchoolTable(user string, segmentId uint, tempArchive ArchivedSessi
 		for resTo.Next() {
 			if err2 := resFrom.ScanRows(resTo, &tempRes); err2 != nil {
 				log.Printf("Error in <database/maintenance_database.go->ArchiveToSchoolTable> %v", err2)
-				errorFlag = false
+				errorFlag = true
 			}
 
 			// Copy to Student Users Archive Table if has one.
@@ -215,24 +224,22 @@ func ArchiveToSchoolTable(user string, segmentId uint, tempArchive ArchivedSessi
 }
 
 // Archive Segment on Student User Segments table
-// T35T
+// T35T errorFlag fixed
 func ArchiveSegmentOnPersonalTable(user string, segId uint) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	var errorFlag bool
+	var errorFlag bool = false
 	var tempSegmentTable StudentSegment
 	tempStudent := GetStudentUserWithStudentID(user)
 	tableToEdit := tempStudent.AnonID + "_segments"
 	if err := Tiukudb.Table(tableToEdit).Where("segment_id = ? ", segId).Find(&tempSegmentTable).Error; err != nil {
 		log.Printf("Error: Could not retrieve segments table for student user in <database/archive_database.go->ArchiveSegmentOnPersonalTable %v \n", err)
-		errorFlag = false
+		errorFlag = true
 	} else {
 		tempSegmentTable.Archived = true
 		if err2 := Tiukudb.Save(tempSegmentTable).Error; err2 != nil {
 			log.Printf("Error: Could not save status to Archived")
-			errorFlag = false
-		} else {
 			errorFlag = true
 		}
 	}

@@ -48,7 +48,7 @@ func CreateStudentSegmentTable(student StudentUser) string {
 }
 
 // For creating Archive Segment table for containing old segments
-// Status: Works
+// Not in use but, Works
 // comment: Most likely unnecessary. Amount of segments for one student user shouldn't be that much
 // that we need another table for archiving.
 func CreateStudentSegmentTableArchived(newStudent StudentUser) string {
@@ -180,28 +180,26 @@ func CreateSegmentsSessionsArchive(user StudentUser) string {
 	return tableToCreate
 }
 
-// Add/Start Session, Returns True on success  / False on Error
-// W0rks
-func CreateNewSessionOnSegment(student string, newSession StudentSegmentSession) bool {
+// Add/Start Session, Returns errorFlag False on success  / True on Error
+// T35T
+func CreateNewSessionOnSegment(user string, newSession StudentSegmentSession) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	studentNow := GetStudentUserWithStudentID(student)
-	var response bool
-	tableToEdit := studentNow.AnonID + "_sessions"
+	tempStudent := GetStudentUserWithStudentID(user)
+	var errorFlag bool = false
+	tableToEdit := tempStudent.AnonID + "_sessions"
 	if err := Tiukudb.Table(tableToEdit).Create(&newSession).Error; err != nil {
-		log.Printf("Error in starting Session %v \n", err)
-		response = false
+		log.Printf("Error in starting Session <database/create_database.go->CreateNewSessionOnSegment> %v \n", err)
+		errorFlag = true
 	} else {
 		//newSession.ResourceID = newSession.ID
 		if err2 := Tiukudb.Table(tableToEdit).Where("id = ?", newSession.ID).Updates(StudentSegmentSession{ResourceID: newSession.ID}).Error; err2 != nil {
-			log.Printf("Error setting ResourceID for starting Session %v \n", err)
-			response = false
-			return response
+			log.Printf("Error setting ResourceID for starting Session <database/create_database.go->CreateNewSessionOnSegment> %v \n", err)
+			errorFlag = true
 		}
-		response = true
 	}
-	return response
+	return errorFlag
 }
 
 // Create new Student User
