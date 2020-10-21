@@ -25,7 +25,7 @@ var StudentsTableToEdit = "student_users"
 var FacultyTableToEdit = "faculty_users"
 var CategoriesTableToEdit = "segment_categories"
 var SchoolParticipationList = "school_segments_sessions"
-var ArchiveTableToEdit = "archived_sessions_table"
+var ArchiveTableToEdit = "archived_sessions_tables"
 
 var DegreeTableToEdit = "degrees"
 var ApartmentTableToEdit = "apartments"

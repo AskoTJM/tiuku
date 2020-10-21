@@ -55,10 +55,34 @@ func PatchStudentsStudent(w http.ResponseWriter, r *http.Request) {
 // Change Course Setting, also for archiving
 // W1P
 func PatchCoursesCourse(w http.ResponseWriter, r *http.Request) {
-	var response string = "test"
 
+	var response string
+	resString, resCode := database.CheckJSONContent(w, r)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = "Error: " + resString
+	} else {
+		var tempCourse database.Course
+		dec := json.NewDecoder(r.Body)
+		dec.DisallowUnknownFields()
+		err := dec.Decode(&tempCourse)
+		if err != nil {
+			log.Printf("Error. Issue with decoding JSON. %v", err)
+		} else {
+			vars := mux.Vars(r)
+			courseToEdit := vars["course"]
+			tempCourse.ID = scripts.StringToUint(courseToEdit)
+			resString, res := database.UpdateCourse(tempCourse)
+			if res {
+				w.WriteHeader(http.StatusInternalServerError)
+				response = resString
+			} else {
+				response = resString
+				w.WriteHeader(http.StatusOK)
+			}
+		}
+	}
 	fmt.Fprintf(w, "%s", response)
 
 }

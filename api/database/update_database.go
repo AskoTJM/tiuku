@@ -67,11 +67,48 @@ func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSessi
 }
 
 // Update or replace existing course data
-// T0D0
-func UpdateCourse(updateCourse Course) {
+// W1P
+func UpdateCourse(updateCourse Course) (string, bool) {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
+	var errorFlag bool = false
+	var responseString string
+	// Get previous state or Archived
+	prevArchiveState := GetCourseTableById(updateCourse.ID)
+	// For now, don't allow to unArchive. So once true, always to true
+	if prevArchiveState.Archived {
+		updateCourse.Archived = true
+	}
+	var tempCourse Course
+	if err := Tiukudb.Table(CourseTableToEdit).Model(&tempCourse).Where("id = ?", updateCourse.ID).Updates(Course{
+		Degree:          updateCourse.Degree,
+		CourseCode:      updateCourse.CourseCode,
+		CourseName:      updateCourse.CourseName,
+		CourseStartDate: updateCourse.CourseStartDate,
+		CourseEndDate:   updateCourse.CourseEndDate,
+		Archived:        updateCourse.Archived,
+	}).Error; err != nil {
+		log.Printf("Error: Problem updating course data. <database/update_database.go->UpdateCourse> %v \n", err)
+		responseString = "Problem updating course data."
+		errorFlag = true
+	}
+	// Need to skip this if it was already Archived.
+
+	if tempCourse.Archived && !prevArchiveState.Archived {
+		log.Printf("Archiving course... %v", updateCourse.ID)
+		err := ArchiveCourse(updateCourse.ID)
+		if err {
+			log.Printf("Error: Failed to Archive course. <database/update_database.go->UpdateCourse.")
+			errorFlag = true
+			responseString = "Error: Failed to Archive course."
+		}
+	} else {
+		log.Printf("Course already Archived.")
+		responseString = "Course already Archived"
+	}
+
+	return responseString, errorFlag
 }
 
 // Update Student User data
@@ -80,8 +117,7 @@ func UpdateStudentUser(newStudent StudentUser) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	//var responseString string
-	//var responseCode uint
+
 	var errorFlag bool = false
 	var tempStudent StudentUser
 
@@ -95,5 +131,5 @@ func UpdateStudentUser(newStudent StudentUser) bool {
 		log.Printf("Error: Problem updating student user data. <database/update_database.go->UpdateStudentUser> %v \n", err)
 		errorFlag = true
 	}
-	return errorFlag //responseString, responseCode
+	return errorFlag
 }

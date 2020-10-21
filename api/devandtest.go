@@ -12,7 +12,6 @@ import (
 	"strconv"
 
 	"github.com/AskoTJM/tiuku/api/database"
-	"github.com/AskoTJM/tiuku/api/scripts"
 )
 
 func HeaderTests(w http.ResponseWriter, r *http.Request) string {
@@ -85,13 +84,6 @@ func HeaderTests(w http.ResponseWriter, r *http.Request) string {
 	}
 	if h == "populatesegments3" {
 		database.PopulateCategories()
-	}
-	if h == "archivecourse" {
-		courseNum := r.Header.Get("X-Course")
-		//log.Println(courseNum)
-		tempCourse := database.GetCourseTableById(scripts.StringToUint(courseNum))
-		//log.Println(tempCourse)
-		database.ArchiveCourse(tempCourse)
 	}
 
 	return "nothing"
