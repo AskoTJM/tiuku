@@ -202,11 +202,12 @@ type ArchivedSessionsTable struct {
 	CampusID           uint
 	ApartmentID        uint
 	DegreeID           uint
+	CourseID           uint
 	CourseCode         string `gorm:"not null"`
 	CourseName         string
 	CourseStartDate    string
 	CourseEndDate      string
-	segmentID          uint
+	SegmentID          uint
 	SegmentName        string
 	TeacherID          uint
 	Scope              uint

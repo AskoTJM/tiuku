@@ -94,20 +94,23 @@ func UpdateCourse(updateCourse Course) (string, bool) {
 		errorFlag = true
 	}
 	// Need to skip this if it was already Archived.
-
-	if tempCourse.Archived && !prevArchiveState.Archived {
-		log.Printf("Archiving course... %v", updateCourse.ID)
-		err := ArchiveCourse(updateCourse.ID)
-		if err {
-			log.Printf("Error: Failed to Archive course. <database/update_database.go->UpdateCourse.")
-			errorFlag = true
-			responseString = "Error: Failed to Archive course."
+	// Also skip if errorFlag is up
+	if !errorFlag {
+		if tempCourse.Archived && !prevArchiveState.Archived {
+			log.Printf("Archiving course... %v", updateCourse.ID)
+			err := ArchiveCourse(updateCourse.ID)
+			if err {
+				log.Printf("Error: Failed to Archive course. <database/update_database.go->UpdateCourse.")
+				errorFlag = true
+				responseString = "Error: Failed to Archive course."
+			} else {
+				responseString = "Course Archived successfully."
+			}
+		} else {
+			log.Printf("Course already Archived.")
+			responseString = "Course already Archived"
 		}
-	} else {
-		log.Printf("Course already Archived.")
-		responseString = "Course already Archived"
 	}
-
 	return responseString, errorFlag
 }
 
