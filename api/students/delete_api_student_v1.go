@@ -74,8 +74,13 @@ func DeleteSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request
 		vars := mux.Vars(r)
 		resSes := vars["session"]
 		res := database.DeleteSessionFromStudent(user, scripts.StringToUint(resSes))
-		w.WriteHeader(http.StatusOK)
-		response = res
+		if res {
+			w.WriteHeader(http.StatusInternalServerError)
+			response = "Error: Deleting Session failed."
+		} else {
+			w.WriteHeader(http.StatusOK)
+			response = "Session Deleted."
+		}
 	}
 	fmt.Fprintf(w, "%s", response)
 }

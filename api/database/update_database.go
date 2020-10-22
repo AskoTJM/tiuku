@@ -67,7 +67,7 @@ func ReplaceSession(user string, oldSession uint, newSession StudentSegmentSessi
 }
 
 // Update or replace existing course data
-// W1P
+// W0rks ?
 func UpdateCourse(updateCourse Course) (string, bool) {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -132,6 +132,30 @@ func UpdateStudentUser(newStudent StudentUser) bool {
 		StudentClass:    newStudent.StudentClass,
 	}).Error; err != nil {
 		log.Printf("Error: Problem updating student user data. <database/update_database.go->UpdateStudentUser> %v \n", err)
+		errorFlag = true
+	}
+	return errorFlag
+}
+
+// Update Faculty User data
+// T35T
+func UpdateFacultyUser(newFaculty FacultyUser) bool {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var errorFlag bool = false
+	var tempFaculty FacultyUser
+
+	if err := Tiukudb.Table(FacultyTableToEdit).Model(&tempFaculty).Where("id = ?", newFaculty.ID).Updates(FacultyUser{
+		FacultyID:    newFaculty.FacultyID,
+		FacultyName:  newFaculty.FacultyName,
+		FacultyEmail: newFaculty.FacultyEmail,
+		Apartment:    newFaculty.Apartment,
+		Active:       newFaculty.Active,
+		Teacher:      newFaculty.Teacher,
+		Admin:        newFaculty.Admin,
+	}).Error; err != nil {
+		log.Printf("Error: Problem updating faculty user data. <database/update_database.go->UpdateFacultyUser> %v \n", err)
 		errorFlag = true
 	}
 	return errorFlag

@@ -52,8 +52,44 @@ func PatchStudentsStudent(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", response)
 }
 
+// Update Faculty Users information
+// T35T Maybe add check to see if data is actually changing?
+func PatchFacultyFaculty(w http.ResponseWriter, r *http.Request) {
+
+	var response string
+
+	resString, resCode := database.CheckJSONContent(w, r)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = "Error: " + resString
+	} else {
+		var tempFacultyNewData database.FacultyUser
+		vars := mux.Vars(r)
+		facultyToEdit := vars["faculty"]
+		dec := json.NewDecoder(r.Body)
+		dec.DisallowUnknownFields()
+		err := dec.Decode(&tempFacultyNewData)
+		if err != nil {
+			log.Printf("Error. Issue with decoding JSON. %v", err)
+		} else {
+			tempFacultyNewData.ID = scripts.StringToUint(facultyToEdit)
+			log.Printf("Updating data for %v \n", tempFacultyNewData.FacultyName)
+			res := database.UpdateFacultyUser(tempFacultyNewData)
+			if res {
+				log.Printf("Error. Could not update faculty user data.")
+				w.WriteHeader(http.StatusInternalServerError)
+			} else {
+				response = "Faculty user data updated succesfully." // resString + studentToEdit
+				w.WriteHeader(http.StatusOK)
+			}
+		}
+	}
+	fmt.Fprintf(w, "%s", response)
+}
+
 // Change Course Setting, also for archiving
-// W1P
+// W0rks
 func PatchCoursesCourse(w http.ResponseWriter, r *http.Request) {
 
 	var response string

@@ -393,6 +393,13 @@ var routes = Routes{
 	},
 
 	Route{
+		"PatchFacultyFaculty",
+		strings.ToUpper("Patch"),
+		"/faculty/v1/faculty/{faculty}",
+		faculty.PatchFacultyFaculty,
+	},
+
+	Route{
 		"PatchCoursesCourse",
 		strings.ToUpper("Patch"),
 		"/faculty/v1/courses/{course}",

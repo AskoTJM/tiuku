@@ -158,6 +158,7 @@ type School struct {
 	Finnish   string
 	English   string
 	Campuses  []Campus //`gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
+	Active    bool     // Show as possible choice
 }
 
 // Campus of the School, Campus can have multiple Apartments
@@ -168,6 +169,7 @@ type Campus struct {
 	Finnish    string
 	English    string
 	Apartments []Apartment //`gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
+	Active     bool        // Show as possible choice
 }
 
 /*
@@ -183,6 +185,7 @@ type Apartment struct {
 	Finnish   string
 	English   string
 	Degrees   []Degree `gorm:"association_foreignkey:ID;AssociationForeignKey:ID"`
+	Active    bool     // Show as possible choice
 }
 
 // Degree in the Apartment.
@@ -192,6 +195,7 @@ type Degree struct {
 	Shorthand   string
 	Finnish     string
 	English     string
+	Active      bool // Show as possible choice
 }
 
 // Struct to Save Archived Sessions

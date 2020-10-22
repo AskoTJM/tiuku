@@ -1,8 +1,11 @@
 package database
 
 import (
+	"errors"
 	"log"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 /*
@@ -22,7 +25,10 @@ func DeleteStudentFromSegment(user string, segRes uint) bool {
 	segmentToJoin := GetSegmentDataById(segRes)
 	// Remove from Schools Participation table
 	if err := Tiukudb.Table(SchoolParticipationList).Where("anon_id = ? AND segment_id = ?", joiningStudent.AnonID, segmentToJoin.ID).Delete(&SchoolSegmentsSession{}).Error; err != nil {
-		errorFlag = true
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Printf("Error removing Student user from Participation list. <database/delete_database.go->DeleteStudentFromSegment> %v \n", err)
+			errorFlag = true
+		}
 	}
 	return errorFlag
 }
@@ -38,29 +44,35 @@ func DeleteStudentFromAllSegments(user string) bool {
 	joiningStudent := GetStudentUserWithStudentID(user)
 	log.Println(joiningStudent)
 	if err := Tiukudb.Table(SchoolParticipationList).Where("anon_id = ?", joiningStudent.AnonID).Delete(&tempSchoolSegment).Error; err != nil {
-		log.Printf("Error. Removing student user from all segments in <database/delete_database->DeleteStudentFromAllSegments> %v \n", err)
-		errorFlag = true
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Printf("Error. Removing student user from all segments in <database/delete_database->DeleteStudentFromAllSegments> %v \n", err)
+			errorFlag = true
+		}
 	}
 	return errorFlag
 }
 
 // Remove Session from Student User, SoftDelete
 // W0rks
-func DeleteSessionFromStudent(studentId string, sessionID uint) string {
+func DeleteSessionFromStudent(studentId string, sessionID uint) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	var response string
+	var errorFlag bool = false
 	student := GetStudentUserWithStudentID(studentId)
 	tableToEdit := student.AnonID + "_sessions"
 
-	Tiukudb.Table(tableToEdit).Where("id = ?", sessionID).Updates(StudentSegmentSession{Deleted: time.Now().Format(time.RFC3339)})
-	response = "Deleted Session"
-	return response
+	if err := Tiukudb.Table(tableToEdit).Where("id = ?", sessionID).Updates(StudentSegmentSession{Deleted: time.Now().Format(time.RFC3339)}).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Printf("Error. Removing Session failed. <database/delete_database.go->DeleteSessionFromStudent> %v \n", err)
+			errorFlag = true
+		}
+	}
+	return errorFlag
 }
 
 // Delete {student}, remove identifying data
-// W1P errorFlag fixed,  Add Transfer of non-Archived Sessions and Remove from Segment
+// W0rks errorFlag fixed,  Add Transfer of non-Archived Sessions and Remove from Segment
 func DeleteStudentUser(studentId string) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -85,21 +97,11 @@ func DeleteStudentUser(studentId string) bool {
 		Tiukudb.DropTableIfExists(tempStudent.AnonID + "_sessions_archived")
 		// Should Archive sessions to Archive_Data before
 		// T0D0 Archive possible Sessions
+
 		Tiukudb.DropTableIfExists(tempStudent.AnonID + "_sessions")
 		// Should remove user from active segments participation
 		Tiukudb.DropTableIfExists(tempStudent.AnonID + "_segments")
 		//errorFlag = false
 	}
-	return errorFlag
-}
-
-// Delete User Session from User Session table, used after Archiving
-// W1P errorFlag fixed move to delete_database.go
-func DeleteSessionsFromUsersSessionsTable(user string, segId uint) bool {
-	if Tiukudb == nil {
-		ConnectToDB()
-	}
-	var errorFlag bool = false
-
 	return errorFlag
 }

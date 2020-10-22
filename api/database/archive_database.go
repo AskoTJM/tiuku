@@ -8,7 +8,7 @@ import (
 )
 
 // Toggle Archive status of course, it's segments and categories, true to archive, false to un-archive
-// W1P , Archiving Course and it's Segments + Categories works already.
+// W0rks
 func ArchiveCourse(courseID uint) bool {
 	if Tiukudb == nil {
 		ConnectToDB()
@@ -185,8 +185,9 @@ func ArchiveToSchoolTable(tempStudent StudentUser, segmentId uint, tempArchive A
 			log.Printf("Error in <database/maintenance_database.go->ArchiveToSchoolTable> %v", err2)
 			errorFlag = true
 		} else {
-			tempRes.ID = 0
+
 			// T0D0 Check if already in table
+			tempRes.ID = 0
 			Tiukudb.Table(tableToCopyTo).Create(&tempRes)
 			// Copy to Schools ArchiveTable
 			tempArchive.ID = 0
@@ -219,19 +220,25 @@ func ArchiveToSchoolTable(tempStudent StudentUser, segmentId uint, tempArchive A
 				}
 			}
 			// T0D0 add check if already in table.
-			if err0r := Tiukudb.Table(ArchiveTableToEdit).Create(&tempArchive).Error; err0r != nil {
-				log.Printf("Error in ArchiveToSchoolTable line 259: %v", err0r)
+			if err := Tiukudb.Table(ArchiveTableToEdit).Create(&tempArchive).Error; err != nil {
+				log.Printf("Error in ArchiveToSchoolTable line 259: %v", err)
 			} else {
 				log.Printf("Added Session to School Archive")
-				// Remove from User Active Sessions Table.
 			}
 		}
 	}
 	if !errorFlag {
-		if errD := Tiukudb.Table(tableToCopyFrom).Where("segment_id = ?", segmentId).Delete(&StudentSegmentSession{}).Error; errD != nil {
-			log.Printf("Error: Problem deleting Session from student users sessions table. <database/archive_database.go->ArchiveToSchoolTable> %v", errD)
+		// Remove Archived Sessions from Student Uses Sessions table
+		if err := Tiukudb.Table(tableToCopyFrom).Where("segment_id = ?", segmentId).Delete(&StudentSegmentSession{}).Error; err != nil {
+			log.Printf("Error: Problem deleting Session from student users sessions table. <database/archive_database.go->ArchiveToSchoolTable> %v", err)
 			errorFlag = true
 		}
+		// Remove Student User from ParticipationsList
+		if err := Tiukudb.Table(SchoolParticipationList).Where("segment_id = ? AND anon_id = ?", segmentId, tempStudent.AnonID).Delete(&SchoolSegmentsSession{}).Error; err != nil {
+			log.Printf("Error: Problem removing student users from Participation list. <database/archive_database.go->ArchiveToSchoolTable> %v", err)
+			errorFlag = true
+		}
+
 	}
 	//slog.Printf("Got to the end of ArchiveToSchoolTable")
 	return errorFlag
@@ -262,17 +269,5 @@ func ArchiveSegmentOnPersonalTable(tempStudent StudentUser, segId uint) bool {
 		}
 	}
 	//log.Printf("Returning from ArchiveSegmentOnPersonalTable...")
-	return errorFlag
-}
-
-// Sequence to when Course is Archived
-// W1P
-func ArchiveCourseSequence(courseToArchive Course) bool {
-	if Tiukudb == nil {
-		ConnectToDB()
-	}
-	var errorFlag bool = false
-	//
-
 	return errorFlag
 }
