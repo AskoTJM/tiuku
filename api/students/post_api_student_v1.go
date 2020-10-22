@@ -22,8 +22,6 @@ import (
 // W0rks
 func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
-	segCode := vars["segment"]
 	user := r.Header.Get("X-User")
 	var res string
 	var response string
@@ -34,6 +32,8 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(resCode)
 		res = resString
 	} else {
+		vars := mux.Vars(r)
+		segCode := vars["segment"]
 		resCheck := database.CheckSegmentParticipation(user, scripts.StringToUint(segCode))
 		if resCheck == 0 {
 			response = database.AddStudentToSegment(user, scripts.StringToUint(segCode))
@@ -46,9 +46,7 @@ func PostCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 			response = "Error. Server data incoherent."
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-		//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		res = response
-
 	}
 	fmt.Fprintf(w, "%s", res)
 }
@@ -140,6 +138,18 @@ func PostSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 // comment: This isn't needed unless implemented personal segments.
 // Segments on School should be automatically added on Students segments when joining them anyway.
 func PostUserSegments(w http.ResponseWriter, r *http.Request) {
+	user := r.Header.Get("X-User")
+	var resCode int
+	var resString string
+	var response string
+
+	resString, resCode = database.CheckIfUserExists(user)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
+	} else {
+		w.WriteHeader(http.StatusNotImplemented)
+	}
+	fmt.Fprintf(w, "%s", response)
 }

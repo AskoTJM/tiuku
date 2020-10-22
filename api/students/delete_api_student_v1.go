@@ -20,13 +20,9 @@ import (
 // W0rks need to add check if actually enrolled for that.
 func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
-	segCode := vars["segment"]
 	var resCode int
 	var resString string
 	var response string
-	//resSeg := database.GetSegmentDataById(scripts.StringToUint(segCode))
-
 	user := r.Header.Get("X-User")
 	resString, resCode = database.CheckIfUserExists(user)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -34,7 +30,10 @@ func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(resCode)
 		response = resString
 	} else {
-		//studentToJoin := database.GetStudentUser(user)
+
+		vars := mux.Vars(r)
+		segCode := vars["segment"]
+
 		resCheck := database.CheckSegmentParticipation(user, scripts.StringToUint(segCode))
 		if resCheck == 0 {
 			response = "Not participating to this Segment"
@@ -42,7 +41,6 @@ func DeleteCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) 
 			res := database.DeleteStudentFromSegment(user, scripts.StringToUint(segCode))
 			if res {
 				w.WriteHeader(http.StatusInternalServerError)
-				response = "Error with removing student user from Segment. "
 			} else {
 				w.WriteHeader(http.StatusOK)
 				response = "Succesfully removed student user from Segment"

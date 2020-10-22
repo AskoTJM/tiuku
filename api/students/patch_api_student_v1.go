@@ -18,15 +18,39 @@ import (
 // Change settings for the {segment}
 // Not needed until we implement personal categories?
 func PatchSegmentSegmentSettings(w http.ResponseWriter, r *http.Request) {
+	user := r.Header.Get("X-User")
+	var resCode int
+	var resString string
+	var response string
+
+	resString, resCode = database.CheckIfUserExists(user)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
+	} else {
+		w.WriteHeader(http.StatusNotImplemented)
+	}
+	fmt.Fprintf(w, "%s", response)
 }
 
 // Update {setting} for {segment}
 //
 func PatchSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
+	user := r.Header.Get("X-User")
+	var resCode int
+	var resString string
+	var response string
+
+	resString, resCode = database.CheckIfUserExists(user)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
+	} else {
+		w.WriteHeader(http.StatusNotImplemented)
+	}
+	fmt.Fprintf(w, "%s", response)
 }
 
 // Stop session by inserting Stop time
