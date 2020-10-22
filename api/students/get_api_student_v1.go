@@ -13,6 +13,7 @@ import (
 
 	"github.com/AskoTJM/tiuku/api/database"
 	"github.com/AskoTJM/tiuku/api/scripts"
+	"github.com/AskoTJM/tiuku/api/stats"
 	"github.com/gorilla/mux"
 )
 
@@ -371,24 +372,42 @@ func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Re
 func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
-	var resCode int
-	var resString string
+	//var resCode int
+	//var resString string
 	var response string
 
-	resString, resCode = database.CheckIfUserExists(user)
+	resString, resCode := database.CheckIfUserExists(user)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if resCode != http.StatusOK {
 		w.WriteHeader(resCode)
 		response = resString
 	} else {
+		var result []database.StudentSegmentSession
 		vars := mux.Vars(r)
 		segId := vars["segment"]
-		result := database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
-		anon, _ := json.Marshal(result)
-		n := len(anon)
-		s := string(anon[:n])
-		w.WriteHeader(http.StatusOK)
-		response = s
+		paramTest := r.URL.Query()
+		filter, params := paramTest["stats"]
+		result = database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
+		if !params || len(filter) == 0 {
+			anon, _ := json.Marshal(result)
+			n := len(anon)
+			s := string(anon[:n])
+			response = s
+			w.WriteHeader(http.StatusOK)
+		} else if paramTest.Get("stats") == "overall" {
+			response, _ = stats.CalculateOverAllTime(result)
+		} else if paramTest.Get("stats") == "week" {
+			response = "week"
+		} else {
+			log.Println("Error: Invalid parameters.")
+		}
+		/*
+			result := database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
+			anon, _ := json.Marshal(result)
+			n := len(anon)
+			s := string(anon[:n])
+			response = s
+		*/
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)

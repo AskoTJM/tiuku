@@ -22,17 +22,18 @@ func CountSegmentTargetHours(ects uint) uint {
 }
 
 // Count overall time
-// W1P
-
+// W0rks
 func CalculateOverAllTime(calcSession []database.StudentSegmentSession) (string, bool) {
 	var errorFlag bool = false
 	var returnTime time.Duration
 	var durationTime time.Duration
 	var returnString string
-
+	//log.Printf("CalculateOverAllTime starting. %v \n", calcSession)
 	for i := range calcSession {
 		startTimeString := calcSession[i].StartTime
+		log.Printf("startTime is %v \n", startTimeString)
 		endTimeString := calcSession[i].EndTime
+		log.Printf("endTime is %v \n", endTimeString)
 		if endTimeString == database.StringForEmpy {
 			break
 		} else {
@@ -41,14 +42,14 @@ func CalculateOverAllTime(calcSession []database.StudentSegmentSession) (string,
 		}
 
 	}
+
 	returnString = returnTime.String()
 	return returnString, errorFlag
 }
 
 // Time Difference returns time.Duration and errorFlag
-// W1P
+// W0rks
 func GetTimeDifference(from string, to string) (time.Duration, bool) {
-	//log.Print("Time now is %v \n", time.Now())
 	var errorFlag bool = false
 	var response time.Duration
 	fromT, err := ParseTimeFormat(from)
@@ -67,14 +68,15 @@ func GetTimeDifference(from string, to string) (time.Duration, bool) {
 }
 
 // Parse String to time.Time, returns time.Time and errorFlag
-// W1P
+// W0rks
 func ParseTimeFormat(timeIn string) (time.Time, bool) {
 	var errorFlag bool = false
-	layout := "2006-01-02T15:04:05.000Z"
+	layout := "2006-01-02T15:04:05Z"
 	response, err := time.Parse(layout, timeIn)
 	if err != nil {
-		log.Println("Error: Could not parse time. <scripts/calculations.go->GetTimeDifferenceParseTimeFormat. ")
+		log.Println("Error: Could not parse time. <stats/calculations.go->GetTimeDifferenceParseTimeFormat. ")
 		errorFlag = true
 	}
+	log.Printf("Response is: %v", response)
 	return response, errorFlag
 }
