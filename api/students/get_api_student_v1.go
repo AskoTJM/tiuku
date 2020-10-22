@@ -395,7 +395,8 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 			response = s
 			w.WriteHeader(http.StatusOK)
 		} else if paramTest.Get("stats") == "overall" {
-			response, _ = stats.CalculateOverAllTime(result)
+			responseTime, _ := stats.CalculateOverAllTime(result)
+			response = responseTime.String()
 		} else if paramTest.Get("stats") == "week" {
 			response = "week"
 		} else {
