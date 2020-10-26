@@ -169,20 +169,6 @@ var routes = Routes{
 	},
 
 	Route{
-		"GetSegmentsSegmentSettingsSetting",
-		strings.ToUpper("Get"),
-		"/students/v1/segments/{segment}/settings/{setting}",
-		students.GetSegmentsSegmentSettingsSetting,
-	},
-
-	Route{
-		"GetUserSegmentSettings",
-		strings.ToUpper("Get"),
-		"/students/v1/segment/{segment}/settings",
-		students.GetUserSegmentsSettings,
-	},
-
-	Route{
 		"GetUserSegments",
 		strings.ToUpper("Get"),
 		"/students/v1/segments",
@@ -361,20 +347,6 @@ var routes = Routes{
 		strings.ToUpper("Get"),
 		"/faculty/v1/courses/{course}/segments/{segment}/categories/{category}",
 		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategory,
-	},
-
-	Route{
-		"GetCoursesCourseSegmentsSegmentCategoriesCategorySettings",
-		strings.ToUpper("Get"),
-		"/faculty/v1/courses/{course}/segments/{segment}/categories/{category}/settings",
-		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategorySettings,
-	},
-
-	Route{
-		"GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting",
-		strings.ToUpper("Get"),
-		"/faculty/v1/courses/{course}/segments/{segment}/categories/{category}/settings/{setting}",
-		faculty.GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting,
 	},
 
 	Route{

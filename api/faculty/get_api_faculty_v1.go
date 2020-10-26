@@ -46,6 +46,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -71,7 +72,7 @@ func GetCoursesCourse(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
-
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -98,6 +99,7 @@ func GetCoursesCourseSegments(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 
@@ -124,6 +126,7 @@ func GetCoursesCourseSegmentsSegment(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -149,7 +152,7 @@ func GetCoursesCourseSegmentsSegmentStudents(w http.ResponseWriter, r *http.Requ
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
-
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -175,7 +178,7 @@ func GetCoursesCourseSegmentsSegmentSessions(w http.ResponseWriter, r *http.Requ
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
-
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -202,26 +205,11 @@ func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r 
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
-
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
 
-}
-
-// Get specific settings of {category}
-// Not sure if this is needed. Better to serve all settings at once.
-func GetCoursesCourseSegmentsSegmentCategoriesCategorySettings(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-// Change(GET) {setting} in {category}
-// status: Unnecessary? Better way to do this by sending all the new settings. Or least should be PUT/PATCH
-// T0D0 : Remove or repurpose
-func GetCoursesCourseSegmentsSegmentCategoriesCategorySettingsSetting(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
 }
 
 // Get Categories for {segment} of the {course}
@@ -245,6 +233,7 @@ func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Requ
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -286,6 +275,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 			n := len(anon)
 			s := string(anon[:n])
 			response = s
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusOK)
 		}
 	}
@@ -308,6 +298,7 @@ func GetStudents(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -332,6 +323,7 @@ func GetStudentsStudent(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -354,7 +346,7 @@ func GetFaculty(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
-
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -377,6 +369,7 @@ func GetSchools(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -399,6 +392,7 @@ func GetCampuses(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -421,7 +415,7 @@ func GetApartments(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
-
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
@@ -444,7 +438,7 @@ func GetDegrees(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
-
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)

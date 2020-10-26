@@ -37,7 +37,7 @@ func DeleteStudentsStudent(w http.ResponseWriter, r *http.Request) {
 		seg := vars["student"]
 		tempStudent := database.GetStudentUserWithID(scripts.StringToUint(seg))
 		resString, resCode = database.CheckIfUserExists(tempStudent.StudentID)
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		if resCode != http.StatusOK {
 			response = resString
 		} else {

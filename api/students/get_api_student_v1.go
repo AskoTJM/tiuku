@@ -28,7 +28,6 @@ func GetSessions(w http.ResponseWriter, r *http.Request) {
 	var response string
 
 	resString, resCode = database.CheckIfUserExists(user)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if resCode != http.StatusOK {
 		w.WriteHeader(resCode)
 		response = resString
@@ -60,6 +59,7 @@ func GetSessions(w http.ResponseWriter, r *http.Request) {
 			n := len(anon)
 			s := string(anon[:n])
 			response = s
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusOK)
 		} else {
 			log.Println("Error: Invalid parameters. <get_api_student_v1.go->GetSessions")
@@ -89,7 +89,6 @@ func GetSessionsLast(w http.ResponseWriter, r *http.Request) {
 	var response string
 
 	resString, resCode = database.CheckIfUserExists(user)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if resCode != http.StatusOK {
 		w.WriteHeader(resCode)
 		response = resString
@@ -101,6 +100,7 @@ func GetSessionsLast(w http.ResponseWriter, r *http.Request) {
 		s := string(anon[:n])
 
 		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		response = s
 	}
 
@@ -442,47 +442,6 @@ func GetSegmentsSegmentSessionsSession(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", response)
 }
 
-// Get value of {setting} for {segment}
-// 'GET particular Setting of the Segment'
-// Can't remember what this was about, or is it actually needed
-// T0D0
-func GetSegmentsSegmentSettingsSetting(w http.ResponseWriter, r *http.Request) {
-	user := r.Header.Get("X-User")
-	var resCode int
-	var resString string
-	var response string
-
-	resString, resCode = database.CheckIfUserExists(user)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if resCode != http.StatusOK {
-		w.WriteHeader(resCode)
-		response = resString
-	} else {
-		w.WriteHeader(http.StatusNotImplemented)
-	}
-	fmt.Fprintf(w, "%s", response)
-
-}
-
-// Get settings for segment, ? Wut?
-// T0D0
-func GetUserSegmentsSettings(w http.ResponseWriter, r *http.Request) {
-	user := r.Header.Get("X-User")
-	var resCode int
-	var resString string
-	var response string
-
-	resString, resCode = database.CheckIfUserExists(user)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if resCode != http.StatusOK {
-		w.WriteHeader(resCode)
-		response = resString
-	} else {
-		w.WriteHeader(http.StatusNotImplemented)
-	}
-	fmt.Fprintf(w, "%s", response)
-}
-
 // Get list of active segments for student user
 // W0rks
 func GetUserSegments(w http.ResponseWriter, r *http.Request) {
@@ -493,7 +452,6 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 	var response string
 
 	resString, resCode = database.CheckIfUserExists(user)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if resCode != http.StatusOK {
 		w.WriteHeader(resCode)
 		response = resString
@@ -516,6 +474,7 @@ func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 		n := len(anon)
 		s := string(anon[:n])
 		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
