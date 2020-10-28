@@ -148,7 +148,7 @@ func PopulateCourses(p int) {
 			CourseStartDate: strconv.Itoa(i) + "." + strconv.Itoa(i) + ".2020",
 			CourseEndDate:   strconv.Itoa(i) + "." + strconv.Itoa(i) + ".2021",
 			Archived:        archivedToAdd,
-			Segment:         []Segment{},
+			//Segment:         []Segment{},
 		}).Error; err != nil {
 			log.Println("Problems populating Courses table. <database/populate.go->populateCourses>")
 		}
@@ -178,8 +178,8 @@ func AutoCreateSegments() {
 				TeacherID:   scripts.IntToUint(c),
 				Scope:       3,
 				//SegmentCategories:     "", //SegmentCategory{},
-				ExpectedAttendance:    15,
-				SchoolSegmentsSession: SchoolSegmentsSession{},
+				ExpectedAttendance: 15,
+				//SchoolSegmentsSession: SchoolSegmentsSession{},
 			}
 			c++
 			newSegment.CourseID = courseToAdd.ID

@@ -48,23 +48,23 @@ type Course struct {
 	CourseStartDate string
 	CourseEndDate   string
 	Archived        bool
-	Segment         []Segment
+	//Segment         []Segment
 	//Degree          Degree
 }
 
 // Course can have on or more Segments
 type Segment struct {
-	ID          uint `gorm:"primary_key"`
-	CourseID    uint `gorm:"not null"`
-	Course      Course
+	ID       uint `gorm:"primary_key"`
+	CourseID uint `gorm:"not null"`
+	//Course      Course
 	SegmentName string
 	TeacherID   uint
 	Scope       uint
 	//SegmentCategories     SegmentCategory
 	//SegmentCategories     string
-	ExpectedAttendance    uint
-	SchoolSegmentsSession SchoolSegmentsSession
-	Archived              bool
+	ExpectedAttendance uint
+	//SchoolSegmentsSession SchoolSegmentsSession
+	Archived bool
 }
 
 // Schools Segment table has data for students and where to find their Session for the Segement.

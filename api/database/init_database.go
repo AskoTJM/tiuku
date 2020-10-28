@@ -26,7 +26,7 @@ func InitDB() {
 		CourseStartDate: "",
 		CourseEndDate:   "",
 		Archived:        false,
-		Segment:         []Segment{},
+		//Segment:         []Segment{},
 	}).Error; err != nil {
 		log.Println("Problems creating table for Course. <database/maintenance_database.go->initDB>")
 	}
@@ -42,8 +42,8 @@ func InitDB() {
 		TeacherID:   0,
 		Scope:       0,
 		//SegmentCategories:     "", //SegmentCategory{},
-		ExpectedAttendance:    0,
-		SchoolSegmentsSession: SchoolSegmentsSession{},
+		ExpectedAttendance: 0,
+		//: SchoolSegmentsSession{},
 	}).Error; err != nil {
 		log.Println("Problems creating table for Segment. <database/maintenance_database.go->initDB>")
 	}
