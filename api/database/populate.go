@@ -172,19 +172,19 @@ func AutoCreateSegments() {
 		c := 1
 		for c < 7 {
 			newSegment := &Segment{
-				ID:          0,
-				CourseID:    courseToAdd.ID,
-				SegmentName: "segment " + strconv.Itoa(c),
-				TeacherID:   scripts.IntToUint(c),
-				Scope:       3,
-				//SegmentCategories:     "", //SegmentCategory{},
+				ID:                 0,
+				CourseID:           courseToAdd.ID,
+				SegmentName:        "segment " + strconv.Itoa(c),
+				TeacherID:          scripts.IntToUint(c),
+				Scope:              3,
 				ExpectedAttendance: 15,
-				//SchoolSegmentsSession: SchoolSegmentsSession{},
 			}
 			c++
 			newSegment.CourseID = courseToAdd.ID
-			Tiukudb.Model(&courseToAdd).Association("Segment").Append(newSegment)
-			Tiukudb.Save(&courseToAdd)
+			//Tiukudb.Model(&courseToAdd).Association("Segment").Append(newSegment)
+			Tiukudb.Save(&newSegment)
+			//SchoolSegmentsSession: SchoolSegmentsSession{},
+			//SegmentCategories:     "", //SegmentCategory{},
 			// Re-thinkin about categories, maybe only create when using other than 3 stock ones?
 			//newSegment.SegmentCategories = AutoCreateCategoriesForSegment(newSegment.ID)
 		}
