@@ -84,14 +84,18 @@ func GetStudentsJoinedOnSegment(segmentID uint) []StudentUser {
 			log.Println(err3)
 		}
 		//log.Println(tempSegments2.AnonID)
-		tempStudentData := GetStudentUserWithAnonID(tempSegments2.AnonID)
+		//var tempStudentData StudentUser
+		if tempSegments2.SegmentID == segmentID {
+			tempStudentData := GetStudentUserWithAnonID(tempSegments2.AnonID)
+			returnSegments = append(returnSegments, tempStudentData)
+		}
 		//var tempStudent StudentUser
 		//result3 := Tiukudb.Table(StudentsTableToEdit).Where("student_id = ?", tempSegments2.ID).Find(&tempStudent)
 		//if result3 == nil {
 		//	log.Println(result3)
 		//}
 		//log.Println(tempSegments2.StudentName)
-		returnSegments = append(returnSegments, tempStudentData)
+
 	}
 
 	return returnSegments

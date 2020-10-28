@@ -145,8 +145,8 @@ func PopulateCourses(p int) {
 			Degree:          1,
 			CourseCode:      "GTC" + strconv.Itoa(i),
 			CourseName:      "Generated Test Course " + strconv.Itoa(i),
-			CourseStartDate: strconv.Itoa(i) + "." + strconv.Itoa(i) + ".2020",
-			CourseEndDate:   strconv.Itoa(i) + "." + strconv.Itoa(i) + ".2021",
+			CourseStartDate: "2020-" + strconv.Itoa(i) + "-" + strconv.Itoa(i),
+			CourseEndDate:   "2020-" + strconv.Itoa(i) + "-" + strconv.Itoa(i),
 			Archived:        archivedToAdd,
 			//Segment:         []Segment{},
 		}).Error; err != nil {
