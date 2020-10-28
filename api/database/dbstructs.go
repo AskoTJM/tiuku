@@ -119,6 +119,7 @@ type MainCategory struct {
 // Students Segments list
 type StudentSegment struct {
 	ID                     uint `gorm:"primary_key"`
+	CourseID               uint
 	SegmentID              uint
 	StudentSegmentSessions string `json:"-"`
 	Archived               bool

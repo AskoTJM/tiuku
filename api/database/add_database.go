@@ -41,6 +41,7 @@ func AddSegmentToStudentsSegments(joiningStudent StudentUser, segmentToJoin Segm
 		if err := Tiukudb.Table(tableToEdit).Create(&StudentSegment{
 			ID:                     0,
 			SegmentID:              segmentToJoin.ID,
+			CourseID:               segmentToJoin.CourseID,
 			StudentSegmentSessions: joiningStudent.AnonID + "_sessions",
 			Archived:               false,
 		}).Error; err != nil {

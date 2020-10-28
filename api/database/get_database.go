@@ -102,7 +102,7 @@ func GetStudentsJoinedOnSegment(segmentID uint) []StudentUser {
 }
 
 // Get segments of student user
-// status:
+// W0rks
 func GetUserSegments(student StudentUser, params string) []StudentSegment {
 	if Tiukudb == nil {
 		ConnectToDB()
