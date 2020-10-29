@@ -182,6 +182,19 @@ var routes = Routes{
 		students.GetUserSegmentsResourceID,
 	},
 
+	Route{
+		"GetFaculty",
+		strings.ToUpper("Get"),
+		"/students/v1/faculty",
+		students.GetFaculty,
+	},
+
+	Route{
+		"GetFacultyFaculty",
+		strings.ToUpper("Get"),
+		"/students/v1/faculty/{faculty}",
+		students.GetFacultyFaculty,
+	},
 	// PATCHs STUDENT
 
 	Route{
@@ -263,6 +276,13 @@ var routes = Routes{
 		strings.ToUpper("Get"),
 		"/faculty/v1/faculty",
 		faculty.GetFaculty,
+	},
+
+	Route{
+		"GetFacultyFaculty",
+		strings.ToUpper("Get"),
+		"/faculty/v1/faculty/{faculty}",
+		faculty.GetFacultyFaculty,
 	},
 
 	Route{

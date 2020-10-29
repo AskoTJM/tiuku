@@ -500,3 +500,57 @@ func GetUserSegmentsResourceID(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "%s", response)
 }
+
+// Get Faculty users.
+// W0rks
+func GetFaculty(w http.ResponseWriter, r *http.Request) {
+
+	user := r.Header.Get("X-User")
+	var resCode int
+	var resString string
+	var response string
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
+	} else {
+		result := database.GetFaculty(0)
+		//log.Println(result)
+		anon, _ := json.Marshal(result)
+		n := len(anon)
+		s := string(anon[:n])
+		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+	}
+	fmt.Fprintf(w, "%s", response)
+}
+
+// Get Faculty by id.
+// T0D0
+func GetFacultyFaculty(w http.ResponseWriter, r *http.Request) {
+	user := r.Header.Get("X-User")
+	var resCode int
+	var resString string
+	var response string
+	resString, resCode = database.CheckIfUserExists(user)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if resCode != http.StatusOK {
+		w.WriteHeader(resCode)
+		response = resString
+	} else {
+
+		vars := mux.Vars(r)
+		stuId := vars["faculty"]
+		result := database.GetFaculty(scripts.StringToUint(stuId))
+		anon, _ := json.Marshal(result)
+		n := len(anon)
+		s := string(anon[:n])
+		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+	}
+	fmt.Fprintf(w, "%s", response)
+
+}

@@ -353,6 +353,31 @@ func GetFaculty(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Get Faculty by id.
+// W0rks
+func GetFacultyFaculty(w http.ResponseWriter, r *http.Request) {
+	var response string
+	user := r.Header.Get("X-User")
+	resF := database.GetFacultyUser(user)
+	if resF.ID == 0 {
+		response = "Access denied."
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+
+		vars := mux.Vars(r)
+		stuId := vars["faculty"]
+		result := database.GetFaculty(scripts.StringToUint(stuId))
+		anon, _ := json.Marshal(result)
+		n := len(anon)
+		s := string(anon[:n])
+		response = s
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+	}
+	fmt.Fprintf(w, "%s", response)
+
+}
+
 // Get school,
 // W0rks
 func GetSchools(w http.ResponseWriter, r *http.Request) {

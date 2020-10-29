@@ -602,7 +602,7 @@ func GetFaculty(facultyID uint) []FacultyUser {
 	if facultyID == 0 {
 		result = Tiukudb.Table(FacultyTableToEdit).Find(&tempFaculty)
 	} else {
-		result = Tiukudb.Table(FacultyTableToEdit).Where("faculty_id = ?", facultyID).Find(&tempFaculty)
+		result = Tiukudb.Table(FacultyTableToEdit).Where("id = ?", facultyID).Find(&tempFaculty)
 	}
 	returnFaculty := make([]FacultyUser, 0)
 	result2, _ := result.Rows()
