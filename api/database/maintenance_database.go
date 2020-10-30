@@ -57,7 +57,7 @@ func ConnectToDB() {
 		log.Printf("Problem with connecting to database. <database/database.go->connectToDB>")
 		log.Println(err)
 	}
-	defer Tiukudb.Close()
+	//defer Tiukudb.Close()
 	//initDB()
 	//fmt.Printf("%s", Tiukudb.Error)
 }
