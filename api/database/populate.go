@@ -174,7 +174,7 @@ func AutoCreateSegments() {
 			newSegment := &Segment{
 				ID:                 0,
 				CourseID:           courseToAdd.ID,
-				SegmentName:        "segment " + strconv.Itoa(c),
+				SegmentName:        scripts.UintToString(courseToAdd.ID) + "segment " + strconv.Itoa(c),
 				TeacherID:          scripts.IntToUint(c),
 				Scope:              3,
 				ExpectedAttendance: 15,

@@ -186,7 +186,7 @@ func GetCoursesCourseSegmentsSegmentSessions(w http.ResponseWriter, r *http.Requ
 }
 
 // Get {category} for the {Segment}
-// W0rks
+// W0rks, maybe needs filtering so not to work for categories not beloning to the segment.
 func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r *http.Request) {
 
 	var response string
@@ -214,7 +214,7 @@ func GetCoursesCourseSegmentsSegmentCategoriesCategory(w http.ResponseWriter, r 
 
 // Get Categories for {segment} of the {course}
 // W0rks
-// But, Think about this.
+// But, Think about this. Should rename to SegmentCategories
 func GetCoursesCourseSegmentsSegmentSettings(w http.ResponseWriter, r *http.Request) {
 
 	var response string
