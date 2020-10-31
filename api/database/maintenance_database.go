@@ -6,6 +6,7 @@ package database
 */
 import (
 	"log"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -57,7 +58,11 @@ func ConnectToDB() {
 		log.Printf("Problem with connecting to database. <database/database.go->connectToDB>")
 		log.Println(err)
 	}
-	//defer Tiukudb.Close()
+	//Tiukudb.DB().SetConnMaxIdleTime(50)
+	Tiukudb.DB().SetMaxIdleConns(10)
+	Tiukudb.DB().SetMaxOpenConns(100)
+	Tiukudb.DB().SetConnMaxLifetime(time.Second * 3)
+
 	//initDB()
 	//fmt.Printf("%s", Tiukudb.Error)
 }
