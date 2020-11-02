@@ -53,15 +53,35 @@ func CheckJSONContent(w http.ResponseWriter, r *http.Request) (string, int) {
 		responseString = "EMPTY"
 	} else {
 		rbody := r.Header.Get("Content-Type")
-		if rbody != "application/json" {
-
-			responseCode = http.StatusNotAcceptable
-			responseString = "TYPE_ERROR"
-		} else {
+		/*
+			if rbody != "application/json; charset=utf-8" {
+				if rbody != "application/json;" {
+					log.Print(r.Header.Get("Content-Type"))
+					responseCode = http.StatusNotAcceptable
+					responseString = "TYPE_ERROR"
+				}
+				//} else if rbody != "application/json;" {
+				//	log.Print(r.Header.Get("Content-Type"))
+				//	responseCode = http.StatusNotAcceptable
+				//	responseString = "TYPE_ERROR"
+			} else {
+				responseCode = http.StatusOK
+				responseString = "PASS"
+			}
+		*/
+		// Flutter uses this
+		if rbody == "application/json; charset=utf-8" {
 			responseCode = http.StatusOK
 			responseString = "PASS"
+			// Can't get Postman to use utf-8 so this is needed by it
+		} else if rbody == "application/json" {
+			responseCode = http.StatusOK
+			responseString = "PASS"
+		} else {
+			log.Print(r.Header.Get("Content-Type"))
+			responseCode = http.StatusNotAcceptable
+			responseString = "TYPE_ERROR"
 		}
-
 	}
 	return responseString, responseCode
 }

@@ -31,6 +31,7 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	} else {
 		resJsonString, resJsonCode := database.CheckJSONContent(w, r)
+		//log.Print(resJsonString)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		if resJsonCode != http.StatusOK {
 			w.WriteHeader(resJsonCode)
@@ -45,12 +46,14 @@ func PostCourses(w http.ResponseWriter, r *http.Request) {
 			}
 			resCode, resString := database.ValidateNewCourse(newCourse)
 			if resCode != http.StatusOK {
-				log.Printf("Response from Validitation test %v", resString)
+				//log.Printf("Response from Validitation test %v", resString)
 				w.WriteHeader(resCode)
+				//log.Print(resString)
 				response = resString
 			} else {
 				response = database.CreateCourse(newCourse, database.CourseTableToEdit)
-				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				log.Print(response)
+				//w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 				w.WriteHeader(http.StatusCreated)
 			}
 		}

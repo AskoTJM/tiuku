@@ -99,14 +99,14 @@ func CreateCourse(newCourse Course, tableToEdit string) string {
 }
 
 // Create new Segment for course
-// Status: works
+// Status: works, needs to be re-worked to be without
 func CreateSegment(newSegment Segment, tableToEdit string) string {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
-	getCourseData := GetCourseTableById(newSegment.CourseID)
-	Tiukudb.Model(&getCourseData).Association("Segment").Append(newSegment)
-	Tiukudb.Save(&getCourseData)
+	//getCourseData := GetCourseTableById(newSegment.CourseID)
+	Tiukudb.Table(tableToEdit).Create(&newSegment)
+	//Tiukudb.Save(&getCourseData)
 	response := "Segment created " + newSegment.SegmentName
 	return response //getCourseData
 }
