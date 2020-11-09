@@ -149,6 +149,8 @@ func ArchivedSessionsTemplate(segmentId uint) (ArchivedSessionsTable, bool) {
 						// Set Campus
 						returnArchive.CampusID = tempApartment.CampusID
 						// Set School
+						// For some reason doesn't set School ID
+						log.Println(tempCampus.SchoolID)
 						returnArchive.SchoolID = tempCampus.SchoolID
 					}
 				}
@@ -197,6 +199,7 @@ func ArchiveToSchoolTable(tempStudent StudentUser, segmentId uint, tempArchive A
 			tempArchive.Updated = tempRes.Updated
 			tempArchive.Deleted = tempRes.Deleted
 			// None of this category stuff works.
+			log.Println(tempCategories[0])
 			for i := range tempCategories {
 				if tempCategories[i].ID == tempRes.Category {
 					log.Printf("Found Category %v", tempCategories[i].SubCategory)

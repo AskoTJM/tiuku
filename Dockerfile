@@ -5,19 +5,20 @@ VOLUME  ["/tiuku"]
 
 
 
-RUN go get -d github.com/gorilla/mux
+#RUN go get -d github.com/gorilla/mux
+
 #GORM V2 uses these
 #RUN go get -u gorm.io/gorm
 #RUN go get -u gorm.io/driver/mysql
 
 #GORM V1 uses these
-RUN go get -u github.com/jinzhu/gorm
-RUN go get -u github.com/jinzhu/gorm/dialects/mysql
+#RUN go get -u github.com/jinzhu/gorm
+#RUN go get -u github.com/jinzhu/gorm/dialects/mysql
 
 #gjson 'get json values quickly'
-RUN go get -u github.com/tidwall/gjson
+#RUN go get -u github.com/tidwall/gjson
 #for body manipulation
-RUN go get -u github.com/golang/gddo/httputil/header
+#RUN go get -u github.com/golang/gddo/httputil/header
 #COPY go.mod ./
 #RUN go mod download
 #COPY . .

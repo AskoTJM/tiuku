@@ -96,9 +96,9 @@ type SegmentSessionReport struct {
 // All SubCategories belong in to one of the three MainCategoy
 // Maybe should be belongs to o one-to-one with two structs?
 type SegmentCategory struct {
-	ID                 uint `gorm:"primary_key"`
-	SegmentID          uint
-	Segment            Segment
+	ID        uint `gorm:"primary_key"`
+	SegmentID uint
+	//Segment            Segment
 	MainCategory       uint `gorm:"not null"`
 	SubCategory        string
 	MandatoryToTrack   bool // Have to see student name, Warning if not
