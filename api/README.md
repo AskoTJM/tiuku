@@ -1,6 +1,5 @@
 
 API for the Tiuku system.
-Thesis work repository for 'tiuku' Winter 2020
 
 Thesis work for Oulu University of Applied Sciences
 by: Asko Mattila
