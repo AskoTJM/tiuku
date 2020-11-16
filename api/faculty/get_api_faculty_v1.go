@@ -172,14 +172,35 @@ func GetCoursesCourseSegmentsSegmentSessions(w http.ResponseWriter, r *http.Requ
 	} else {
 		vars := mux.Vars(r)
 		segCode := vars["segment"]
-
-		studentResult := database.GetAllSessionsForSegment(scripts.StringToUint(segCode))
-		anon, _ := json.Marshal(studentResult)
-		n := len(anon)
-		s := string(anon[:n])
-		response = s
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
+		var studentResult []database.SegmentSessionReport
+		testString, testCode := database.CheckSegmentStatus(scripts.StringToInt(segCode))
+		if testCode == http.StatusOK {
+			if testString == "active" {
+				studentResult = database.GetAllActiveSessionsForSegment(scripts.StringToUint(segCode))
+			} else if testString == "archived" {
+				studentResult = database.GetAllArchivedSessionsForSegment(scripts.StringToUint(segCode))
+			}
+			anon, _ := json.Marshal(studentResult)
+			n := len(anon)
+			s := string(anon[:n])
+			response = s
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusOK)
+		} else {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			response = testString
+			w.WriteHeader(testCode)
+		}
+		//log.Printf("TestString is: %s and testCode is %d", testString, testCode)
+		//studentResult := database.GetAllActiveSessionsForSegment(scripts.StringToUint(segCode))
+		/*
+			anon, _ := json.Marshal(studentResult)
+			n := len(anon)
+			s := string(anon[:n])
+			response = s
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusOK)
+		*/
 	}
 	fmt.Fprintf(w, "%s", response)
 

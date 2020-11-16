@@ -97,6 +97,7 @@ func InitDB() {
 		Scope:              0,
 		ExpectedAttendance: 0,
 		MainCategory:       0,
+		SubCategoryID:      0,
 		SubCategory:        "",
 		MandatoryToTrack:   false,
 		MandatoryToComment: false,

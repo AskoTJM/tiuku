@@ -476,9 +476,9 @@ func GetStudentsArchivedSessions(student string, segmentID uint) []StudentSegmen
 	return returnSegments
 }
 
-// GET all Sessions for Segment
+// GET all Active Sessions for Segment
 // W1P, W0rks but remodel privacy handling? Move it to Session by Session setting.
-func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
+func GetAllActiveSessionsForSegment(segmentID uint) []SegmentSessionReport {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
@@ -533,6 +533,81 @@ func GetAllSessionsForSegment(segmentID uint) []SegmentSessionReport {
 				returnSegments = append(returnSegments, tempReport)
 			}
 		}
+
+	}
+	return returnSegments
+
+}
+
+// Get All Archived Sessions for the {segment} from schools Archived Table
+// W1P, needed to get archived sessions from schools Archived table
+func GetAllArchivedSessionsForSegment(segId uint) []SegmentSessionReport {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+
+	var tempSchoolSessions []ArchivedSessionsTable
+	returnSegments := make([]SegmentSessionReport, 0)
+	var anonMap = make(map[string]string)
+
+	resultSchool := Tiukudb.Table(ArchiveTableToEdit).Where("segment_id = ?", segId).Find(&tempSchoolSessions)
+	result2, _ := resultSchool.Rows()
+	anonymStudent := 1
+	for result2.Next() {
+		var tempReport SegmentSessionReport
+		var tempSegment2 ArchivedSessionsTable
+		if err3 := resultSchool.ScanRows(result2, &tempSegment2); err3 != nil {
+			log.Println(err3)
+		}
+		//
+		if res, ok := anonMap[tempSegment2.AnonID]; ok {
+			tempReport.StudentID = res
+		} else {
+			tempReport.StudentID = "Anonyymi " + strconv.Itoa(anonymStudent)
+			anonymStudent++
+			anonMap[tempSegment2.AnonID] = tempReport.StudentID
+			// Add anonynom
+			// tempStudent.StudentName
+		}
+		tempReport.ResourceID = tempSegment2.ID
+		tempReport.StartTime = tempSegment2.StartTime
+		tempReport.EndTime = tempSegment2.EndTime
+		tempReport.SegmentID = tempSegment2.SegmentID
+		// Problem, SubCategory is saved as uint in active segments and is string when archived.
+		tempReport.Category = tempSegment2.SubCategoryID
+		tempReport.Comment = tempSegment2.Comment
+
+		tempReport.Created = tempSegment2.Created
+		tempReport.Updated = tempSegment2.Updated
+
+		returnSegments = append(returnSegments, tempReport)
+
+		//tableToEdit := tempSegment2.StudentSegmentsSessions
+		//var tempStudentSessions []StudentSegmentSession
+		//studentResult := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segmentID).Find(&tempStudentSessions)
+		//studentResult := Tiukudb.Table(tableToEdit).Where("segment_id = ?", segId).Where("Deleted = ?", "N0tS3t").Order("resource_id asc").Find(&tempStudentSessions)
+		//studentResult2, _ := studentResult.Rows()
+		//var tempSegment3 StudentSegmentSession
+		//for studentResult2.Next() {
+		//	if err5 := studentResult.ScanRows(studentResult2, &tempSegment3); err5 != nil {
+		//		log.Println(err5)
+		//	}
+		/*
+			if tempSegment3.Deleted == StringForEmpy {
+
+				tempReport.ResourceID = tempSegment3.ResourceID
+				tempReport.StartTime = tempSegment3.StartTime
+				tempReport.EndTime = tempSegment3.EndTime
+				tempReport.SegmentID = tempSegment3.SegmentID
+				tempReport.Category = tempSegment3.Category
+				tempReport.Comment = tempSegment3.Comment
+
+				tempReport.Created = tempSegment3.Created
+				tempReport.Updated = tempSegment3.Updated
+
+				returnSegments = append(returnSegments, tempReport)
+			}
+		}*/
 
 	}
 	return returnSegments

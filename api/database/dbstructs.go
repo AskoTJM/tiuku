@@ -218,6 +218,7 @@ type ArchivedSessionsTable struct {
 	Scope              uint
 	ExpectedAttendance uint
 	MainCategory       uint `gorm:"not null"`
+	SubCategoryID      uint // Added later
 	SubCategory        string
 	MandatoryToTrack   bool
 	MandatoryToComment bool

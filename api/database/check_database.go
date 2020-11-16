@@ -320,7 +320,6 @@ func CheckStudentsSegmentStatus(user string, segId uint) (string, int) {
 	tempStudent := GetStudentUserWithStudentID(user)
 	var tableToCheck = tempStudent.AnonID + "_segments"
 	result := Tiukudb.Table(tableToCheck).Where("segment_id = ?", segId).Find(&tempSegment).RowsAffected
-	log.Print(tableToCheck)
 	if result == 0 {
 		responseCode = http.StatusBadRequest
 		responseString = "Segment Not Found."
@@ -337,6 +336,65 @@ func CheckStudentsSegmentStatus(user string, segId uint) (string, int) {
 		}
 
 	}
+	return responseString, responseCode
+}
+
+// Check if segment is in schools archived table
+// W1P
+func CheckIfSegmentInArchive(segId int) (string, int) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseCode int
+	var responseString string
+	var tempSegment ArchivedSessionsTable
+	var tableToCheck = ArchiveTableToEdit
+	result := Tiukudb.Table(tableToCheck).Where("segment_id = ?", segId).Find(&tempSegment).RowsAffected
+	if result == 0 {
+		responseCode = http.StatusBadRequest
+		responseString = "Segment Not Found."
+	} else if result < 1 {
+		log.Printf("Error, multiple segments with same SegmentID found in <database/check_database.go->CheckIfSegmentInArchives>")
+		responseCode = http.StatusInternalServerError
+		responseString = "Problems with the server."
+	} else {
+		responseCode = http.StatusOK
+		responseString = "archived"
+
+	}
 
 	return responseString, responseCode
+
+}
+
+// Check segment status from Segment table, archived or active
+// W1P
+func CheckSegmentStatus(segId int) (string, int) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseCode int
+	var responseString string
+	var tempSegment Segment
+	var tableToCheck = SegmentTableToEdit
+	result := Tiukudb.Table(tableToCheck).Where("id = ?", segId).Find(&tempSegment).RowsAffected
+	if result == 0 {
+		responseCode = http.StatusBadRequest
+		responseString = "Segment Not Found."
+	} else if result < 1 {
+		log.Printf("Error, multiple segments with same SegmentID found in <database/check_database.go->CheckSegmentStatus>")
+		responseCode = http.StatusInternalServerError
+		responseString = "Problems with the server."
+	} else {
+		responseCode = http.StatusOK
+		if tempSegment.Archived {
+			responseString = "archived"
+		} else {
+			responseString = "active"
+		}
+
+	}
+
+	return responseString, responseCode
+
 }

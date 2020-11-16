@@ -367,8 +367,8 @@ func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Re
 
 }
 
-// desc:Get sessions for {segment}
-// W0rks for active, need to work for archived
+// Get sessions for {segment}
+// W0rks
 func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
@@ -396,28 +396,35 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 		} else if testString == "archived" {
 			result = database.GetStudentsArchivedSessions(user, scripts.StringToUint(segId))
 		}
-		if !params || len(filter) == 0 {
-			anon, _ := json.Marshal(result)
-			n := len(anon)
-			s := string(anon[:n])
-			response = s
+		// Check if the result was an StatusOK else skip and return error code
+		if testCode == 200 {
+			if !params || len(filter) == 0 {
+				anon, _ := json.Marshal(result)
+				n := len(anon)
+				s := string(anon[:n])
+				response = s
+				w.WriteHeader(http.StatusOK)
+			} else if paramTest.Get("stats") == "overall" {
+				responseTime, _ := stats.CalculateOverAllTime(result)
+				response = responseTime.String()
+			} else if paramTest.Get("stats") == "week" {
+				response = "week"
+			} else {
+				log.Println("Error: Invalid parameters.")
+			}
+
+			/*
+				result := database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
+				anon, _ := json.Marshal(result)
+				n := len(anon)
+				s := string(anon[:n])
+				response = s
+			*/
 			w.WriteHeader(http.StatusOK)
-		} else if paramTest.Get("stats") == "overall" {
-			responseTime, _ := stats.CalculateOverAllTime(result)
-			response = responseTime.String()
-		} else if paramTest.Get("stats") == "week" {
-			response = "week"
 		} else {
-			log.Println("Error: Invalid parameters.")
+			w.WriteHeader(testCode)
+			response = testString
 		}
-		/*
-			result := database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
-			anon, _ := json.Marshal(result)
-			n := len(anon)
-			s := string(anon[:n])
-			response = s
-		*/
-		w.WriteHeader(http.StatusOK)
 	}
 	fmt.Fprintf(w, "%s", response)
 
