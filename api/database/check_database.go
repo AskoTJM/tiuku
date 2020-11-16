@@ -300,9 +300,43 @@ func CheckSegmentParticipation(user string, segId uint) int64 {
 	if Tiukudb == nil {
 		ConnectToDB()
 	}
+
 	var tempSchoolSegment SchoolSegmentsSession
 	tempStudent := GetStudentUserWithStudentID(user)
 	result := Tiukudb.Table(SchoolParticipationList).Where("anon_id = ? AND segment_id = ?", tempStudent.AnonID, segId).Find(&tempSchoolSegment).RowsAffected
 
 	return result
+}
+
+// Check if Students segment is in the active or archived table, returns "archived" or "active" and 200 on success.
+// W0rks
+func CheckStudentsSegmentStatus(user string, segId uint) (string, int) {
+	if Tiukudb == nil {
+		ConnectToDB()
+	}
+	var responseCode int
+	var responseString string
+	var tempSegment StudentSegment
+	tempStudent := GetStudentUserWithStudentID(user)
+	var tableToCheck = tempStudent.AnonID + "_segments"
+	result := Tiukudb.Table(tableToCheck).Where("segment_id = ?", segId).Find(&tempSegment).RowsAffected
+	log.Print(tableToCheck)
+	if result == 0 {
+		responseCode = http.StatusBadRequest
+		responseString = "Segment Not Found."
+	} else if result < 1 {
+		log.Printf("Error, multiple segments with same SegmentID found in <database/check_database.go->CheckStudentsSegmentStatus>")
+		responseCode = http.StatusInternalServerError
+		responseString = "Problems with the server."
+	} else {
+		responseCode = http.StatusOK
+		if tempSegment.Archived {
+			responseString = "archived"
+		} else {
+			responseString = "active"
+		}
+
+	}
+
+	return responseString, responseCode
 }

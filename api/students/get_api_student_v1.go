@@ -368,7 +368,7 @@ func GetCoursesCourseSegmentsSegmentCategories(w http.ResponseWriter, r *http.Re
 }
 
 // desc:Get sessions for {segment}
-// W0rks
+// W0rks for active, need to work for archived
 func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Header.Get("X-User")
@@ -387,7 +387,15 @@ func GetSegmentsSegmentSessions(w http.ResponseWriter, r *http.Request) {
 		segId := vars["segment"]
 		paramTest := r.URL.Query()
 		filter, params := paramTest["stats"]
-		result = database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
+		// Check if the requested segment is in active or achived
+		testString, testCode := database.CheckStudentsSegmentStatus(user, scripts.StringToUint(segId))
+		log.Printf("TestString is: %s and testCode is: %d", testString, testCode)
+		// End Check
+		if testString == "active" {
+			result = database.GetStudentsSessionsForSegment(user, scripts.StringToUint(segId))
+		} else if testString == "archived" {
+			result = database.GetStudentsArchivedSessions(user, scripts.StringToUint(segId))
+		}
 		if !params || len(filter) == 0 {
 			anon, _ := json.Marshal(result)
 			n := len(anon)
