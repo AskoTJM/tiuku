@@ -61,7 +61,7 @@ func ConnectToDB() {
 	//Tiukudb.DB().SetConnMaxIdleTime(50)
 	Tiukudb.DB().SetMaxIdleConns(10)
 	Tiukudb.DB().SetMaxOpenConns(100)
-	Tiukudb.DB().SetConnMaxLifetime(time.Second * 3)
+	Tiukudb.DB().SetConnMaxLifetime(time.Second * 4)
 
 	//initDB()
 	//fmt.Printf("%s", Tiukudb.Error)
